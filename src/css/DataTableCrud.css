@@ -1,0 +1,40 @@
+
+.datatable-crud .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+@media screen and (max-width: 960px) {
+    .datatable-crud .table-header {
+        align-items: flex-start;
+    }
+}
+.datatable-crud .product-image {
+    width: 100px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+.datatable-crud .p-dialog .user-image {
+    width: 150px;
+    margin: 0 auto 2rem auto;
+    display: block;
+}
+.datatable-crud .confirmation-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@media screen and (max-width: 960px) {
+    .datatable-crud .p-toolbar {
+        flex-wrap: wrap;
+    }
+    .datatable-crud .p-toolbar .p-button {
+        margin-bottom: 0.25rem;
+    }
+    .datatable-crud .table-header {
+        flex-direction: column;
+    }
+    .datatable-crud .table-header .p-input-icon-left, .datatable-crud .table-header input {
+        width: 100%;
+    }
+}
+                
