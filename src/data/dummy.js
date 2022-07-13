@@ -1,9 +1,9 @@
 import React from 'react';
-import { AiOutlineCalendar, AiOutlineShoppingCart, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock, AiOutlineHome, AiOutlinePlusCircle, AiOutlineSetting} from 'react-icons/ai';
+import { AiOutlineCalendar, AiOutlineShoppingCart, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock, AiOutlineHome, AiOutlineSetting} from 'react-icons/ai';
 import {MdManageAccounts, MdOutlineSupervisorAccount} from 'react-icons/md';
 import { FiShoppingBag, FiEdit, FiPieChart, FiBarChart, FiCreditCard, FiStar, FiShoppingCart, FiUsers } from 'react-icons/fi';
-import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft } from 'react-icons/bs';
-import { BiColorFill } from 'react-icons/bi';
+import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft, BsPlusLg } from 'react-icons/bs';
+import { BiColorFill} from 'react-icons/bi';
 import { IoMdContacts } from 'react-icons/io';
 import { RiContactsLine, RiStockLine } from 'react-icons/ri';
 import { HiOutlineRefresh } from 'react-icons/hi';
@@ -513,7 +513,7 @@ export const links = [
         {
           name: 'Nouveux CodeLab',
           url: 'newCodelab',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         },
       ],
     },
@@ -528,7 +528,7 @@ export const links = [
         {
           name: 'Nouveux Chapiter',
           url: 'newChapiter',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         },
       ],
     },
@@ -543,7 +543,7 @@ export const links = [
         {
           name: 'Nouveux Cours',
           url: 'newCours',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         },
       ],
     },
@@ -558,7 +558,7 @@ export const links = [
         {
           name: 'Nouveux Categories',
           url: 'newCategorie',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         }
       ]
     },
@@ -573,7 +573,7 @@ export const links = [
         {
           name: 'Nouveux Projets',
           url: 'newProjet',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         }
       ]
     },
@@ -588,7 +588,7 @@ export const links = [
         {
           name: 'Nouveux Categories',
           url: 'newCategorieProjet',
-          icon: <AiOutlinePlusCircle />,
+          icon: <BsPlusLg />,
         }
       ]
     }
@@ -856,32 +856,32 @@ export const medicalproBranding = {
   ],
 };
 
-export const themeColors = [
-  {
-    name: 'blue-theme',
-    color: '#1A97F5',
-  },
-  {
-    name: 'green-theme',
-    color: '#03C9D7',
-  },
-  {
-    name: 'purple-theme',
-    color: '#7352FF',
-  },
-  {
-    name: 'red-theme',
-    color: '#FF5C8E',
-  },
-  {
-    name: 'indigo-theme',
-    color: '#1E4DB7',
-  },
-  {
-    color: '#FB9678',
-    name: 'orange-theme',
-  },
-];
+// export const themeColors = [
+//   {
+//     name: 'blue-theme',
+//     color: '#1A97F5',
+//   },
+//   {
+//     name: 'green-theme',
+//     color: '#03C9D7',
+//   },
+//   {
+//     name: 'purple-theme',
+//     color: '#7352FF',
+//   },
+//   {
+//     name: 'red-theme',
+//     color: '#FF5C8E',
+//   },
+//   {
+//     name: 'indigo-theme',
+//     color: '#1E4DB7',
+//   },
+//   {
+//     color: '#FB9678',
+//     name: 'orange-theme',
+//   },
+// ];
 
 export const userProfileData = [
   {
@@ -894,7 +894,7 @@ export const userProfileData = [
   {
     icon: <AiOutlineSetting />,
     title: 'Settings',
-    desc: 'Modifier les parameters',
+    desc: 'Modifier les paramètres',
     iconColor: 'rgb(0, 194, 146)',
     iconBg: 'rgb(235, 250, 242)',
   },

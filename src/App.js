@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 import { Navbar, Sidebar, ThemeSettings } from './components';
 
@@ -20,40 +22,25 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
+    const {pathname, currentColor, setCurrentMode, currentMode, activeMenu, themeSettings, setThemeSettings } = useStateContext();
 
     useEffect(() => {
-        const currentThemeColor = localStorage.getItem('colorMode');
         const currentThemeMode = localStorage.getItem('themeMode');
-        if (currentThemeColor && currentThemeMode) {
-        setCurrentColor(currentThemeColor);
-        setCurrentMode(currentThemeMode);
-        }
-    }, []);
+        if (currentThemeMode) {
+            setCurrentMode(currentThemeMode);
+        };
+        
+    });
+
+    const home = { icon: 'pi pi-home', url: 'http://localhost:3000/' }
 
     return (
         <div className={currentMode === 'Dark' ? 'dark' : ''}>
             <BrowserRouter>
                 <div className="flex relative dark:bg-main-dark-bg w-100">
-                    <div className="fixed right-4 bottom-4" style={{ zIndex: '1000' }}>
-                        <TooltipComponent
-                            content="Settings"
-                            position="Top"
-                        >
-                        <button
-                            type="button"
-                            onClick={() => setThemeSettings(true)}
-                            style={{ background: currentColor, borderRadius: '50%' }}
-                            className="text-3xl text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
-                        >
-                            <FiSettings />
-                        </button>
-
-                        </TooltipComponent>
-                    </div>
                     {activeMenu ? (
                         <div className="flex-1 w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
-                        <Sidebar />
+                            <Sidebar />
                         </div>
                     ) : (
                         <div className="w-0 dark:bg-secondary-dark-bg">
@@ -71,7 +58,9 @@ const App = () => {
                             <Navbar />
                         </div>
                         <div className='p-3'>
-                            {themeSettings && (<ThemeSettings />)}
+                            <div className="card">
+                                <BreadCrumb model={pathname} home={home}/>
+                            </div>
 
                             <Routes>
                                 <Route path="/" element={<Home />} />

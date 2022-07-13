@@ -7,12 +7,13 @@ import {links, SiteLogo} from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const Sidebar = () => {
-  const { currentColor, activeMenu, setActiveMenu, screenSize } = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, screenSize, setPath } = useStateContext();
 
   const handleCloseSideBar = () => {
     if (activeMenu !== undefined && screenSize <= 900) {
       setActiveMenu(false);
     }
+    setPath()
   };
 
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg  text-white  text-md m-2';
@@ -40,7 +41,7 @@ const Sidebar = () => {
           <div className="mt-10 ">
             {links.map((item) => (
               <div key={item.title}>
-                <p className="text-gray-400 pl-2 dark:text-gray-400 m-3 mt-4 uppercase border-l-4 border-500">
+                <p className="text-gray-400 pl-2 dark:text-gray-400 m-3 mt-4 uppercase border-l-4 border-[#6366F1]">
                   {item.title}
                 </p>
                 {item.links.map((link) => (

@@ -191,15 +191,6 @@ const codelabs = () => {
 
     //     setCodelab(_User);
     // }
-
-    const leftToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                {/* <Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} /> */}
-                <Button label="Supprimer" icon="pi pi-trash" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCodelabs || !selectedCodelabs.length} />
-            </React.Fragment>
-        )
-    }
     
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.title}</span>
@@ -259,12 +250,13 @@ const codelabs = () => {
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
-                <Toolbar className="mt-2 mb-3 p-0" left={leftToolbarTemplate} ></Toolbar>
+                <div className="mt-2 mb-3 mx-1 p-0">
+                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCodelabs || !selectedCodelabs.length}  />
+                </div>
             </div>
-            <h5 className="mx-0 mt-1 mb-4">Gérer les Codelabs</h5>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} onChange={onGlobalFilterChange} placeholder="Chercher codelab..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} onChange={onGlobalFilterChange} placeholder="Chercher par nom..." />
             </span>
         </div>
     );
