@@ -621,32 +621,36 @@ export const cartData = [
 
 export const chatData = [
   {
-    image:
-      avatar2,
-    message: 'Roman Joined the Team!',
-    desc: 'Congratulate him',
+    image:avatar3,
+    message: 'An Error is Reported by Ali',
+    desc: 'Ali reported an error at the introductin to kotlin codelab',
     time: '9:08 AM',
   },
   {
-    image:
-      avatar3,
-    message: 'New message received',
-    desc: 'Salma sent you new message',
+    image: avatar2,
+    message: 'Maryam rated a codelab',
+    desc: 'Maryam gives a 5 star to  the introduction to kotlin codelab',
     time: '11:56 AM',
   },
   {
     image:
       avatar4,
-    message: 'New Payment received',
-    desc: 'Check your earnings',
+    message: 'An Error is Reported by Elon',
+    desc: 'Elon reported an error at the adding a google map to a Flutter app codelab',
     time: '4:39 AM',
   },
   {
+    image: avatar2,
+    message: 'Maryam rated a codelab',
+    desc: 'Maryam gives a 5 star to  the introduction to kotlin codelab',
+    time: '11:56 AM',
+  },
+  {
     image:
-      avatar,
-    message: 'Jolly completed tasks',
-    desc: 'Assign her new tasks',
-    time: '1:12 AM',
+      avatar4,
+    message: 'An Error is Reported by Elon',
+    desc: 'Elon reported an error at the adding a google map to a Flutter app codelab',
+    time: '4:39 AM',
   },
 ];
 

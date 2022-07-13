@@ -57,7 +57,7 @@ const App = () => {
                         <div className="static dark:bg-main-dark-bg navbar w-full bg-white">
                             <Navbar />
                         </div>
-                        <div className='p-3'>
+                        <div className='m-3 p-4'>
                             <div className="card">
                                 <BreadCrumb model={pathname} home={home}/>
                             </div>

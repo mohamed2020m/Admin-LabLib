@@ -41,7 +41,7 @@ const Sidebar = () => {
           <div className="mt-10 ">
             {links.map((item) => (
               <div key={item.title}>
-                <p className="text-gray-400 pl-2 dark:text-gray-400 m-3 mt-4 uppercase border-l-4 border-[#6366F1]">
+                <p className="text-gray-400 pl-2 dark:text-gray-400 m-3 mt-4 uppercase border-l-4 border-500">
                   {item.title}
                 </p>
                 {item.links.map((link) => (
