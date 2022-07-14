@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "id": "1",
+            "title": "Mobile dev",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "dateOfCreation": "06-29-22"
+        },
+        {
+            "id": "2",
+            "title": "Web Dev",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "dateOfCreation": "06-29-22"
+        }
+    ]
+}

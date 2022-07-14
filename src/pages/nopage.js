@@ -3,7 +3,7 @@ import React from 'react'
 export default function NoPage(){
     return(
         <div>
-            <h1>The page doesn't exist!!</h1>
+            <h1 className='text-center p-3 m-3'>The page doesn't exist!!</h1>
         </div>
     )
 }

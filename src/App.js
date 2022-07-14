@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { BreadCrumb } from 'primereact/breadcrumb';
 
-import { Navbar, Sidebar, ThemeSettings } from './components';
+import { Navbar, Sidebar } from './components';
 
 import Home from "./pages/home";
 import Users from './pages/users.js';
+import NewCategorie from "./pages/newCategorie";
+import Categories from "./pages/Categories";
 import NewCodeLabs from "./pages/CodeLabs";
 import CodeLabs from "./pages/CodelabsList";
 import Chapiter from "./pages/ChapiterList";
@@ -22,7 +23,7 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const {pathname, currentColor, setCurrentMode, currentMode, activeMenu, themeSettings, setThemeSettings } = useStateContext();
+    const {pathname, setCurrentMode, currentMode, activeMenu, themeSettings, setThemeSettings } = useStateContext();
 
     useEffect(() => {
         const currentThemeMode = localStorage.getItem('themeMode');
@@ -65,6 +66,8 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="users" element={<Users />} />
+                                <Route path="newCategorie" element={<NewCategorie />} />
+                                <Route path="categories" element={<Categories />} />
                                 <Route path="newcodelab" element={<NewCodeLabs />} />
                                 <Route path="codelabs" element={<CodeLabs />} />
                                 <Route path="chapiters" element={<Chapiter />} />

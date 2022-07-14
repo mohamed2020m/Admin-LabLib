@@ -60,7 +60,7 @@ const Navbar = () => {
           className="flex items-center rounded-full text-[#03c9d7] p-3 hover:bg-light-gray"
         >
           <BiExit/>
-          <span className="ml-1">Back to DashBoard</span>
+          <span className="ml-1">Exit Admin Panel</span>
         </a>
         {/* <NavButton title="Cart" customFunc={() => setMode(currentMode)} color={currentColor}  icon={currentMode !== 'Light' ? <MdOutlineLightMode /> :  <MdOutlineModeNight />}/> */}
         {/* <NavButton title="Chat" dotColor="#03C9D7" customFunc={() => handleClick('chat')} color={currentColor} icon={<BsChatLeft />} /> */}

@@ -1,22 +1,22 @@
 
 /* FormDemo.css */
 
-.form-demo .card {
+.form .card {
     min-width: 550px;
 }
-.form-demo .card form {
+.form .card form {
     margin-top: 2rem;
 }
-.form-demo .card .field {
+.form .card .field {
     margin-bottom: 1.5rem;
 }
 @media screen and (max-width: 960px) {
-    .form-demo .card {
+    .form .card {
         width: 80%;
     }
 }
 @media screen and (max-width: 640px) {
-    .form-demo .card {
+    .form .card {
         width: 100%;
         min-width: 0;
     }

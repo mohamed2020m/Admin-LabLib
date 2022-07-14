@@ -14,8 +14,7 @@ import { classNames } from 'primereact/utils';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
-
-import './../css/FormDemo.css';
+import './../css/Form.css';
 import htmlLogo96 from '../data/html-5-96.png'
 
 
@@ -190,12 +189,12 @@ const Codelab = () => {
         )
     }
 
-    const chooseOptions = {label: 'Choisir', icon: 'pi pi-fw pi-plus'};
-    const uploadOptions = {label: 'Uplaod', icon: 'pi pi-upload', className: 'p-button-success'};
+    const chooseOptions = {label: 'Choisir', icon: 'pi pi-fw pi-plus', className: 'color-[#03c9d7]'};
+    // const uploadOptions = {label: 'Uplaod', icon: 'pi pi-upload', className: 'p-button-success'};
     const cancelOptions = {label: 'Annuler', icon: 'pi pi-times', className: 'p-button-danger'};
 
     return (
-        <div className="form-demo">
+        <div className="from">
             <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
                 <div className="flex align-items-center flex-column pt-6 px-3">
                     <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
@@ -205,10 +204,9 @@ const Codelab = () => {
                     </p>
                 </div>
             </Dialog>
-
-            <div className="flex justify-content-center">
+            <h3 className='text-center mt-5 mb-3'>Créer un Codelab: </h3>
+            <div className="flex justify-center p-3">
                 <div className="card">
-                    <h5 className="text-center">Ajouter un CodeLab</h5>
                     <form onSubmit={formik.handleSubmit} className="p-fluid">
                         <div className="field">
                             <span className="p-float-label">
@@ -224,6 +222,12 @@ const Codelab = () => {
                             {getFormErrorMessage('description')}
                         </div>
                         <div className='flex'>
+                            <div className="field flex-grow-1 ml-1">
+                                <span className="p-float-label p-input-icon-right">
+                                    <Dropdown disabled={!coursSelected} id="categorie" name="categorie" value={listChapitre} options={listChapitres} onChange={onChapiterChange} optionLabel="name" placeholder="Select a categorie" className={coursSelected && classNames({ 'p-invalid': isFormFieldValid('categorie') })} />
+                                </span>
+                                {coursSelected && getFormErrorMessage('categorie')}
+                            </div>
                             <div className="field flex-grow-1 mr-1">
                                 <span className="p-float-label p-input-icon-right">
                                     <Dropdown id="cours" name="cours" value={listCours} options={dataList} onChange={onCoursChange} optionLabel="name" placeholder="Select a Course" className={classNames({ 'p-invalid': isFormFieldValid('cours') })} />
@@ -237,14 +241,12 @@ const Codelab = () => {
                                 {coursSelected && getFormErrorMessage('chapitre')}
                             </div>
                         </div>
-                        <div>
-                            <h5>Upload the file</h5>
-                            
+                        <div className="field">
                             <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" 
-                                    accept=".html" maxFileSize={1000000}
-                                    onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                                    headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                                    chooseOptions={chooseOptions} cancelOptions={cancelOptions}     
+                                accept=".html" maxFileSize={1000000}
+                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                chooseOptions={chooseOptions} cancelOptions={cancelOptions}     
                             />
                         </div>
                         <Button type="submit" label="Submit" className="mt-2" />

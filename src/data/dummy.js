@@ -503,16 +503,31 @@ export const links = [
       ],
     },
     {
-      title: 'CodeLabs',
+      title:'Categorie des Cours',
       links: [
         {
-          name: 'Gerer les CodeLabs',
-          url: 'codelabs',
+          name: 'Gerer les Categories',
+          url: 'categories',
           icon: <MdManageAccounts />,
         },
         {
-          name: 'Nouveux CodeLab',
-          url: 'newCodelab',
+          name: 'Nouveux Categories',
+          url: 'newCategorie',
+          icon: <BsPlusLg />,
+        }
+      ]
+    },
+    {
+      title: 'Cours',
+      links: [
+        {
+          name: 'Gerer les Cours',
+          url: 'cours',
+          icon: <MdManageAccounts />,
+        },
+        {
+          name: 'Nouveux Cours',
+          url: 'newCours',
           icon: <BsPlusLg />,
         },
       ],
@@ -533,34 +548,19 @@ export const links = [
       ],
     },
     {
-      title: 'Cours',
+      title: 'CodeLabs',
       links: [
         {
-          name: 'Gerer les Cours',
-          url: 'cours',
+          name: 'Gerer les CodeLabs',
+          url: 'codelabs',
           icon: <MdManageAccounts />,
         },
         {
-          name: 'Nouveux Cours',
-          url: 'newCours',
+          name: 'Nouveux CodeLab',
+          url: 'newCodelab',
           icon: <BsPlusLg />,
         },
       ],
-    },
-    {
-      title:'Categorie des Cours',
-      links: [
-        {
-          name: 'Gerer les Categories',
-          url: 'categories',
-          icon: <MdManageAccounts />,
-        },
-        {
-          name: 'Nouveux Categories',
-          url: 'newCategorie',
-          icon: <BsPlusLg />,
-        }
-      ]
     },
     {
       title:'Projets',

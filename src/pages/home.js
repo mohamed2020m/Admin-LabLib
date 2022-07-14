@@ -45,7 +45,7 @@ export default function Home(){
                     </div>
                     <div className='grow bg-[#00cc00] hover:opacity-75 text-white m-3 p-3 w-40 rounded-md'>
                         <div className='text-5xl text-center'>80</div>
-                        <div className="text-center">Number of users Active</div>
+                        <div className="text-center">Number of Active users</div>
                     </div>
                     <div className='grow bg-[#ff6666] hover:opacity-75 text-white m-3 p-3 w-40 rounded-md'>
                         <div className='text-5xl text-center'>2000</div>
