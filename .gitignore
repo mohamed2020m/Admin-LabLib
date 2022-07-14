@@ -3,10 +3,6 @@
 # dependencies
 /node_modules
 
-.yarn/*
-!.yarn/cache
-!.yarn/releases
-
 # testing
 /coverage
 
@@ -24,3 +20,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+/.yarn
