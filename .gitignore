@@ -3,7 +3,9 @@
 # dependencies
 /node_modules
 
-/.yarn
+.yarn/*
+!.yarn/cache
+!.yarn/releases
 
 # testing
 /coverage
