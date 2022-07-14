@@ -11,7 +11,6 @@ export class CategoryService {
             raw = JSON.stringify(data);
             newCategory = {
                 method: method,
-                mode: 'no-cors',
                 headers: header,
                 body: raw,
                 redirect: 'follow'
@@ -24,13 +23,18 @@ export class CategoryService {
         }
     
         if(method === "POST"){
-            return fetch("http://projet-apis.herokuapp.com/api/v1/category", newCategory)
-            .then(res => res.json)
+            return fetch("https://admin-newlablib.herokuapp.com/http://projet-apis.herokuapp.com/api/v1/category", newCategory)
+            .then(res => {
+                if(res.ok){
+                    res.json()
+                }
+                throw res;
+            })
             .then(d => d)
             .catch(error => console.log('error', error));
         }
         else if(method === "GET"){
-            return fetch('http://projet-apis.herokuapp.com/api/v1/category', newCategory)
+            return fetch('https://admin-newlablib.herokuapp.com/http://projet-apis.herokuapp.com/api/v1/category', newCategory)
             .then(res => {
                 if(res.ok){
                     res.json()
@@ -41,14 +45,24 @@ export class CategoryService {
             .catch(error => console.log('error', error));
         }
         else if(method === 'PUT'){
-            return fetch(`http://projet-apis.herokuapp.com/api/v1/category/${id}`, newCategory)
-            .then(res => res.json())
+            return fetch(`https://admin-newlablib.herokuapp.com/http://projet-apis.herokuapp.com/api/v1/category/${id}`, newCategory)
+            .then(res => {
+                if(res.ok){
+                    res.json()
+                }
+                throw res;
+            })
             .then(d => d.data)
             .catch(error => console.log('error', error));
         }
         else if(method === 'DELETE'){
-            return fetch(`http://projet-apis.herokuapp.com/api/v1/category/${id}`, newCategory)
-            .then(res => res.json())
+            return fetch(`https://admin-newlablib.herokuapp.com/http://projet-apis.herokuapp.com/api/v1/category/${id}`, newCategory)
+            .then(res => {
+                if(res.ok){
+                    res.json()
+                }
+                throw res;
+            })
             .then(d => d.data)
             .catch(error => console.log('error', error));
         }
