@@ -4034,6 +4034,51 @@ __metadata:
   languageName: node
   linkType: hard
 
+"adminlablib@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "adminlablib@workspace:."
+  dependencies:
+    "@syncfusion/ej2": ^19.4.48
+    "@syncfusion/ej2-buttons": ^20.2.36
+    "@syncfusion/ej2-file-utils": ^20.2.36
+    "@syncfusion/ej2-react-calendars": ^19.4.48
+    "@syncfusion/ej2-react-charts": ^19.4.50
+    "@syncfusion/ej2-react-dropdowns": ^19.4.52
+    "@syncfusion/ej2-react-grids": ^19.4.50
+    "@syncfusion/ej2-react-inputs": ^19.4.52
+    "@syncfusion/ej2-react-kanban": ^19.4.48
+    "@syncfusion/ej2-react-popups": ^19.4.52
+    "@syncfusion/ej2-react-richtexteditor": ^19.4.50
+    "@syncfusion/ej2-react-schedule": ^19.4.50
+    "@syncfusion/ej2-splitbuttons": ^20.2.36
+    "@testing-library/jest-dom": ^5.16.4
+    "@testing-library/react": ^13.3.0
+    "@testing-library/user-event": ^13.5.0
+    autoprefixer: ^10.4.7
+    eslint: ^8.9.0
+    eslint-config-airbnb: ^19.0.4
+    eslint-plugin-import: ^2.25.4
+    eslint-plugin-jsx-a11y: ^6.5.1
+    eslint-plugin-react: ^7.28.0
+    eslint-plugin-react-hooks: ^4.3.0
+    formik: ^2.2.9
+    postcss: ^8.4.14
+    primeflex: ^3.2.1
+    primeicons: ^5.0.0
+    primereact: ^8.1.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-helmet: ^6.1.0
+    react-icons: ^4.4.0
+    react-router: ^6.3.0
+    react-router-dom: ^6.3.0
+    react-scripts: 5.0.0
+    tailwindcss: ^3.1.5
+    web-vitals: ^2.1.4
+    yup: ^0.32.11
+  languageName: unknown
+  linkType: soft
+
 "agent-base@npm:6, agent-base@npm:^6.0.2":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
@@ -10927,51 +10972,6 @@ __metadata:
   checksum: 1d38588e520dab7cea67cbbe2efdd86a10cc7a074c09657635e34f035277b59fbb57d09d8638346bf7090f8e8ebc070c96fa5fd183b777fff4f5edff5e9466cf
   languageName: node
   linkType: hard
-
-"project_syncfusion_dashboard@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "project_syncfusion_dashboard@workspace:."
-  dependencies:
-    "@syncfusion/ej2": ^19.4.48
-    "@syncfusion/ej2-buttons": ^20.2.36
-    "@syncfusion/ej2-file-utils": ^20.2.36
-    "@syncfusion/ej2-react-calendars": ^19.4.48
-    "@syncfusion/ej2-react-charts": ^19.4.50
-    "@syncfusion/ej2-react-dropdowns": ^19.4.52
-    "@syncfusion/ej2-react-grids": ^19.4.50
-    "@syncfusion/ej2-react-inputs": ^19.4.52
-    "@syncfusion/ej2-react-kanban": ^19.4.48
-    "@syncfusion/ej2-react-popups": ^19.4.52
-    "@syncfusion/ej2-react-richtexteditor": ^19.4.50
-    "@syncfusion/ej2-react-schedule": ^19.4.50
-    "@syncfusion/ej2-splitbuttons": ^20.2.36
-    "@testing-library/jest-dom": ^5.16.4
-    "@testing-library/react": ^13.3.0
-    "@testing-library/user-event": ^13.5.0
-    autoprefixer: ^10.4.7
-    eslint: ^8.9.0
-    eslint-config-airbnb: ^19.0.4
-    eslint-plugin-import: ^2.25.4
-    eslint-plugin-jsx-a11y: ^6.5.1
-    eslint-plugin-react: ^7.28.0
-    eslint-plugin-react-hooks: ^4.3.0
-    formik: ^2.2.9
-    postcss: ^8.4.14
-    primeflex: ^3.2.1
-    primeicons: ^5.0.0
-    primereact: ^8.1.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-helmet: ^6.1.0
-    react-icons: ^4.4.0
-    react-router: ^6.3.0
-    react-router-dom: ^6.3.0
-    react-scripts: 5.0.0
-    tailwindcss: ^3.1.5
-    web-vitals: ^2.1.4
-    yup: ^0.32.11
-  languageName: unknown
-  linkType: soft
 
 "promise-inflight@npm:^1.0.1":
   version: 1.0.1
