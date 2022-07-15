@@ -34,7 +34,7 @@ export class CategoryService {
             .catch(error => console.log('error', error));
         }
         else if(method === "GET"){
-            return fetch('/api/v1/category', header)
+            return fetch('https://lablib-api.herokuapp.com/api/v1/category', {headers: header})
             .then(res => {
                 if(res.ok){
                     res.json()
