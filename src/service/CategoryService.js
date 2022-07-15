@@ -21,7 +21,7 @@ export class CategoryService {
                 headers: header
             }
         }
-    
+        console.log(header);
         if(method === "POST"){
             return fetch("/api/v1/category", newCategory)
             .then(res => {
@@ -34,7 +34,7 @@ export class CategoryService {
             .catch(error => console.log('error', error));
         }
         else if(method === "GET"){
-            return fetch('/api/v1/category', newCategory)
+            return fetch('/api/v1/category', header)
             .then(res => {
                 if(res.ok){
                     res.json()
