@@ -12,11 +12,12 @@ if(process.env.NODE_ENV === 'production'){
         res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
     })
 }
-
-app.use(express.static('build'));
-app.get('/*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
-})
+else{
+    app.use(express.static('build'));
+    app.get('/*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+    })
+}
 
 app.listen(port, (err) => {
     if(err){
