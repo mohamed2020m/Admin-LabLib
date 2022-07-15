@@ -2,16 +2,16 @@ import React from 'react'
 import { Formik} from 'formik';
 import * as Yup from 'yup';
 
-export default function NewCategory(){
+export default function NewCourse(){
     return(
         <div className='flex justify-center border-2 p-3 m-5'>
             <div className="max-w-screen-md mx-auto p-5">
                 <div className="text-center mb-16">
                     <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
-                        New Category
+                        New Course
                     </p>
                     <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-                        Create a New <span className="text-indigo-600">Category</span>
+                        Create a New <span className="text-indigo-600">Course</span>
                     </h3>
                 </div>
                 <Formik
@@ -66,7 +66,7 @@ export default function NewCategory(){
                                 </div>
                                 <div className="flex justify-between w-full px-3">
                                     <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" type="submit">
-                                        Create Category
+                                        Create Course
                                     </button>
                                 </div>
                             </div>

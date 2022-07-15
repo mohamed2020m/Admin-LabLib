@@ -4,7 +4,7 @@ export class CategoryService {
 
         const header = new Headers({
             'Content-Type': 'application/json',
-            'Accept': 'application/json', 
+            'Accept': 'application/json'
         });
 
         if(method === 'POST' || method === 'PUT'){
@@ -18,6 +18,7 @@ export class CategoryService {
         }
         else{
             newCategory = {
+                mode: 'cors',
                 headers: header
             }
         }

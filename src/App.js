@@ -7,15 +7,16 @@ import { BreadCrumb } from 'primereact/breadcrumb';
 import { Navbar, Sidebar } from './components';
 
 import Home from "./pages/home";
+import Footer from "./components/Footer";
 import Users from './pages/users.js';
 import NewCategorie from "./pages/newCategorie";
 import Categories from "./pages/Categories";
 import NewCodeLabs from "./pages/CodeLabs";
 import CodeLabs from "./pages/CodelabsList";
 import Chapiter from "./pages/ChapiterList";
-import NewChapiter from "./pages/Chapiter";
+import NewChapiter from "./pages/newChapiter";
 import Cours from "./pages/CoursList";
-import NewCours from "./pages/Cours";
+import NewCours from "./pages/newCourse";
 import NoPage from "./pages/nopage";
 
 import './css/App.css';
@@ -66,18 +67,18 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="users" element={<Users />} />
-                                <Route path="newCategorie" element={<NewCategorie />} />
+                                <Route path="NewCategorie" element={<NewCategorie />} />
                                 <Route path="categories" element={<Categories />} />
-                                <Route path="newcodelab" element={<NewCodeLabs />} />
+                                {/* <Route path="NewCodelab" element={<NewCodeLabs />} /> */}
                                 <Route path="codelabs" element={<CodeLabs />} />
-                                <Route path="chapiters" element={<Chapiter />} />
-                                <Route path="newchapiter" element={<NewChapiter />} />
+                                <Route path="NewChapiter" element={<NewChapiter />} />
+                                {/* <Route path="chapiters" element={<Chapiter />} /> */}
+                                <Route path="NewCours" element={<NewCours />} />
                                 <Route path="cours" element={<Cours />} />
-                                <Route path="newcours" element={<NewCours />} />
                                 <Route path="*" element={<NoPage />} />    
                             </Routes>
                         </div>
-                        {/* <Footer /> */}
+                        <Footer />
                     </div>
                 </div>
             </BrowserRouter>

@@ -569,11 +569,6 @@ export const links = [
           name: 'Gerer les Projets',
           url: 'projets',
           icon: <MdManageAccounts />,
-        },
-        {
-          name: 'Nouveux Projets',
-          url: 'newProjet',
-          icon: <BsPlusLg />,
         }
       ]
     },
