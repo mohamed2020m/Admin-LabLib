@@ -71,7 +71,7 @@ const App = () => {
                                 <Route path="categories" element={<Categories />} />
                                 {/* <Route path="NewCodelab" element={<NewCodeLabs />} /> */}
                                 <Route path="codelabs" element={<CodeLabs />} />
-                                <Route path="NewChapiter" element={<NewChapiter />} />
+                                {/* <Route path="NewChapiter" element={<NewChapiter />} /> */}
                                 {/* <Route path="chapiters" element={<Chapiter />} /> */}
                                 <Route path="NewCours" element={<NewCours />} />
                                 <Route path="cours" element={<Cours />} />

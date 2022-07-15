@@ -58,6 +58,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:4.6.0"],\
             ["express", "npm:4.18.1"],\
             ["formik", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.2.9"],\
+            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
             ["postcss", "npm:8.4.14"],\
             ["primeflex", "npm:3.2.1"],\
             ["primeicons", "npm:5.0.0"],\
@@ -6016,6 +6017,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:4.6.0"],\
             ["express", "npm:4.18.1"],\
             ["formik", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.2.9"],\
+            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
             ["postcss", "npm:8.4.14"],\
             ["primeflex", "npm:3.2.1"],\
             ["primeicons", "npm:5.0.0"],\
@@ -10494,6 +10496,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["http-proxy-middleware", "npm:2.0.6"]\
           ],\
           "linkType": "SOFT"\
+        }],\
+        ["virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6", {\
+          "packageLocation": "./.yarn/__virtual__/http-proxy-middleware-virtual-1fcb2ff97e/0/cache/http-proxy-middleware-npm-2.0.6-3bb17658ee-2ee85bc878.zip/node_modules/http-proxy-middleware/",\
+          "packageDependencies": [\
+            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
+            ["@types/express", null],\
+            ["@types/http-proxy", "npm:1.17.9"],\
+            ["http-proxy", "npm:1.18.1"],\
+            ["is-glob", "npm:4.0.3"],\
+            ["is-plain-obj", "npm:3.0.0"],\
+            ["micromatch", "npm:4.0.5"]\
+          ],\
+          "packagePeers": [\
+            "@types/express"\
+          ],\
+          "linkType": "HARD"\
         }],\
         ["virtual:685b1837494dd23e4d3d75d426aa5166398259e0bdb78e8a98fe446849a06be24906d69e93be93b10ea59639c276ae88d0c46727c6fc9e40ef99ae3b58434a69#npm:2.0.6", {\
           "packageLocation": "./.yarn/__virtual__/http-proxy-middleware-virtual-d4abf1a049/0/cache/http-proxy-middleware-npm-2.0.6-3bb17658ee-2ee85bc878.zip/node_modules/http-proxy-middleware/",\

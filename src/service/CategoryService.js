@@ -18,7 +18,6 @@ export class CategoryService {
         }
         else{
             newCategory = {
-                mode: 'cors',
                 headers: header
             }
         }
