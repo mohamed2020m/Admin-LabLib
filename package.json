@@ -76,5 +76,6 @@
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.5"
   },
+  "proxy": "http://lablib-api.herokuapp.com",
   "main": "server.js"
 }
