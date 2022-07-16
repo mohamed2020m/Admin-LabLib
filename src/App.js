@@ -24,7 +24,7 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const {pathname, setCurrentMode, currentMode, activeMenu, themeSettings, setThemeSettings } = useStateContext();
+    const {pathname, setCurrentMode, currentMode, activeMenu} = useStateContext();
 
     useEffect(() => {
         const currentThemeMode = localStorage.getItem('themeMode');
@@ -34,7 +34,7 @@ const App = () => {
         
     });
 
-    const home = { icon: 'pi pi-home', url: 'http://localhost:3000/' }
+    const home = { icon: 'pi pi-home', url: 'https://admin-lablib.herokuapp.com'}
 
     return (
         <div className={currentMode === 'Dark' ? 'dark' : ''}>
