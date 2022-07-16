@@ -23,6 +23,8 @@
 /src/components/ChartsHeader.jsx
 /src/components/ThemeSettings.jsx
 
+.pnp.cjs
+.pnp.loader.mjs
 
 # production
 build/
