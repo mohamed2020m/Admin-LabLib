@@ -6,7 +6,7 @@ const proxy = {
 }
 module.exports = function(app) {
     app.use(
-        'categories',
+        '/categories',
         createProxyMiddleware(proxy)
     );
 };
