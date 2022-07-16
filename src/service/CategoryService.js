@@ -6,7 +6,7 @@ const header = new Headers({
 export class CategoryService {
     
     getCategory(){
-        return fetch('https://lablib-api.herokuapp.com/api/v1/category', { 
+        return fetch('/api/v1/category', { 
             headers: {
                 "Content-Type": "application/json"
             }
