@@ -284,7 +284,7 @@ const Users = () => {
                         currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} utilisateurs"
                         globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun utilisateur trouvé." responsiveLayout="scroll">
                         <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                        {/* <Column field="code" header="Code" style={{ minWidth: '0rem' }}></Column> */}
+                        <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
                         <Column field="username" header="Username" body={usernameBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="country" filterField="country.name" header="Country" body={countryBodyTemplate} style={{ minWidth: '8rem' }} filter filterPlaceholder="Recherche par pays"
                             filterClear={filterClearTemplate} filterApply={filterApplyTemplate}></Column>

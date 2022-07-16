@@ -18,6 +18,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../css/DataTableCrud.css';
+import {getCategory} from '../service/CategoryService';
 
 const Categories = () => {
 
@@ -40,19 +41,19 @@ const Categories = () => {
     const toast = useRef(null);
     const dt = useRef(null);
 
-    const categoryService = new CategoryService();
+    // const categoryService = new CategoryService();
 
     useEffect(() => {
-        categoryService.getCategory().then(data => setCategories(updateDateCategory(data)));
+        getCategory().then(data => setCategories(data));
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const updateDateCategory = (rowData) => {
-        return [...rowData || []].map(d => {
-            d.dateOfCreation = new Date(d.dateOfCreation);
-            return d;
-        });
-    }
+    // const updateDateCategory = (rowData) => {
+    //     return [...rowData || []].map(d => {
+    //         d.dateOfCreation = new Date(d.dateOfCreation);
+    //         return d;
+    //     });
+    // }
 
     const formatDate = (value) => {
         if(value){
@@ -199,7 +200,14 @@ const Categories = () => {
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
-
+    
+    const descriptionBodyTemplate = (rowData) => {
+        return <span>{rowData.description}</span>
+    }
+    
+    const imageBodyTemplate = (rowData) => {
+        return <img src={`images/user/${rowData.image}`} onError={(e) => e.target.src='https://www.citypng.com/public/uploads/preview/png-round-blue-contact-user-profile-icon-11639786938sxvzj5ogua.png'} alt={rowData.image} className="user-image" />
+    }
 
     const filterApplyTemplate = (options) => {
         return <Button type="button" icon="pi pi-check" onClick={options.filterApplyCallback} className="p-button-success"></Button>
@@ -294,9 +302,10 @@ const Categories = () => {
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
                     <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
                     <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                    <Column field="description" header="Description"  style={{ minWidth: '20rem' }}></Column>
-                    <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
-                        filter filterElement={dateFilterTemplate} ></Column>
+                    <Column field="image" header="Image" body={imageBodyTemplate}></Column>
+                    <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '20rem' }}></Column>
+                    {/* <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
+                        filter filterElement={dateFilterTemplate} ></Column> */}
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
             </div>

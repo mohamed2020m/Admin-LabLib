@@ -3,23 +3,33 @@ const header = new Headers({
     'Accept': 'application/json'
 });
 
+export async function getCategory() {
+    const response = await fetch('https://lablib-api.herokuapp.com/api/v1/category');
+    const categories = await response.json();
+    return categories;
+}
 export class CategoryService {
-    
-    getCategory(){
-        return fetch('https://lablib-api.herokuapp.com/api/v1/category', { 
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(res => {
-            if(res.ok){
-                res.json()
-            }
-            throw res;
-        })
-        .then(d => d)
-        .catch(error => console.log('error', error));
-    }
+    // getCategory(){
+    //     return fetch('https://lablib-api.herokuapp.com/api/v1/category', { 
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             'Accept': 'application/json'
+    //         }
+    //     })
+    //     .then(res => {
+    //         if(res.ok){
+    //             res.json();
+    //         }
+    //         else{
+    //             throw res;
+    //         }
+    //     })
+    //     .then(data => {
+    //         // console.log("data:", d);
+    //         return data;
+    //     })
+    //     .catch(error => console.log('error', error));
+    // }
 
     postCategory(data){
         let newCategory = {
