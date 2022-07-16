@@ -1,7 +1,7 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const proxy = {
-    target: 'http://lablib-api.herokuapp.com',
+    target: 'https://lablib-api.herokuapp.com',
     changeOrigin: true,
     pathRewrite: {
         [`^/categories`]: '/api/v1/category',
