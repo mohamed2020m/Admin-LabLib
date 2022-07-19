@@ -137,7 +137,7 @@ export default function NewCourse(){
                                     >
                                         <option disabled defaultValue>Select Course</option>
                                         {courses.map((item) => (
-                                            <option value={item.id}>{item.name}</option>
+                                            <option key={item.id} value={item.id}>{item.name}</option>
                                         ))}
                                     </Field>
                                     :
@@ -146,7 +146,7 @@ export default function NewCourse(){
                                         value={formik.values.course} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
                                         className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                     >
-                                        <option disabled defaultValue>Select Course</option>
+                                        <option disabled>Select Course</option>
                                     </Field>
                                     }
                                     {formik.touched.course && formik.errors.course ? (
