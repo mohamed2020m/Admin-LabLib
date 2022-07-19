@@ -117,12 +117,21 @@ const Categories = () => {
         if (category.name.trim()) {
             let _Categories = [...categories];
             let _Category = {...category};
-
+            console.log("_Categories: ", _Categories)
+            console.log("_Category", _Category);
             if (category.id) {
                 const index = findIndexById(category.id);
                 _Categories[index] = _Category;
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                let modifieCategory = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: JSON.stringify(_Category),
+                    redirect: 'follow'
+                }
                 try{
-                    let res = await PutCategory(category.id, _Category);
+                    let res = await PutCategory(category.id, modifieCategory);
                     if (res.ok){
                         let d = await res.json();
                         console.log(d);
@@ -139,10 +148,10 @@ const Categories = () => {
                 } 
             }
             else {
-                console.log("creating... ")
-                let res = await PostCategory(formData)
-                console.log("finished!");
-                console.log("res: ", res);
+                // console.log("creating... ")
+                // let res = await PostCategory(formData)
+                // console.log("finished!");
+                // console.log("res: ", res);
                 _Categories.push(_Category);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
             }
@@ -431,9 +440,9 @@ const Categories = () => {
                     <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
-                    <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
+                    <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '13rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
-                    <Column field="updatedAt" header="Date de modification" filterField="updatedAt" body={dateUpdatedBodyTemplate} style={{ minWidth: '0rem' }}
+                    <Column field="updatedAt" header="Date de modification" filterField="updatedAt" body={dateUpdatedBodyTemplate} style={{ minWidth: '13rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                 </DataTable>

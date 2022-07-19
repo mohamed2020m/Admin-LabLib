@@ -18,14 +18,7 @@ export async function PostCategory(newCategory) {
     return await fetch('https://lablib-api.herokuapp.com/api/v1/category', newCategory);
 }
 
-export async function PutCategory(id, data) {
-    let modifieCategory = {
-        method: 'PUT',
-        headers: header,
-        body: JSON.stringify(data),
-        redirect: 'follow'
-    }
-    console.log("data: ", JSON.stringify(data));
+export async function PutCategory(id, modifieCategory) {
     return await fetch(`https://lablib-api.herokuapp.com/api/v1/category/${id}`, modifieCategory);
 }
 
