@@ -9,20 +9,12 @@ const initialState = {
 
 export const ContextProvider = ({ children }) => {
   const [screenSize, setScreenSize] = useState(undefined);
-  const [currentMode, setCurrentMode] = useState('Light');
-  const [themeSettings, setThemeSettings] = useState(false);
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
   const [pathname, setPathName] = useState();
 
-  const setMode = (prevMode) => {
-    const nextMode = prevMode === 'Light' ? 'Dark' : 'Light';
-    setCurrentMode(nextMode);
-    localStorage.setItem('themeMode', nextMode);
-  };
-  
   const setPath = () => {
-    const pathName = window.location.pathname.substr(1);
+    const pathName = window.location.pathname.substring(1);
     setPathName(() => {
       return ( [
           {label: pathName},
@@ -38,7 +30,7 @@ export const ContextProvider = ({ children }) => {
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <StateContext.Provider value={{ pathname, currentColor, currentMode, activeMenu, screenSize, setPath, setScreenSize, setPathName, handleClick, isClicked, initialState, setIsClicked, setActiveMenu, setCurrentMode, setMode, themeSettings, setThemeSettings }}>
+    <StateContext.Provider value={{ pathname, currentColor, activeMenu, screenSize, setPath, setScreenSize, setPathName, handleClick, isClicked, initialState, setIsClicked, setActiveMenu}}>
       {children}
     </StateContext.Provider>
   );

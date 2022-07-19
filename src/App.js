@@ -5,18 +5,18 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { BreadCrumb } from 'primereact/breadcrumb';
 
 import { Navbar, Sidebar } from './components';
+import Footer from "./components/Footer";
 
 import Home from "./pages/home";
-import Footer from "./components/Footer";
-import Users from './pages/users.js';
+import Users from './pages/users';
 import NewCategorie from "./pages/newCategorie";
 import Categories from "./pages/Categories";
 import NewCodeLabs from "./pages/CodeLabs";
 import CodeLabs from "./pages/CodelabsList";
-import Chapiter from "./pages/ChapiterList";
 import NewChapiter from "./pages/newChapiter";
-import Cours from "./pages/CoursList";
+import Chapiter from "./pages/ChapiterList";
 import NewCours from "./pages/newCourse";
+import Cours from "./pages/Cours";
 import NoPage from "./pages/nopage";
 
 import './css/App.css';
@@ -24,39 +24,39 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const {pathname, setCurrentMode, currentMode, activeMenu} = useStateContext();
+    const {pathname, activeMenu, setPathName} = useStateContext();
 
-    useEffect(() => {
-        const currentThemeMode = localStorage.getItem('themeMode');
-        if (currentThemeMode) {
-            setCurrentMode(currentThemeMode);
-        };
+    // useEffect(() => {
+    //     const currentPath = localStorage.getItem('currentPath');
+    //     if (currentPath) {
+    //         setPathName([{label: currentPath}]);
+    //     };
         
-    });
+    // }, []);
 
     const home = { icon: 'pi pi-home', url: 'https://admin-lablib.herokuapp.com'}
 
     return (
-        <div className={currentMode === 'Dark' ? 'dark' : ''}>
+        <div>
             <BrowserRouter>
-                <div className="flex relative dark:bg-main-dark-bg w-100">
+                <div className="flex relative w-100">
                     {activeMenu ? (
-                        <div className="flex-1 w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
+                        <div className="flex-1 w-72 fixed sidebar bg-white ">
                             <Sidebar />
                         </div>
                     ) : (
-                        <div className="w-0 dark:bg-secondary-dark-bg">
+                        <div className="w-0">
                             <Sidebar />
                         </div>
                     )}
                     <div
                         className={
                         activeMenu
-                            ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen md:ml-72 w-full overflow-hidden'
-                            : 'bg-main-bg dark:bg-main-dark-bg  w-full min-h-screen flex-2 '
+                            ? 'bg-main-bg min-h-screen md:ml-72 w-full overflow-hidden'
+                            : 'bg-main-bg  w-full min-h-screen flex-2 '
                         }
                     >
-                        <div className="static dark:bg-main-dark-bg navbar w-full bg-white">
+                        <div className="static navbar w-full bg-white">
                             <Navbar />
                         </div>
                         <div className='m-3 p-4'>
@@ -69,10 +69,10 @@ const App = () => {
                                 <Route path="users" element={<Users />} />
                                 <Route path="NewCategorie" element={<NewCategorie />} />
                                 <Route path="categories" element={<Categories />} />
-                                {/* <Route path="NewCodelab" element={<NewCodeLabs />} /> */}
+                                <Route path="NewCodelab" element={<NewCodeLabs />} />
                                 <Route path="codelabs" element={<CodeLabs />} />
-                                {/* <Route path="NewChapiter" element={<NewChapiter />} /> */}
-                                {/* <Route path="chapiters" element={<Chapiter />} /> */}
+                                <Route path="NewChapiter" element={<NewChapiter />} /> 
+                                <Route path="chapiters" element={<Chapiter />} />
                                 <Route path="NewCours" element={<NewCours />} />
                                 <Route path="cours" element={<Cours />} />
                                 <Route path="*" element={<NoPage />} />    

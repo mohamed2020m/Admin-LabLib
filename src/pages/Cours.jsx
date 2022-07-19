@@ -11,7 +11,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { classNames } from 'primereact/utils';
-import { CategoryService } from '../service/CategoryService';
+// import { CategoryService } from '../service/CategoryService';
 import { Toast } from 'primereact/toast';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
@@ -23,23 +23,25 @@ import { InputText } from 'primereact/inputtext';
 import '../css/DataTableCrud.css';
 import Img404 from './../data/Img404.png';
 
-import {GetCategory, PostCategory, PutCategory, DelCategory} from '../service/CategoryService';
+import {GetCourse, PostCourse, PutCourse, DelCourse} from '../service/CourseService';
 
-const Categories = () => {
+const Cours = () => {
     const url = 'https://lablib-api.herokuapp.com/api/v1/image';
-    let emptyCategory = {
-        // id: null,
+    let emptyCourse = {
+        id: null,
         name: '',
+        level: '',
+        category: '',
         description: '',
-        // dateOfCreation:null
+        dateOfCreation:null
     };
 
-    const [categories, setCategories] = useState(null);
-    const [CategoryDialog, setCategoryDialog] = useState(false);
-    const [deleteCategoryDialog, setDeleteCategoryDialog] = useState(false);
-    const [deleteCategoriesDialog, setDeleteCategoriesDialog] = useState(false);
-    const [category, setCategory] = useState(emptyCategory);
-    const [selectedCategories, setSelectedCategories] = useState(null);
+    const [courses, setCourses] = useState(null);
+    const [CourseDialog, setCourseDialog] = useState(false);
+    const [deleteCourseDialog, setDeleteCourseDialog] = useState(false);
+    const [deleteCoursesDialog, setDeleteCoursesDialog] = useState(false);
+    const [course, setCourse] = useState(emptyCourse);
+    const [selectedCourses, setSelectedCourses] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
@@ -49,12 +51,10 @@ const Categories = () => {
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
 
-    // const categoryService = new CategoryService();
-
     useEffect(() => {
-        GetCategory().then(data => setCategories(data));
+        GetCourse().then(data => setCourses(data));
         initFilters();
-    }, [categories]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [courses]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -93,36 +93,36 @@ const Categories = () => {
     }
 
     // const openNew = () => {
-    //     setCategory(emptyCategory);
+    //     setCourse(emptyCourse);
     //     setSubmitted(false);
-    //     setCategoryDialog(true);
+    //     setCourseDialog(true);
     // }
 
     const hideDialog = () => {
         setSubmitted(false);
-        setCategoryDialog(false);
+        setCourseDialog(false);
     }
 
     const hideDeleteCategoryDialog = () => {
-        setDeleteCategoryDialog(false);
+        setDeleteCourseDialog(false);
     }
 
     const hideDeleteCategoriesDialog = () => {
-        setDeleteCategoriesDialog(false);
+        setDeleteCoursesDialog(false);
     }
 
     const saveCategory = async (File) => {
         setSubmitted(true);
 
-        if (category.name.trim()) {
-            let _Categories = [...categories];
-            let _Category = {...category};
+        if (course.name.trim()) {
+            let _Categories = [...courses];
+            let _Category = {...course};
 
-            if (category.id) {
-                const index = findIndexById(category.id);
+            if (course.id) {
+                const index = findIndexById(course.id);
                 _Categories[index] = _Category;
                 try{
-                    let res = await PutCategory(category.id, _Category);
+                    let res = await PutCourse(course.id, _Category);
                     if (res.ok){
                         let d = await res.json();
                         console.log(d);
@@ -140,35 +140,35 @@ const Categories = () => {
             }
             else {
                 console.log("creating... ")
-                let res = await PostCategory(formData)
+                let res = await PostCourse(formData)
                 console.log("finished!");
                 console.log("res: ", res);
                 _Categories.push(_Category);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
             }
-            setCategories(_Categories);
-            setCategoryDialog(false);
-            setCategory(emptyCategory);
+            setCourses(_Categories);
+            setCourseDialog(false);
+            setCourse(emptyCourse);
         }
     }
 
-    const editCategory = (category) => {
-        setCategory({...category});
-        setCategoryDialog(true);
+    const editCategory = (course) => {
+        setCourse({...course});
+        setCourseDialog(true);
     }
 
-    const confirmDeleteCategory = (category) => {
-        setCategory(category);
-        setDeleteCategoryDialog(true);
+    const confirmDeleteCategory = (course) => {
+        setCourse(course);
+        setDeleteCourseDialog(true);
     }
 
     const deleteCategory = async () => {
-        let _categories = categories.filter((val) => {
-            val.id !== category.id;
+        let _courses = courses.filter((val) => {
+            val.id !== course.id;
         });
-        setCategories(_categories);
+        setCourses(_courses);
         try{
-            let res = await DelCategory(category.id)
+            let res = await DelCourse(course.id)
             if (!res.ok){
                 if(Array.isArray(res) && res.length === 0) return "error";
                 let r = await res.json()
@@ -181,14 +181,14 @@ const Categories = () => {
         catch (err){
             toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
         } 
-        setDeleteCategoryDialog(false);
-        setCategory(emptyCategory);
+        setDeleteCourseDialog(false);
+        setCourse(emptyCourse);
     }
 
     const findIndexById = (id) => {
         let index = -1;
-        for (let i = 0; i < categories.length; i++) {
-            if (categories[i].id === id) {
+        for (let i = 0; i < courses.length; i++) {
+            if (courses[i].id === id) {
                 index = i;
                 break;
             }
@@ -197,37 +197,49 @@ const Categories = () => {
     }
 
     const confirmDeleteSelected = () => {
-        setDeleteCategoriesDialog(true);
+        setDeleteCoursesDialog(true);
     }
 
     const deleteSelectedCategories = () => {
-        let _categories = categories.filter(val => !selectedCategories.includes(val));
-        setCategories(_categories);
-        selectedCategories.map((item) => {
-            DelCategory(item.id);
+        let _courses = courses.filter(val => !selectedCourses.includes(val));
+        setCourses(_courses);
+        selectedCourses.map((item) => {
+            DelCourse(item.id);
         })
-        setDeleteCategoriesDialog(false);
-        setSelectedCategories(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les categories supprimés avec succès', life: 3000 });
+        setDeleteCoursesDialog(false);
+        setSelectedCourses(null);
+        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les courses supprimés avec succès', life: 3000 });
     }
 
     const onInputFileChange = (e, name) => {
         console.log("image: ", e);
         const val = (e.files && e.files[0].name) || '';
-        let _Category = {...category};
+        let _Category = {...course};
         _Category[`${name}`] = val;
-        setCategory(_Category);
+        setCourse(_Category);
     }
     
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
-        let _Category = {...category};
+        let _Category = {...course};
         _Category[`${name}`] = val;
-        setCategory(_Category);
+        setCourse(_Category);
     }
 
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
+    }
+
+    const levelBodyTemplate = (rowData) => {
+        return <span>{rowData.level || "None"}</span>
+    }
+
+    const nchapitersBodyTemplate = (rowData) => {
+        return <span>{rowData.nchapiters || 0}</span>
+    }
+    
+    const categoryBodyTemplate = (rowData) => {
+        return <span>{rowData.nchapiters || "None"}</span>
     }
     
     const descriptionBodyTemplate = (rowData) => {
@@ -235,7 +247,7 @@ const Categories = () => {
     }
     
     const imageBodyTemplate = (rowData) => {
-        return <img src={`${url}/${rowData.image}`} onError={(e) => e.target.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAABmJLR0QA/wD/AP+gvaeTAAAE9ElEQVRoge2Ze2xTVRzHP/f2tmtHH2u3sQePhQ3lsYSgPEJC1EEIiCivgRgICzImI0wIExAVNJI4EzATGTrCIwoBIYIhIcFACCgKiCAvN2JiEGGQzbCtZYy+H9c/yupK260bhULS7z899/f7nfP73HNOT36nFQaMnqzD66sUoBAw8uTLAuxXqDXl0n3wBfEm6oKMQInXYUcUYHq8abqpQgkwtT2VyhZyfS4ADotajgs9ABjUy0rZy3UAuDwCy3YMDIzgfQkwCgAItTLi1ceEDiap/VOuz0U+TgAuoA7YdRoPQ3JaAT98e8npIPf0txXXBUB+hLzBEh9bpkegoJk/LGoDM17TbuZvmdVsO9YbAI8veObFWgG0/tkWGoJ9j1rCwFGvPr51jrGe7m0zVHbEm6HbEv4eMSSxbeKhBHy8lICPlxLw8VJ08IKAZuQoEKMLV6Snk/xiAT0KxqLsm9MFGtGfR4iuRpI6DwHDrNmklq+kYVEx9vO/R86tN5D27gdox40PAnBcPE/jJx/jrrvRYR5j8UKMJaXcmj0T19W/Hh5eYUjBuGAh7uvXcFy+FBlcqyV7y9eocvOwnjiO7cRPyE4H6uEj0U+ZTvb2ndQXF0V8ASkjk5S583D+eQXXtehuNJ3CmxYvQdQbuL3mPWSPJ2KcceFiVLl5NH++npY9uwL2e0ePYD12lKyN1aS//yH1pcVh+6cuW4GgUtG0rgJ8vqjgO9zESQMGops8DeuJH7H9eipinCBJ6CZNxllbQ8ve3SF++9kz3D2wH/Xzw1H26Rvi1wwbQY+x42g9dBDnldqowDuGFwRSy1cie72YN1aiMJrQvTYlbKiUkYmo1WK/cA7k8HWe7fRJAFT9n3mAQCT1nZX4bFbM1VVIGZloJ7zycPDa8RNRPzeMll07cN+sQztxEulr1qLs3Sf0PdX+W5fXYomYSLbb/bEaTZBdP2MWqv7PYtm6GW9TE7pphfRcW4Go03cPXlCrMS1egqfxNnd2bPfbJKXfKUV1QEUlUW/AWFKK+2Ydd/ftvZ9HAkHwf3bWP5zR+GYJUmYW5qoN+Gy2mME+KNOiMhSGFJor1yG7XF3uHwKv7NUbw5y5OGouc+/IDzGBDCdVbh66qYXYTv6M7dQv3RojZG1Mby9DUCUhSBIZFesCdmVOPwDSylfgs1oB8DQ3Y97wWbcSpy5fhaBQIOr1ZHy6PmBv+0Knr/4osBru+nrMmzaEHAYh8ApTKgBJg/JJGpQfklQzanSg7bWYubNtc+BcFhQd7NO20sLrj1WkpgGgHjI0bHjyCwWBtuffBixbq5EdwfftkGz1b80LO1hK0XxMZUu5+fpU3Nf/CfLJPhlkGVVuXkT2tlPK29QIwK1Z08LGmcqWklI0nxsTxuC1mCOOBzGqKn13W3BeqSW5YAxSVnaIX1CrMcwpwtfaiqPmj1ikBGJYEpurqxDVGrK++JKkwf9vNykrm8zKKpR9+mLZ8hWyyxmrlNFVldHIfu43GivWkrZqNb2++RZ33Q1ktxtVv1wQRVp276Tluz2xSgd0Ad5x8Tz2M6fxNNRHjGk9eADHpQvoZ75B0uB8BKWK1kMH/fYOKtL2sp87izKnH96WO53GJn50ipcS8PFSAj5eSsDHS089fMel25MrsyjD9/Gm6JYEeZ/ktHnLNcmSLCPPoN1f+U+wzAjyPofVt/w/cSyJn0mj7McAAAAASUVORK5CYII="} alt={rowData.image} className="category-image" />
+        return <img src={`${url}/${rowData.image}`} onError={(e) => e.target.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAABmJLR0QA/wD/AP+gvaeTAAAE9ElEQVRoge2Ze2xTVRzHP/f2tmtHH2u3sQePhQ3lsYSgPEJC1EEIiCivgRgICzImI0wIExAVNJI4EzATGTrCIwoBIYIhIcFACCgKiCAvN2JiEGGQzbCtZYy+H9c/yupK260bhULS7z899/f7nfP73HNOT36nFQaMnqzD66sUoBAw8uTLAuxXqDXl0n3wBfEm6oKMQInXYUcUYHq8abqpQgkwtT2VyhZyfS4ADotajgs9ABjUy0rZy3UAuDwCy3YMDIzgfQkwCgAItTLi1ceEDiap/VOuz0U+TgAuoA7YdRoPQ3JaAT98e8npIPf0txXXBUB+hLzBEh9bpkegoJk/LGoDM17TbuZvmdVsO9YbAI8veObFWgG0/tkWGoJ9j1rCwFGvPr51jrGe7m0zVHbEm6HbEv4eMSSxbeKhBHy8lICPlxLw8VJ08IKAZuQoEKMLV6Snk/xiAT0KxqLsm9MFGtGfR4iuRpI6DwHDrNmklq+kYVEx9vO/R86tN5D27gdox40PAnBcPE/jJx/jrrvRYR5j8UKMJaXcmj0T19W/Hh5eYUjBuGAh7uvXcFy+FBlcqyV7y9eocvOwnjiO7cRPyE4H6uEj0U+ZTvb2ndQXF0V8ASkjk5S583D+eQXXtehuNJ3CmxYvQdQbuL3mPWSPJ2KcceFiVLl5NH++npY9uwL2e0ePYD12lKyN1aS//yH1pcVh+6cuW4GgUtG0rgJ8vqjgO9zESQMGops8DeuJH7H9eipinCBJ6CZNxllbQ8ve3SF++9kz3D2wH/Xzw1H26Rvi1wwbQY+x42g9dBDnldqowDuGFwRSy1cie72YN1aiMJrQvTYlbKiUkYmo1WK/cA7k8HWe7fRJAFT9n3mAQCT1nZX4bFbM1VVIGZloJ7zycPDa8RNRPzeMll07cN+sQztxEulr1qLs3Sf0PdX+W5fXYomYSLbb/bEaTZBdP2MWqv7PYtm6GW9TE7pphfRcW4Go03cPXlCrMS1egqfxNnd2bPfbJKXfKUV1QEUlUW/AWFKK+2Ydd/ftvZ9HAkHwf3bWP5zR+GYJUmYW5qoN+Gy2mME+KNOiMhSGFJor1yG7XF3uHwKv7NUbw5y5OGouc+/IDzGBDCdVbh66qYXYTv6M7dQv3RojZG1Mby9DUCUhSBIZFesCdmVOPwDSylfgs1oB8DQ3Y97wWbcSpy5fhaBQIOr1ZHy6PmBv+0Knr/4osBru+nrMmzaEHAYh8ApTKgBJg/JJGpQfklQzanSg7bWYubNtc+BcFhQd7NO20sLrj1WkpgGgHjI0bHjyCwWBtuffBixbq5EdwfftkGz1b80LO1hK0XxMZUu5+fpU3Nf/CfLJPhlkGVVuXkT2tlPK29QIwK1Z08LGmcqWklI0nxsTxuC1mCOOBzGqKn13W3BeqSW5YAxSVnaIX1CrMcwpwtfaiqPmj1ikBGJYEpurqxDVGrK++JKkwf9vNykrm8zKKpR9+mLZ8hWyyxmrlNFVldHIfu43GivWkrZqNb2++RZ33Q1ktxtVv1wQRVp276Tluz2xSgd0Ad5x8Tz2M6fxNNRHjGk9eADHpQvoZ75B0uB8BKWK1kMH/fYOKtL2sp87izKnH96WO53GJn50ipcS8PFSAj5eSsDHS089fMel25MrsyjD9/Gm6JYEeZ/ktHnLNcmSLCPPoN1f+U+wzAjyPofVt/w/cSyJn0mj7McAAAAASUVORK5CYII="} alt={rowData.image} className="course-image" />
     }
 
     const filterApplyTemplate = (options) => {
@@ -289,7 +301,7 @@ const Categories = () => {
                     <Button type="button" icon="pi pi-plus" label="New" className="p-button-success " onClick={openNew}/>
                 </div> */}
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCategories || !selectedCategories.length}  />
+                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCourses || !selectedCourses.length}  />
                 </div>
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
@@ -419,17 +431,20 @@ const Categories = () => {
             <Toast ref={toast} />
 
             <div className="card">
-                <DataTable ref={dt} value={categories} selection={selectedCategories}
-                    onSelectionChange={(e) => setSelectedCategories(e.value)}
+                <DataTable ref={dt} value={courses} selection={selectedCourses}
+                    onSelectionChange={(e) => setSelectedCourses(e.value)}
                     dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} category"
+                    currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} course"
                     globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} 
-                    emptyMessage="Aucun Category trouvé." responsiveLayout="scroll">
+                    emptyMessage="Aucun Cours trouvé." responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
                     <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
-                    <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="name" header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
+                    <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="Nchapiters" header="Nombre de Chapiter" body={nchapitersBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="category" header="Category" body={categoryBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
                     <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
@@ -439,11 +454,11 @@ const Categories = () => {
                 </DataTable>
             </div>
 
-            <Dialog visible={CategoryDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
+            <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name">Title</label>
-                    <InputText id="name" value={category.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !category.name })} />
-                    {submitted && !category.name && <small className="p-error">Name is required.</small>}
+                    <InputText id="name" value={course.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !course.name })} />
+                    {submitted && !course.name && <small className="p-error">Name is required.</small>}
                 </div>
                 {/* <div className="field">
                     <label htmlFor="image">Upload Image</label>
@@ -452,33 +467,33 @@ const Categories = () => {
                         onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                         chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}   
-                        className={classNames({ 'p-invalid': submitted && !category.image })}
+                        className={classNames({ 'p-invalid': submitted && !course.image })}
                         customUpload uploadHandler={myUploader} onChange={(e) => onInputFileChange(e, 'image')} required
                     />
-                    {submitted && !category.image && <small className="p-error">image is required.</small>}
+                    {submitted && !course.image && <small className="p-error">image is required.</small>}
                 </div> */}
                 <div className="field">
                     <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={category.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !category.description })}/>
-                    {submitted && !category.description && <small className="p-error">Description is required.</small>}
+                    <InputTextarea id="description" value={course.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !course.description })}/>
+                    {submitted && !course.description && <small className="p-error">Description is required.</small>}
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteCategoryDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>
+            <Dialog visible={deleteCourseDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                    {category && <span>Êtes-vous sûr de vouloir supprimer <b>{category.name}</b>?</span>}
+                    {course && <span>Êtes-vous sûr de vouloir supprimer <b>{course.name}</b>?</span>}
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteCategoriesDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoriesDialogFooter} onHide={hideDeleteCategoriesDialog}>
+            <Dialog visible={deleteCoursesDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoriesDialogFooter} onHide={hideDeleteCategoriesDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                    {category && <span>Êtes-vous sûr de vouloir supprimer les category sélectionnés?</span>}
+                    {course && <span>Êtes-vous sûr de vouloir supprimer les course sélectionnés?</span>}
                 </div>
             </Dialog>
         </div>
     );
 }
                 
-export default Categories;
+export default Cours;

@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef} from 'react'
 import { Toast } from 'primereact/toast';
 import { Formik} from 'formik';
 import * as Yup from 'yup';
@@ -7,13 +7,9 @@ import {PostCategory} from '../service/CategoryService';
 export default function NewCategory(){
     const toast = useRef(null);
 
-    // useEffect(() => {
-    //     actions.resetForm();
-    // })
     const inputRef = useRef(null);
 
     const resetFileInput = () => {
-        // 👇️ reset input value
         inputRef.current.value = null;
     };
     return(

@@ -8,6 +8,12 @@ export async function GetCategory() {
     return categories;
 }
 
+export async function GetCategoryItem(id) {
+    const response = await fetch(`https://lablib-api.herokuapp.com/api/v1/category/${id}/list`);
+    const categories = await response.json();
+    return categories;
+}
+
 export async function PostCategory(newCategory) {
     return await fetch('https://lablib-api.herokuapp.com/api/v1/category', newCategory);
 }
