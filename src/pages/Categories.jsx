@@ -5,6 +5,9 @@ import 'primereact/resources/primereact.css';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { ProgressBar } from 'primereact/progressbar';
+import { Tag } from 'primereact/tag';
+import { FileUpload } from 'primereact/fileupload';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { classNames } from 'primereact/utils';
@@ -18,15 +21,17 @@ import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../css/DataTableCrud.css';
-import {getCategory} from '../service/CategoryService';
+import Img404 from './../data/Img404.png';
+
+import {GetCategory, PostCategory, PutCategory, DelCategory} from '../service/CategoryService';
 
 const Categories = () => {
-
+    const url = 'https://lablib-api.herokuapp.com/api/v1/image';
     let emptyCategory = {
-        id: null,
+        // id: null,
         name: '',
         description: '',
-        dateOfCreation:null
+        // dateOfCreation:null
     };
 
     const [categories, setCategories] = useState(null);
@@ -39,14 +44,17 @@ const Categories = () => {
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
+    // const [file, setFile] = useState(null);
+    const [totalSize, setTotalSize] = useState(0);
+    const fileUploadRef = useRef(null);
     const dt = useRef(null);
 
     // const categoryService = new CategoryService();
 
     useEffect(() => {
-        getCategory().then(data => setCategories(data));
+        GetCategory().then(data => setCategories(data));
         initFilters();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [categories]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -57,11 +65,7 @@ const Categories = () => {
 
     const formatDate = (value) => {
         if(value){
-            return value.toLocaleDateString('en-US', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-            });
+            return value.toLocaleString('en-US');
         }
         return 
     }
@@ -107,24 +111,41 @@ const Categories = () => {
         setDeleteCategoriesDialog(false);
     }
 
-    const saveCategory = () => {
+    const saveCategory = async (File) => {
         setSubmitted(true);
 
         if (category.name.trim()) {
             let _Categories = [...categories];
             let _Category = {...category};
+
             if (category.id) {
                 const index = findIndexById(category.id);
-
                 _Categories[index] = _Category;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
+                try{
+                    let res = await PutCategory(category.id, _Category);
+                    if (res.ok){
+                        let d = await res.json();
+                        console.log(d);
+                        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
+                    }
+                    else{
+                        if(Array.isArray(res) && res.length === 0) return "error";
+                        let r = await res.json()
+                        throw r[0].message;
+                    }
+                }
+                catch (err){
+                    toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                } 
             }
             else {
-                _Category.id = createId();
+                console.log("creating... ")
+                let res = await PostCategory(formData)
+                console.log("finished!");
+                console.log("res: ", res);
                 _Categories.push(_Category);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
             }
-
             setCategories(_Categories);
             setCategoryDialog(false);
             setCategory(emptyCategory);
@@ -141,12 +162,27 @@ const Categories = () => {
         setDeleteCategoryDialog(true);
     }
 
-    const deleteCategory = () => {
-        let _categories = categories.filter(val => val.id !== category.id);
+    const deleteCategory = async () => {
+        let _categories = categories.filter((val) => {
+            val.id !== category.id;
+        });
         setCategories(_categories);
+        try{
+            let res = await DelCategory(category.id)
+            if (!res.ok){
+                if(Array.isArray(res) && res.length === 0) return "error";
+                let r = await res.json()
+                throw r[0].message;
+            }
+            else{
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Category supprimé avec succès', life: 3000 });
+            }
+        }
+        catch (err){
+            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+        } 
         setDeleteCategoryDialog(false);
         setCategory(emptyCategory);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Category supprimé avec succès', life: 3000 });
     }
 
     const findIndexById = (id) => {
@@ -160,15 +196,6 @@ const Categories = () => {
         return index;
     }
 
-    const createId = () => {
-        let id = '';
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
-
     const confirmDeleteSelected = () => {
         setDeleteCategoriesDialog(true);
     }
@@ -176,37 +203,39 @@ const Categories = () => {
     const deleteSelectedCategories = () => {
         let _categories = categories.filter(val => !selectedCategories.includes(val));
         setCategories(_categories);
+        selectedCategories.map((item) => {
+            DelCategory(item.id);
+        })
         setDeleteCategoriesDialog(false);
         setSelectedCategories(null);
         toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les categories supprimés avec succès', life: 3000 });
     }
 
+    const onInputFileChange = (e, name) => {
+        console.log("image: ", e);
+        const val = (e.files && e.files[0].name) || '';
+        let _Category = {...category};
+        _Category[`${name}`] = val;
+        setCategory(_Category);
+    }
+    
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
         let _Category = {...category};
         _Category[`${name}`] = val;
-
         setCategory(_Category);
     }
 
-    // const onInputNumberChange = (e, name) => {
-    //     const val = e.value || 0;
-    //     let _User = {...codelab};
-    //     _User[`${name}`] = val;
-
-    //     setCodelab(_User);
-    // }
-    
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
     
     const descriptionBodyTemplate = (rowData) => {
-        return <span>{rowData.description}</span>
+        return <span>{rowData.description || "Empty!"}</span>
     }
     
     const imageBodyTemplate = (rowData) => {
-        return <img src={`images/user/${rowData.image}`} onError={(e) => e.target.src='https://www.citypng.com/public/uploads/preview/png-round-blue-contact-user-profile-icon-11639786938sxvzj5ogua.png'} alt={rowData.image} className="user-image" />
+        return <img src={`${url}/${rowData.image}`} onError={(e) => e.target.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAABmJLR0QA/wD/AP+gvaeTAAAE9ElEQVRoge2Ze2xTVRzHP/f2tmtHH2u3sQePhQ3lsYSgPEJC1EEIiCivgRgICzImI0wIExAVNJI4EzATGTrCIwoBIYIhIcFACCgKiCAvN2JiEGGQzbCtZYy+H9c/yupK260bhULS7z899/f7nfP73HNOT36nFQaMnqzD66sUoBAw8uTLAuxXqDXl0n3wBfEm6oKMQInXYUcUYHq8abqpQgkwtT2VyhZyfS4ADotajgs9ABjUy0rZy3UAuDwCy3YMDIzgfQkwCgAItTLi1ceEDiap/VOuz0U+TgAuoA7YdRoPQ3JaAT98e8npIPf0txXXBUB+hLzBEh9bpkegoJk/LGoDM17TbuZvmdVsO9YbAI8veObFWgG0/tkWGoJ9j1rCwFGvPr51jrGe7m0zVHbEm6HbEv4eMSSxbeKhBHy8lICPlxLw8VJ08IKAZuQoEKMLV6Snk/xiAT0KxqLsm9MFGtGfR4iuRpI6DwHDrNmklq+kYVEx9vO/R86tN5D27gdox40PAnBcPE/jJx/jrrvRYR5j8UKMJaXcmj0T19W/Hh5eYUjBuGAh7uvXcFy+FBlcqyV7y9eocvOwnjiO7cRPyE4H6uEj0U+ZTvb2ndQXF0V8ASkjk5S583D+eQXXtehuNJ3CmxYvQdQbuL3mPWSPJ2KcceFiVLl5NH++npY9uwL2e0ePYD12lKyN1aS//yH1pcVh+6cuW4GgUtG0rgJ8vqjgO9zESQMGops8DeuJH7H9eipinCBJ6CZNxllbQ8ve3SF++9kz3D2wH/Xzw1H26Rvi1wwbQY+x42g9dBDnldqowDuGFwRSy1cie72YN1aiMJrQvTYlbKiUkYmo1WK/cA7k8HWe7fRJAFT9n3mAQCT1nZX4bFbM1VVIGZloJ7zycPDa8RNRPzeMll07cN+sQztxEulr1qLs3Sf0PdX+W5fXYomYSLbb/bEaTZBdP2MWqv7PYtm6GW9TE7pphfRcW4Go03cPXlCrMS1egqfxNnd2bPfbJKXfKUV1QEUlUW/AWFKK+2Ydd/ftvZ9HAkHwf3bWP5zR+GYJUmYW5qoN+Gy2mME+KNOiMhSGFJor1yG7XF3uHwKv7NUbw5y5OGouc+/IDzGBDCdVbh66qYXYTv6M7dQv3RojZG1Mby9DUCUhSBIZFesCdmVOPwDSylfgs1oB8DQ3Y97wWbcSpy5fhaBQIOr1ZHy6PmBv+0Knr/4osBru+nrMmzaEHAYh8ApTKgBJg/JJGpQfklQzanSg7bWYubNtc+BcFhQd7NO20sLrj1WkpgGgHjI0bHjyCwWBtuffBixbq5EdwfftkGz1b80LO1hK0XxMZUu5+fpU3Nf/CfLJPhlkGVVuXkT2tlPK29QIwK1Z08LGmcqWklI0nxsTxuC1mCOOBzGqKn13W3BeqSW5YAxSVnaIX1CrMcwpwtfaiqPmj1ikBGJYEpurqxDVGrK++JKkwf9vNykrm8zKKpR9+mLZ8hWyyxmrlNFVldHIfu43GivWkrZqNb2++RZ33Q1ktxtVv1wQRVp276Tluz2xSgd0Ad5x8Tz2M6fxNNRHjGk9eADHpQvoZ75B0uB8BKWK1kMH/fYOKtL2sp87izKnH96WO53GJn50ipcS8PFSAj5eSsDHS089fMel25MrsyjD9/Gm6JYEeZ/ktHnLNcmSLCPPoN1f+U+wzAjyPofVt/w/cSyJn0mj7McAAAAASUVORK5CYII="} alt={rowData.image} className="category-image" />
     }
 
     const filterApplyTemplate = (options) => {
@@ -231,7 +260,11 @@ const Categories = () => {
     // }
 
     const dateBodyTemplate = (rowData) => {
-        return formatDate(rowData.dateOfCreation);
+        return formatDate(new Date(rowData.createdAt));
+    }
+
+    const dateUpdatedBodyTemplate = (rowData) => {
+        return formatDate(new Date(rowData.updatedAt));
     }
 
     const dateFilterTemplate = (options) => {
@@ -252,9 +285,9 @@ const Categories = () => {
     const header = (
         <div className="table-header">
             <div className='flex'>
-                <div className="mt-2 mb-3 mx-1 p-0">
+                {/* <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-plus" label="New" className="p-button-success " onClick={openNew}/>
-                </div>
+                </div> */}
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCategories || !selectedCategories.length}  />
                 </div>
@@ -287,6 +320,100 @@ const Categories = () => {
         </React.Fragment>
     );
 
+
+    // Uploading file
+    
+    const onTemplateSelect = (e) => {
+        console.log("e: ", e.files[0]);
+        let _totalSize = e.files[0].size || 0;
+        setTotalSize(_totalSize);
+    }
+
+    const onTemplateUpload = (e) => {
+        let _totalSize = e.files[0].size || 0;
+
+        setTotalSize(_totalSize);
+        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    }
+
+    const onTemplateRemove = (file, callback) => {
+        setTotalSize(totalSize - file.size);
+        callback();
+    }
+
+    const onTemplateClear = () => {
+        setTotalSize(0);
+    }
+
+    const headerTemplate = (options) => {
+        const { className, chooseButton, uploadButton, cancelButton } = options;
+        const value = totalSize/10000;
+        const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
+
+        return (
+            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
+                <div style={{width:"40px", heigth:"20px"}}>
+                    {chooseButton}
+                </div>
+                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
+            </div>
+        );
+    }
+
+    const itemTemplate = (file, props) => {
+        return (
+            <div className="flex align-items-center flex-wrap">
+                <div className="flex align-items-center" style={{width: '90%'}}>
+                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
+                    <div className='flex flex-grow-1'>
+                        <div style={{width: '100%'}}>
+                            <div className="text-left ml-3">
+                                {file.name}
+                            </div>
+                            <div className="text-left ml-3">
+                                <small>{new Date().toLocaleDateString()}</small>
+                            </div>
+                            <div className="text-left ml-3">
+                                <Tag value={props.formatSize} severity="warning" className="px-3 py-2"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <Button type="button" icon="pi pi-times" className="w-8 h-8 p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
+                </div>
+            </div>
+        )
+    }
+
+    const emptyTemplate = () => {
+        return (
+            <div className="flex flex-column justify-center items-center">
+                <div className='flex items-center justify-content-center'>
+                    <i className="pi pi-image mt-3 p-5" style={{'fontSize': '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
+                </div>
+                <div className='flex items-center justify-center'>
+                    <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5 ml-2">Faites glisser et déposez l'image ici</span>
+                </div>
+            </div>
+        )
+    }
+
+    const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'w-16 h-16 custom-choose-btn p-button-rounded p-button-outlined'};
+    const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
+    const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
+
+    const myUploader = (e) => {
+        const file = e.files[0];
+        console.log("Files: ", e.files[0], " file: ", file);
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+            console.log("inside the myUploader, e: ", e.target.result);
+            saveCategory(e.target.result);
+        };
+        fileReader.readAsDataURL(file);
+    };
+    //End uploading File
     return (
         <div className="datatable-crud">
             <Toast ref={toast} />
@@ -303,57 +430,38 @@ const Categories = () => {
                     <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
                     <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '20rem' }}></Column>
-                    {/* <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
-                        filter filterElement={dateFilterTemplate} ></Column> */}
+                    <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
+                    <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
+                        filter filterElement={dateFilterTemplate} ></Column>
+                    <Column field="updatedAt" header="Date de modification" filterField="updatedAt" body={dateUpdatedBodyTemplate} style={{ minWidth: '0rem' }}
+                        filter filterElement={dateFilterTemplate} ></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
             </div>
 
-            <Dialog visible={CategoryDialog} style={{ width: '450px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
-                {/* {codelab.image && <img src={`images/codelab/${codelab.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={category.image} className="category-image block m-auto pb-3" />} */}
+            <Dialog visible={CategoryDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name">Title</label>
                     <InputText id="name" value={category.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !category.name })} />
                     {submitted && !category.name && <small className="p-error">Name is required.</small>}
                 </div>
+                {/* <div className="field">
+                    <label htmlFor="image">Upload Image</label>
+                    <FileUpload id="image" ref={fileUploadRef} name="image"
+                        accept="image/*" maxFileSize={1000000}
+                        onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                        headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                        chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}   
+                        className={classNames({ 'p-invalid': submitted && !category.image })}
+                        customUpload uploadHandler={myUploader} onChange={(e) => onInputFileChange(e, 'image')} required
+                    />
+                    {submitted && !category.image && <small className="p-error">image is required.</small>}
+                </div> */}
                 <div className="field">
                     <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={category.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
+                    <InputTextarea id="description" value={category.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !category.description })}/>
+                    {submitted && !category.description && <small className="p-error">Description is required.</small>}
                 </div>
-
-                {/* <div className="field">
-                    <label className="mb-3">Category</label>
-                    <div className="formgrid grid">
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={codelab.category === 'Accessories'} />
-                            <label htmlFor="category1">Accessories</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={codelab.category === 'Clothing'} />
-                            <label htmlFor="category2">Clothing</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={codelab.category === 'Electronics'} />
-                            <label htmlFor="category3">Electronics</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={codelab.category === 'Fitness'} />
-                            <label htmlFor="category4">Fitness</label>
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="price">Price</label>
-                        <InputNumber id="price" value={codelab.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                    </div>
-                    <div className="field col">
-                        <label htmlFor="quantity">Quantity</label>
-                        <InputNumber id="quantity" value={codelab.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
-                    </div>
-                </div> */}
             </Dialog>
 
             <Dialog visible={deleteCategoryDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>

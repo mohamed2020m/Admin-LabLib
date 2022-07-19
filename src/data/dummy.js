@@ -90,6 +90,7 @@ const gridEmployeeCountry = (props) => (
     <span>{props.Country}</span>
   </div>
 );
+
 export const EditorData = () => (
   <div>
     <h3>
@@ -132,6 +133,7 @@ export const EditorData = () => (
     </h3>
   </div>
 );
+
 const customerGridImage = (props) => (
   <div className="image flex gap-4">
     <img
@@ -562,32 +564,6 @@ export const links = [
         },
       ],
     },
-    {
-      title:'Projets',
-      links: [
-        {
-          name: 'Gerer les Projets',
-          url: 'projets',
-          icon: <MdManageAccounts />,
-        }
-      ]
-    },
-    {
-      title:'Categorie des projets',
-      links: [
-        {
-          name: 'Gerer les Categories',
-          url: 'categorieProjets',
-          icon: <MdManageAccounts />,
-        },
-        {
-          name: 'Nouveux Categories',
-          url: 'newCategorieProjet',
-          icon: <BsPlusLg />,
-        }
-      ]
-    }
-    
   ];
 
 export const cartData = [

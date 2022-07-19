@@ -62,8 +62,6 @@ const Navbar = () => {
           <BiExit/>
           <span className="ml-1">Exit Admin Panel</span>
         </a>
-        {/* <NavButton title="Cart" customFunc={() => setMode(currentMode)} color={currentColor}  icon={currentMode !== 'Light' ? <MdOutlineLightMode /> :  <MdOutlineModeNight />}/> */}
-        {/* <NavButton title="Chat" dotColor="#03C9D7" customFunc={() => handleClick('chat')} color={currentColor} icon={<BsChatLeft />} /> */}
         <NavButton title="Notification" dotColor="rgb(254, 201, 15)" customFunc={() => handleClick('notification')} color={currentColor} icon={<RiNotification3Line />} />
         <TooltipComponent content="Profile" position="BottomCenter">
           <div
@@ -85,7 +83,6 @@ const Navbar = () => {
           </div>
         </TooltipComponent>
 
-        {isClicked.chat && (<Chat />)}
         {isClicked.notification && (<Notification />)}
         {isClicked.userProfile && (<UserProfile />)}
       </div>
