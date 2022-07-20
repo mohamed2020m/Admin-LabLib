@@ -245,7 +245,7 @@ const Users = () => {
         <div className="table-header">
             <div className='flex'>
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
+                    <Button type="button" icon="pi pi-filter-slash" className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedUsers || !selectedUsers.length}  />
