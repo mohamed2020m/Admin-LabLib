@@ -26,7 +26,14 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const {activeMenu} = useStateContext();
+    const {pathname, activeMenu, setPathName} = useStateContext();
+
+  
+    // useEffect(() => {
+    //     const currentPath = localStorage.getItem('currentPath');
+    //     console.log("currentPath: ", currentPath)
+    //     setPathName([{label: currentPath}]);        
+    // }, []);
 
     const home = { icon: 'pi pi-home', url: 'https://admin-lablib.herokuapp.com'}
 
@@ -55,7 +62,7 @@ const App = () => {
                         </div>
                         <div className='m-3 p-4'>
                             <div className="card">
-                                <BreadCrumb model={[{label: window.location.pathname.substring(1)}]} home={home}/>
+                                <BreadCrumb model={pathname} home={home}/>
                             </div>
 
                             <Routes>
