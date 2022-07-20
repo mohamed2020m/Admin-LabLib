@@ -311,7 +311,7 @@ const Users = () => {
                 </div>
                 :
                 <div className="card py-4">
-                    <div className="flex justify-between mb-3">
+                    <div className="flex flex-wrap justify-between mb-3">
                         <div className='flex'>
                             <div className='mx-3'>
                                 <Skeleton width={100} height={50}/>
