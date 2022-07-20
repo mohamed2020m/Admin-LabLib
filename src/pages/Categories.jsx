@@ -53,8 +53,6 @@ const Categories = () => {
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    console.log("categories:", categories)
-
     useEffect(() => {
         setIsLoading(true);
         GetCategory().then(data => setCategories(data));
