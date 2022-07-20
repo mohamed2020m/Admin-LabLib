@@ -313,7 +313,7 @@ const Users = () => {
                 <div className="card py-4">
                     <div className="flex flex-wrap justify-between mb-3">
                         <div className='flex'>
-                            <div className='mx-3'>
+                            <div className='mr-3'>
                                 <Skeleton width={100} height={50}/>
                             </div>
                             <div>
