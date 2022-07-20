@@ -112,6 +112,7 @@ export const userProfileData = [
     desc: 'Voir le profile',
     iconColor: '#03C9D7',
     iconBg: '#E5FAFB',
+    to:"profile"
   },
   {
     icon: <AiOutlineSetting />,
@@ -119,6 +120,7 @@ export const userProfileData = [
     desc: 'Modifier les paramètres',
     iconColor: 'rgb(0, 194, 146)',
     iconBg: 'rgb(235, 250, 242)',
+    to:"settings"
   },
 ];
 

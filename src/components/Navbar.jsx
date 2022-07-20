@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { MdOutlineLightMode, MdOutlineModeNight } from 'react-icons/md';
 import { BiExit } from 'react-icons/bi';
 import { RiNotification3Line } from 'react-icons/ri';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import avatar from '../data/avatar1.png';
-import { Cart, Chat, Notification, UserProfile } from '.';
+import { Notification, UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -28,7 +27,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 const Navbar = () => {
-  const { currentColor, currentMode, activeMenu, setMode, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
+  const { currentColor, activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -47,6 +46,10 @@ const Navbar = () => {
       setActiveMenu(true);
     }
   }, [screenSize]);
+
+  const greetings = () => {
+
+  }
 
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
@@ -73,7 +76,7 @@ const Navbar = () => {
               src={avatar}
               alt="user-profile"
             />
-            <p>
+            <p className='hidden md:block'>
               <span className="text-gray-400 text-14">Bonjour,</span>{' '}
               <span className="text-gray-400 font-bold ml-1 text-14">
                 Leeuw

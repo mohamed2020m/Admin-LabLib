@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
+import Helmet from "react-helmet"
 import { Formik, Field} from 'formik';
 import { Toast } from 'primereact/toast';
 import * as Yup from 'yup';
@@ -22,6 +23,11 @@ export default function NewCourse(){
 
     return(
         <>
+        <Helmet>
+                <script>
+                    document.title = "New course"
+                </script>
+            </Helmet>
         <Toast ref={toast} />
         <div className='flex justify-center border-2 p-3 m-5'>
             <div className="max-w-screen-md mx-auto p-5">
@@ -111,7 +117,7 @@ export default function NewCourse(){
                                     >
                                         <option disabled defaultValue>Select Category</option>
                                         {categories.map((item) => (
-                                            <option value={item.id}>{item.name}</option>
+                                            <option key={item.id} value={item.id}>{item.name}</option>
                                         ))}
                                     </Field>
                                     {formik.touched.category && formik.errors.category ? (

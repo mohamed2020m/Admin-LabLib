@@ -7,6 +7,9 @@ import 'primereact/resources/primereact.css';
 // import '../css/App.css';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import Helmet from "react-helmet"
 // import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
@@ -53,6 +56,7 @@ const Users = () => {
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
     const dt = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const statuses = [
         'online', 'offline'
@@ -62,8 +66,13 @@ const Users = () => {
 
 
     useEffect(() => {
-        userService.getUsers().then(data => setUsers(updateDateUsers(data)));
-        initFilters();
+        setIsLoading(true);
+        const timer  = setTimeout(() => {
+            userService.getUsers().then(data => setUsers(updateDateUsers(data)));
+            initFilters();
+            setIsLoading(false);
+        }, 5000)
+        return () => clearTimeout(timer);
 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -277,6 +286,7 @@ const Users = () => {
             
             <div className="datatable-crud">
                 <Toast ref={toast} />
+                {!isLoading ?
                 <div className="card">
                     <DataTable ref={dt} value={users} selection={selectedUsers} onSelectionChange={(e) => setSelectedUsers(e.value)}
                         dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
@@ -299,7 +309,25 @@ const Users = () => {
                         <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                     </DataTable>
                 </div>
-
+                :
+                <div className="card py-4">
+                    <div className="flex justify-between mb-3">
+                        <div className='flex'>
+                            <div className='mx-3'>
+                                <Skeleton width={100} height={50}/>
+                            </div>
+                            <div>
+                                <Skeleton width={100} height={50}/>
+                            </div>
+                        </div>
+                        <div className='pr-3'>
+                            <Skeleton width={150} height={50}/>
+                        </div>
+                    </div>
+                    <Skeleton height={30}/>
+                    <Skeleton count={8} height={25}/>
+                </div>
+                }
                 <Dialog visible={deleteUserDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteUserDialogFooter} onHide={hideDeleteUserDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />

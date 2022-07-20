@@ -4,6 +4,10 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 
 import React, { useState, useEffect, useRef } from 'react';
+
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
+import Helmet from "react-helmet"
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
@@ -20,18 +24,17 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import '../css/DataTableCrud.css';
-import Img404 from './../data/Img404.png';
 
-import {GetCategory, PostCategory, PutCategory, DelCategory} from '../service/CategoryService';
+import '../css/DataTableCrud.css';
+
+import {GetCategory, PutCategory, DelCategory} from '../service/CategoryService';
 
 const Categories = () => {
     const url = 'https://lablib-api.herokuapp.com/api/v1/image';
     let emptyCategory = {
-        // id: null,
+        id: null,
         name: '',
         description: '',
-        // dateOfCreation:null
     };
 
     const [categories, setCategories] = useState(null);
@@ -48,13 +51,16 @@ const Categories = () => {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // const categoryService = new CategoryService();
+    console.log("categories:", categories)
 
     useEffect(() => {
+        setIsLoading(true);
         GetCategory().then(data => setCategories(data));
+        setIsLoading(false);
         initFilters();
-    }, [categories]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -235,6 +241,7 @@ const Categories = () => {
         setCategory(_Category);
     }
 
+    
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
@@ -298,10 +305,10 @@ const Categories = () => {
                     <Button type="button" icon="pi pi-plus" label="New" className="p-button-success " onClick={openNew}/>
                 </div> */}
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCategories || !selectedCategories.length}  />
+                    <Button type="button" icon="pi pi-filter-slash" className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
+                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCategories || !selectedCategories.length}  />
                 </div>
             </div>
             <span className="p-input-icon-left">
@@ -424,19 +431,25 @@ const Categories = () => {
     };
     //End uploading File
     return (
+        <>
+        <Helmet>
+                <script>
+                    document.title = "Categories"
+                </script>
+            </Helmet>
         <div className="datatable-crud">
             <Toast ref={toast} />
-
+            {!isLoading ?
             <div className="card">
                 <DataTable ref={dt} value={categories} selection={selectedCategories}
                     onSelectionChange={(e) => setSelectedCategories(e.value)}
                     dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} category"
+                    currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} categories"
                     globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} 
-                    emptyMessage="Aucun Category trouvé." responsiveLayout="scroll">
+                    emptyMessage="Aucun Category trouvé." responsiveLayout="scroll" className="p-datatable-striped">
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                    <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
+                    <Column field="id" header="Id" tyle={{ minWidth: '0rem' }}></Column>
                     <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
@@ -447,7 +460,25 @@ const Categories = () => {
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
             </div>
-
+            :
+            <div className="card py-4">
+                <div class="flex flex-wrap justify-between mb-3">
+                    <div className='flex'>
+                        <div className='mr-3'>
+                            <Skeleton width={100} height={50}/>
+                        </div>
+                        <div>
+                            <Skeleton width={100} height={50}/>
+                        </div>
+                    </div>
+                    <div className='pr-3'>
+                        <Skeleton width={150} height={50}/>
+                    </div>
+                </div>
+                <Skeleton height={30}/>
+                <Skeleton count={8} height={25}/>
+            </div>
+            }
             <Dialog visible={CategoryDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name">Title</label>
@@ -487,6 +518,7 @@ const Categories = () => {
                 </div>
             </Dialog>
         </div>
+        </>
     );
 }
                 

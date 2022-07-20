@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
+import Helmet from "react-helmet"
 import { Formik, Field} from 'formik';
 import { Toast } from 'primereact/toast';
 import * as Yup from 'yup';
@@ -26,6 +27,11 @@ export default function NewCourse(){
 
     return(
         <>
+        <Helmet>
+                <script>
+                    document.title = "New Chapter"
+                </script>
+            </Helmet>
         <Toast ref={toast} />
         <div className='flex justify-center border-2 p-3 m-5'>
             <div className="max-w-screen-md mx-auto p-5">

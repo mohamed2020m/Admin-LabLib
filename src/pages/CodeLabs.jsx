@@ -1,18 +1,14 @@
 import React, { useEffect, useState , useRef} from 'react';
+import Helmet from "react-helmet"
 import { FileUpload } from 'primereact/fileupload';
 import { useFormik } from 'formik';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
-// import { Calendar } from 'primereact/calendar';
-// import { cours } from 'primereact/cours';
-import { Checkbox } from 'primereact/checkbox';
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import { ProgressBar } from 'primereact/progressbar';
-import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
 import './../css/Form.css';
 import htmlLogo96 from '../data/html-5-96.png'
@@ -194,6 +190,12 @@ const Codelab = () => {
     const cancelOptions = {label: 'Annuler', icon: 'pi pi-times', className: 'p-button-danger'};
 
     return (
+        <>
+        <Helmet>
+                <script>
+                    document.title = "New Codelab"
+                </script>
+            </Helmet>
         <div className="from">
             <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
                 <div className="flex align-items-center flex-column pt-6 px-3">
@@ -254,6 +256,7 @@ const Codelab = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

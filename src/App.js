@@ -17,6 +17,8 @@ import NewChapiter from "./pages/newChapiter";
 import Chapiter from "./pages/ChapiterList";
 import NewCours from "./pages/newCourse";
 import Cours from "./pages/Cours";
+import Profile from "./pages/profile";
+import Settings from "./pages/settings";
 import NoPage from "./pages/nopage";
 
 import './css/App.css';
@@ -75,6 +77,8 @@ const App = () => {
                                 <Route path="chapiters" element={<Chapiter />} />
                                 <Route path="NewCours" element={<NewCours />} />
                                 <Route path="cours" element={<Cours />} />
+                                <Route path="profile" element={<Profile />} />
+                                <Route path="settings" element={<Settings />} />
                                 <Route path="*" element={<NoPage />} />    
                             </Routes>
                         </div>

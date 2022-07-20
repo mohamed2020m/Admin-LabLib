@@ -4,6 +4,10 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 
 import React, { useState, useEffect, useRef } from 'react';
+
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
+import Helmet from "react-helmet"
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
@@ -47,14 +51,17 @@ const Chapter = () => {
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
         async function fetchData(){
             try{
                 let res = await GetChapiter();
                 if(res.ok){
                     let data = await res.json();
-                    setChapiters(data)
+                    setChapiters(data);
+                    setIsLoading(false);
                 }
                 else{
                     let err = await res.json();
@@ -68,7 +75,7 @@ const Chapter = () => {
         }
         fetchData();
         initFilters();
-    }, [chapiters]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -319,10 +326,10 @@ const Chapter = () => {
                     <Button type="button" icon="pi pi-plus" label="New" className="p-button-success " onClick={openNew}/>
                 </div> */}
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedChapiters || !selectedChapiters.length}  />
+                    <Button type="button" icon="pi pi-filter-slash"  className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
+                    <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedChapiters || !selectedChapiters.length}  />
                 </div>
             </div>
             <span className="p-input-icon-left">
@@ -445,9 +452,15 @@ const Chapter = () => {
     };
     //End uploading File
     return (
+        <>
+        <Helmet>
+                <script>
+                    document.title = "Chapiters"
+                </script>
+            </Helmet>
         <div className="datatable-crud">
             <Toast ref={toast} />
-
+            {!isLoading ?
             <div className="card">
                 <DataTable ref={dt} value={chapiters} selection={selectedChapiters}
                     onSelectionChange={(e) => setSelectedChapiters(e.value)}
@@ -472,7 +485,25 @@ const Chapter = () => {
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
             </div>
-
+            :
+            <div className="card py-4">
+                <div class="flex flex-wrap justify-between mb-3">
+                    <div className='flex'>
+                        <div className='mr-3'>
+                            <Skeleton width={100} height={50}/>
+                        </div>
+                        <div>
+                            <Skeleton width={100} height={50}/>
+                        </div>
+                    </div>
+                    <div className='pr-3'>
+                        <Skeleton width={150} height={50}/>
+                    </div>
+                </div>
+                <Skeleton height={30}/>
+                <Skeleton count={8} height={25}/>
+            </div>
+            }
             <Dialog visible={ChapiterDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name">Title</label>
@@ -512,6 +543,7 @@ const Chapter = () => {
                 </div>
             </Dialog>
         </div>
+        </>
     );
 }
                 

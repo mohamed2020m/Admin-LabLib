@@ -1,12 +1,13 @@
-
 // prime css
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-// import 'primeflex/primeflex.css';
-// import '../css/App.css';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
+import Helmet from "react-helmet"
+
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -14,8 +15,6 @@ import { CodelabService } from '../service/CodelabService.js';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../css/DataTableCrud.css';
@@ -42,12 +41,18 @@ const codelabs = () => {
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
     const dt = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const codelabService = new CodelabService();
 
     useEffect(() => {
-        codelabService.getUsers().then(data => setCodelabs(updateDateUsers(data)));
-        initFilters();
+        setIsLoading(true);
+        const timer  = setTimeout(() => {
+            codelabService.getUsers().then(data => setCodelabs(updateDateUsers(data)));
+            initFilters();
+            setIsLoading(false);
+        }, 5000)
+        return () => clearTimeout(timer);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateDateUsers = (rowData) => {
@@ -248,7 +253,7 @@ const codelabs = () => {
         <div className="table-header">
             <div className='flex'>
                 <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-filter-slash" label="Effacer les filtres" className=" m-0 p-button-outlined" onClick={clearFilter} />
+                    <Button type="button" icon="pi pi-filter-slash" className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-trash" label="Supprimer" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedCodelabs || !selectedCodelabs.length}  />
@@ -280,87 +285,112 @@ const codelabs = () => {
     );
 
     return (
-        <div className="datatable-crud">
-            <Toast ref={toast} />
-
-            <div className="card">
-                <DataTable ref={dt} value={codelabs} selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
-                    dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} codelabs"
-                    globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun codelab trouvé." responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                    <Column field="code" header="Code" style={{ minWidth: '0rem' }}></Column>
-                    <Column field="title" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                    <Column field="description" header="Description"  style={{ minWidth: '20rem' }}></Column>
-                    <Column field="chapiter" header="Chapiter" body={chapiterBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                    <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column>
-                    <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
-                        filter filterElement={dateFilterTemplate} ></Column>
-                    <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
-                </DataTable>
-            </div>
-
-            {/* <Dialog visible={UserDialog} style={{ width: '450px' }} header="codelab Details" modal className="p-fluid" footer={UserDialogFooter} onHide={hideDialog}>
-                {codelab.image && <img src={`images/codelab/${codelab.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={codelab.image} className="codelab-image block m-auto pb-3" />}
-                <div className="field">
-                    <label htmlFor="name">Name</label>
-                    <InputText id="name" value={codelab.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !codelab.name })} />
-                    {submitted && !codelab.name && <small className="p-error">Name is required.</small>}
+        <>
+            <Helmet>
+                <script>
+                    document.title = "Codelabs"
+                </script>
+            </Helmet>
+            <div className="datatable-crud">
+                <Toast ref={toast} />
+                {!isLoading ?
+                <div className="card">
+                    <DataTable ref={dt} value={codelabs} selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
+                        dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} codelabs"
+                        globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun codelab trouvé." responsiveLayout="scroll">
+                        <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
+                        <Column field="code" header="Code" style={{ minWidth: '0rem' }}></Column>
+                        <Column field="title" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="description" header="Description"  style={{ minWidth: '20rem' }}></Column>
+                        <Column field="chapiter" header="Chapiter" body={chapiterBodyTemplate} style={{ minWidth: '0rem' }}></Column>
+                        <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column>
+                        <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
+                            filter filterElement={dateFilterTemplate} ></Column>
+                        <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
+                    </DataTable>
                 </div>
-                <div className="field">
-                    <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={codelab.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
+                :
+                <div className="card py-4">
+                    <div className="flex flex-wrap justify-between mb-3">
+                        <div className='flex'>
+                            <div className='mr-3'>
+                                <Skeleton width={100} height={50}/>
+                            </div>
+                            <div>
+                                <Skeleton width={100} height={50}/>
+                            </div>
+                        </div>
+                        <div className='pr-3'>
+                            <Skeleton width={150} height={50}/>
+                        </div>
+                    </div>
+                    <Skeleton height={30}/>
+                    <Skeleton count={8} height={25}/>
                 </div>
+                }
+                {/* <Dialog visible={UserDialog} style={{ width: '450px' }} header="codelab Details" modal className="p-fluid" footer={UserDialogFooter} onHide={hideDialog}>
+                    {codelab.image && <img src={`images/codelab/${codelab.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={codelab.image} className="codelab-image block m-auto pb-3" />}
+                    <div className="field">
+                        <label htmlFor="name">Name</label>
+                        <InputText id="name" value={codelab.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !codelab.name })} />
+                        {submitted && !codelab.name && <small className="p-error">Name is required.</small>}
+                    </div>
+                    <div className="field">
+                        <label htmlFor="description">Description</label>
+                        <InputTextarea id="description" value={codelab.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
+                    </div>
 
-                <div className="field">
-                    <label className="mb-3">Category</label>
+                    <div className="field">
+                        <label className="mb-3">Category</label>
+                        <div className="formgrid grid">
+                            <div className="field-radiobutton col-6">
+                                <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={codelab.category === 'Accessories'} />
+                                <label htmlFor="category1">Accessories</label>
+                            </div>
+                            <div className="field-radiobutton col-6">
+                                <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={codelab.category === 'Clothing'} />
+                                <label htmlFor="category2">Clothing</label>
+                            </div>
+                            <div className="field-radiobutton col-6">
+                                <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={codelab.category === 'Electronics'} />
+                                <label htmlFor="category3">Electronics</label>
+                            </div>
+                            <div className="field-radiobutton col-6">
+                                <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={codelab.category === 'Fitness'} />
+                                <label htmlFor="category4">Fitness</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="formgrid grid">
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={codelab.category === 'Accessories'} />
-                            <label htmlFor="category1">Accessories</label>
+                        <div className="field col">
+                            <label htmlFor="price">Price</label>
+                            <InputNumber id="price" value={codelab.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
                         </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={codelab.category === 'Clothing'} />
-                            <label htmlFor="category2">Clothing</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={codelab.category === 'Electronics'} />
-                            <label htmlFor="category3">Electronics</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={codelab.category === 'Fitness'} />
-                            <label htmlFor="category4">Fitness</label>
+                        <div className="field col">
+                            <label htmlFor="quantity">Quantity</label>
+                            <InputNumber id="quantity" value={codelab.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
                         </div>
                     </div>
-                </div>
+                </Dialog> */}
 
-                <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="price">Price</label>
-                        <InputNumber id="price" value={codelab.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
+                <Dialog visible={deleteCodelabDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>
+                    <div className="confirmation-content">
+                        <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
+                        {codelab && <span>Êtes-vous sûr de vouloir supprimer <b>{codelab.title}</b>?</span>}
                     </div>
-                    <div className="field col">
-                        <label htmlFor="quantity">Quantity</label>
-                        <InputNumber id="quantity" value={codelab.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
+                </Dialog>
+
+                <Dialog visible={deleteCodelabsDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabsDialogFooter} onHide={hideDeleteCodelabsDialog}>
+                    <div className="confirmation-content">
+                        <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
+                        {codelab && <span>Êtes-vous sûr de vouloir supprimer les codelabs sélectionnés?</span>}
                     </div>
-                </div>
-            </Dialog> */}
-
-            <Dialog visible={deleteCodelabDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>
-                <div className="confirmation-content">
-                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                    {codelab && <span>Êtes-vous sûr de vouloir supprimer <b>{codelab.title}</b>?</span>}
-                </div>
-            </Dialog>
-
-            <Dialog visible={deleteCodelabsDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabsDialogFooter} onHide={hideDeleteCodelabsDialog}>
-                <div className="confirmation-content">
-                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                    {codelab && <span>Êtes-vous sûr de vouloir supprimer les codelabs sélectionnés?</span>}
-                </div>
-            </Dialog>
-        </div>
+                </Dialog>
+            </div>
+        </>
     );
 }
                 

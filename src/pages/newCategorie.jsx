@@ -1,4 +1,5 @@
 import React, {useRef} from 'react'
+import Helmet from "react-helmet"
 import { Toast } from 'primereact/toast';
 import { Formik} from 'formik';
 import * as Yup from 'yup';
@@ -14,6 +15,11 @@ export default function NewCategory(){
     };
     return(
         <>
+        <Helmet>
+                <script>
+                    document.title = "New Category"
+                </script>
+        </Helmet>
         <Toast ref={toast} />
         <div className='flex justify-center border-2 p-3 m-5'>
             <div className="max-w-screen-md mx-auto p-5">

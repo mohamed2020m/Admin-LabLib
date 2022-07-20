@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 import { Button } from '.';
 import { userProfileData } from '../data/dummy';
@@ -44,10 +45,12 @@ const UserProfile = () => {
               {item.icon}
             </button>
 
+            <Link to={item.to}>
             <div>
               <p className="font-semibold dark:text-gray-200 ">{item.title}</p>
               <p className="text-gray-500 text-sm dark:text-gray-400"> {item.desc} </p>
             </div>
+            </Link>
           </div>
         ))}
       </div>

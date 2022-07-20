@@ -1,9 +1,18 @@
 import React from 'react'
+import Helmet from "react-helmet"
+import nocontent from "../data/notFound.png"
 
 export default function NoPage(){
     return(
         <div>
-            <h1 className='text-center p-3 m-3'>The page doesn't exist!!</h1>
+            <Helmet>
+                <script>
+                    document.title = "Not Found!"
+                </script>
+            </Helmet>
+            <div className='flex justify-center align-center p-3 m-3'>
+                <img src={nocontent} alt="page dones't exist"/>
+            </div>
         </div>
     )
 }
