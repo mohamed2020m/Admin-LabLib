@@ -263,13 +263,21 @@ const Chapter = () => {
     }
     
     const categoryBodyTemplate = (rowData) => {
-        return <span>{rowData.nchapiters || "None"}</span>
+        return <span>{rowData.category || "None"}</span>
     }
 
     const courseBodyTemplate = (rowData) => {
-        return <span>{rowData.nchapiters || "None"}</span>
+        return <span>{rowData.course || "None"}</span>
     }
     
+    const labsBodyTemplate = (rowData) => {
+        return <span>{rowData.labs || "None"}</span>
+    }
+
+    const orderBodyTemplate = (rowData) => {
+        return <span>{rowData.order || "None"}</span>
+    }
+
     const descriptionBodyTemplate = (rowData) => {
         return <span>{rowData.description || "Empty!"}</span>
     }
@@ -476,11 +484,11 @@ const Chapter = () => {
                     <Column field="id" sortable header="Id" style={{ minWidth: '0rem' }}></Column>
                     <Column field="name" sortable header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    {/* <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
-                    {/* <Column field="Nchapiters" header="Nombre de Chapiter" body={nchapitersBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
                     <Column field="category" header="Category" body={categoryBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="chapiter" header="Cours" body={courseBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
+                    <Column field="labs" header="Labs" body={labsBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="order" header="Order" body={orderBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
                     <Column field="updatedAt" header="Date de modification" filterField="updatedAt" body={dateUpdatedBodyTemplate} style={{ minWidth: '0rem' }}

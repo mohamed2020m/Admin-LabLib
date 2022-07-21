@@ -90,7 +90,7 @@ const codelabs = () => {
 
     const hideDialog = () => {
         setSubmitted(false);
-        setUserDialog(false);
+        // setUserDialog(false);
     }
 
     const hideDeleteCodelabDialog = () => {
@@ -101,7 +101,7 @@ const codelabs = () => {
         setDeleteCodelabsDialog(false);
     }
 
-    const saveUser = () => {
+    const saveLab = () => {
         setSubmitted(true);
 
         if (codelab.name.trim()) {
@@ -121,7 +121,7 @@ const codelabs = () => {
             }
 
             setCodelabs(_Users);
-            setUserDialog(false);
+            // setUserDialog(false);
             setCodelab(emptyLab);
         }
     }
@@ -163,9 +163,23 @@ const codelabs = () => {
         setDeleteCodelabsDialog(true);
     }
 
-    const deleteSelectedCodelabs = () => {
+    const deleteSelectedCodelabs = async () => {
         let _Codelabs = codelabs.filter(val => !selectedCodelabs.includes(val));
         setCodelabs(_Codelabs);
+        try{
+            let res = await DelLabs(codelab.id)
+            if (!res.ok){
+                if(Array.isArray(res) && res.length === 0) return "error";
+                let r = await res.json()
+                throw r[0].message;
+            }
+            else{
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Category supprimé avec succès', life: 3000 });
+            }
+        }
+        catch (err){
+            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+        } 
         setDeleteCodelabsDialog(false);
         setSelectedCodelabs(null);
         toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Codelabs supprimés avec succès', life: 3000 });
@@ -281,7 +295,7 @@ const codelabs = () => {
     const CodelabDialogFooter = (
         <React.Fragment>
             <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveUser} />
+            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveLab} />
         </React.Fragment>
     );
     const deleteCodelabDialogFooter = (
@@ -301,7 +315,7 @@ const codelabs = () => {
         <>
             <Helmet>
                 <script>
-                    document.title = "Codelabs"
+                    document.title = "Labs"
                 </script>
             </Helmet>
             <div className="datatable-crud">
@@ -315,14 +329,11 @@ const codelabs = () => {
                         globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun codelab trouvé." responsiveLayout="scroll">
                         <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
                         <Column field="id" header="Id" sortable style={{ minWidth: '0rem' }}></Column>
-                        <Column field="name" header="Title" sortable body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="name" header="Title" sortable body={titleBodyTemplate} style={{ minWidth: '13rem' }}></Column>
                         <Column field="duration" header="Durée" body={durationBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                        <Column field="chapter" header="Chapiter" sortable body={chapterBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                        <Column field="steps" header="Step" body={stepsBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                        {/* <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column> */}
-                        {/* <Column field="title" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
-                        {/* <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column> */}
+                        <Column field="chapter" header="Chapiter" sortable body={chapterBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="steps" header="Step" body={stepsBodyTemplate} style={{ minWidth: '1=0rem' }}></Column>
                         <Column field="createdAt" header="Créé à" filterField="createdAt" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}
                             filter filterElement={dateFilterTemplate} ></Column>
                         <Column field="updatedAt" header="Modifié à" filterField="updatedAt" body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}

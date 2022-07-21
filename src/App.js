@@ -11,12 +11,14 @@ import Home from "./pages/home";
 import Users from './pages/users';
 import NewCategorie from "./pages/newCategorie";
 import Categories from "./pages/Categories";
-import NewLab from "./pages/newLab";
-import Labs from "./pages/labsList";
-import NewChapiter from "./pages/newChapiter";
-import Chapiter from "./pages/ChapiterList";
 import NewCours from "./pages/newCourse";
 import Cours from "./pages/Cours";
+import NewChapiter from "./pages/newChapiter";
+import Chapiter from "./pages/ChapiterList";
+import NewLab from "./pages/newLab";
+import Steps from "./pages/stepsList";
+import NewStep from "./pages/newStep";
+import Labs from "./pages/labsList";
 import Profile from "./pages/profile";
 import Settings from "./pages/settings";
 import NoPage from "./pages/nopage";
@@ -69,12 +71,14 @@ const App = () => {
                                 <Route path="users" element={<Users />} />
                                 <Route path="NewCategorie" element={<NewCategorie />} />
                                 <Route path="categories" element={<Categories />} />
-                                {/* <Route path="NewLab" element={<NewLab />} /> */}
-                                <Route path="labs" element={<Labs />} />
-                                <Route path="NewChapiter" element={<NewChapiter />} /> 
-                                <Route path="chapiters" element={<Chapiter />} />
                                 <Route path="NewCours" element={<NewCours />} />
                                 <Route path="cours" element={<Cours />} />
+                                <Route path="NewChapiter" element={<NewChapiter />} /> 
+                                <Route path="chapiters" element={<Chapiter />} />
+                                {/* <Route path="NewLab" element={<NewLab />} /> */}
+                                <Route path="labs" element={<Labs />} />
+                                <Route path="steps" element={<Steps />} />
+                                {/* <Route path="NewSteps" element={<NewSteps />} /> */}
                                 <Route path="profile" element={<Profile />} />
                                 <Route path="settings" element={<Settings />} />
                                 <Route path="*" element={<NoPage />} />    
