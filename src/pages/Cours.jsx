@@ -52,6 +52,7 @@ const Cours = () => {
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -60,7 +61,7 @@ const Cours = () => {
             setIsLoading(false);
         });
         initFilters();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -131,7 +132,6 @@ const Cours = () => {
                     let res = await PutCourse(course.id, _Category);
                     if (res.ok){
                         let d = await res.json();
-                        console.log(d);
                         toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
                     }
                     else{
@@ -145,9 +145,10 @@ const Cours = () => {
                 } 
             }
             else {
-                console.log("creating... ")
-                let res = await PostCourse(formData)
-                console.log("finished!");
+                // this block is not used yet! by leeuw
+                // console.log("creating... ")
+                // let res = await PostCourse(formData)
+                // console.log("finished!");
                 console.log("res: ", res);
                 _Categories.push(_Category);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
@@ -187,6 +188,7 @@ const Cours = () => {
         catch (err){
             toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
         } 
+        setIsDeleted(preIsDeleted => (!preIsDeleted));
         setDeleteCourseDialog(false);
         setCourse(emptyCourse);
     }
@@ -241,11 +243,11 @@ const Cours = () => {
     }
 
     const nchapitersBodyTemplate = (rowData) => {
-        return <span>{rowData.nchapiters || 0}</span>
+        return <span>{rowData.chapters || 0}</span>
     }
     
     const categoryBodyTemplate = (rowData) => {
-        return <span>{rowData.nchapiters || "None"}</span>
+        return <span>{rowData.category || "None"}</span>
     }
     
     const descriptionBodyTemplate = (rowData) => {
@@ -298,7 +300,7 @@ const Cours = () => {
         );
     }
 
-    let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
+    // let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
 
     const header = (
         <div className="table-header">
@@ -364,7 +366,7 @@ const Cours = () => {
     }
 
     const headerTemplate = (options) => {
-        const { className, chooseButton, uploadButton, cancelButton } = options;
+        const { className, chooseButton} = options;
         const value = totalSize/10000;
         const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
 
@@ -436,7 +438,7 @@ const Cours = () => {
         <>
         <Helmet>
             <script>
-                document.title = "Courses"
+                document.title = "Cours"
             </script>
         </Helmet>
         <div className="datatable-crud">
@@ -451,12 +453,12 @@ const Cours = () => {
                     globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} 
                     emptyMessage="Aucun Cours trouvé." responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                    <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
-                    <Column field="name" header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="id" sortable header="Id" style={{ minWidth: '0rem' }}></Column>
+                    <Column field="name" sortable header="Nom" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    {/* <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
                     <Column field="Nchapiters" header="Nombre de Chapiter" body={nchapitersBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                    <Column field="category" header="Category" body={categoryBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="category" header="Categorie" body={categoryBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
                     <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
@@ -486,7 +488,7 @@ const Cours = () => {
             }
             <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
                 <div className="field">
-                    <label htmlFor="name">Title</label>
+                    <label htmlFor="name">Titre</label>
                     <InputText id="name" value={course.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !course.name })} />
                     {submitted && !course.name && <small className="p-error">Name is required.</small>}
                 </div>

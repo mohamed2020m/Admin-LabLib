@@ -91,17 +91,32 @@ export const links = [
     title: 'CodeLabs',
     links: [
       {
-        name: 'Gerer les CodeLabs',
-        url: 'Codelabs',
+        name: 'Gerer les Labs',
+        url: 'labs',
         icon: <MdManageAccounts />,
       },
       {
-        name: 'Nouveux CodeLab',
-        url: 'NewCodelab',
+        name: 'Nouveux Lab',
+        url: 'NewLab',
         icon: <BsPlusLg />,
       },
     ],
   },
+  {
+    title: 'Steps',
+    links: [
+      {
+        name: 'Gerer les Steps',
+        url: 'Steps',
+        icon: <MdManageAccounts />,
+      },
+      {
+        name: 'Nouveux Step',
+        url: 'NewStep',
+        icon: <BsPlusLg />,
+      },
+    ],
+  }
 ];
 
 

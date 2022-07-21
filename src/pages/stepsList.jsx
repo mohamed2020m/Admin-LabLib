@@ -8,68 +8,64 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
 
+import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { CodelabService } from '../service/CodelabService.js';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
+
 import '../css/DataTableCrud.css';
 
-const codelabs = () => {
+import {GetLabs, PutLabs, DelLabs} from '../service/StepsService';
 
-    let emptyUser = {
-        code: null,
-        title: '',
+const steps = () => {
+
+    let emptyStep = {
+        id: "",
+        name: '',
         description: '',
-        chapiter: '',
-        cours: '',
-        dateOfCreation:null
+        level:'',
+        chapter: '',
+        steps:"",
+        createdAt:null,
+        updatedAt:null
     };
 
-    const [codelabs, setCodelabs] = useState(null);
+    const [steps, setCodelabs] = useState(null);
     const [CodelabDialog, setCodelabDialog] = useState(false);
     const [deleteCodelabDialog, setDeleteCodelabDialog] = useState(false);
     const [deleteCodelabsDialog, setDeleteCodelabsDialog] = useState(false);
-    const [codelab, setCodelab] = useState(emptyUser);
+    const [codelab, setCodelab] = useState(emptyStep);
     const [selectedCodelabs, setSelectedCodelabs] = useState(null);
-    // const [submitted, setSubmitted] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    const codelabService = new CodelabService();
+    const [isDeleted, setIsDeleted] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
-        const timer  = setTimeout(() => {
-            codelabService.getUsers().then(data => setCodelabs(updateDateUsers(data)));
+        GetLabs().then(data =>{
+            setCodelabs(data);
             initFilters();
             setIsLoading(false);
-        }, 5000)
-        return () => clearTimeout(timer);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const updateDateUsers = (rowData) => {
-        return [...rowData || []].map(d => {
-            d.dateOfCreation = new Date(d.dateOfCreation);
-            return d;
-        });
-    }
+        })
+    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const formatDate = (value) => {
-        return value.toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
+        if(value){
+            return value.toLocaleString('en-US');
+        }
+        return 
     }
-    
+
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
         let _filters = { ...filters };
@@ -92,10 +88,10 @@ const codelabs = () => {
         setGlobalFilter('');
     }
 
-    // const hideDialog = () => {
-    //     setSubmitted(false);
-    //     setUserDialog(false);
-    // }
+    const hideDialog = () => {
+        setSubmitted(false);
+        setUserDialog(false);
+    }
 
     const hideDeleteCodelabDialog = () => {
         setDeleteCodelabDialog(false);
@@ -105,67 +101,61 @@ const codelabs = () => {
         setDeleteCodelabsDialog(false);
     }
 
-    // const saveUser = () => {
-    //     setSubmitted(true);
+    const saveUser = () => {
+        setSubmitted(true);
 
-    //     if (codelab.name.trim()) {
-    //         let _Users = [...codelabs];
-    //         let _User = {...codelab};
-    //         if (codelab.id) {
-    //             const index = findIndexById(codelab.id);
+        if (codelab.name.trim()) {
+            let _Users = [...steps];
+            let _User = {...codelab};
+            if (codelab.id) {
+                const index = findIndexById(codelab.id);
 
-    //             _Users[index] = _User;
-    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Updated', life: 3000 });
-    //         }
-    //         else {
-    //             _User.id = createId();
-    //             _User.image = 'codelab-placeholder.svg';
-    //             _Users.push(_User);
-    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Created', life: 3000 });
-    //         }
+                _Users[index] = _User;
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Updated', life: 3000 });
+            }
+            else {
+                _User.id = createId();
+                _User.image = 'codelab-placeholder.svg';
+                _Users.push(_User);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Created', life: 3000 });
+            }
 
-    //         setCodelabs(_Users);
-    //         setUserDialog(false);
-    //         setCodelab(emptyUser);
-    //     }
-    // }
+            setCodelabs(_Users);
+            setUserDialog(false);
+            setCodelab(emptyStep);
+        }
+    }
 
     const confirmDeleteCodelab = (codelab) => {
         setCodelab(codelab);
         setDeleteCodelabDialog(true);
     }
 
-    const deleteCodelab = () => {
-        let _Codelab = codelabs.filter(val => val.id !== codelab.id);
-        setCodelabs(_Codelab);
+    const deleteCodelab = async () => {
+        let _Codelabs = steps.filter(val => val.id !== codelab.id);
+        setCodelabs(_Codelabs);
+        try{
+            let res = await DelLabs(codelab.id);
+            if (!res.ok){
+                if(Array.isArray(res) && res.length === 0) return "error";
+                let r = await res.json()
+                throw r[0].message;
+            }
+            else{
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'le Lab supprimé avec succès', life: 3000 });
+            }
+        }
+        catch (err){
+            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+        } 
+        setIsDeleted(preIsDeleted => (!preIsDeleted))
         setDeleteCodelabDialog(false);
-        setCodelab(emptyUser);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Codelab supprimé avec succès', life: 3000 });
+        setCodelab(emptyStep);
+        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Le Lab supprimé avec succès', life: 3000 });
     }
 
-    // const findIndexById = (id) => {
-    //     let index = -1;
-    //     for (let i = 0; i < codelabs.length; i++) {
-    //         if (codelabs[i].id === id) {
-    //             index = i;
-    //             break;
-    //         }
-    //     }
-
-    //     return index;
-    // }
-
-    // const createId = () => {
-    //     let id = '';
-    //     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    //     for (let i = 0; i < 5; i++) {
-    //         id += chars.charAt(Math.floor(Math.random() * chars.length));
-    //     }
-    //     return id;
-    // }
-
-    const editCodelab = (product) => {
-        setCodelab({...product});
+    const editCodelab = (codelab) => {
+        setCodelab({...codelab});
         setCodelabDialog(true);
     }
 
@@ -174,34 +164,53 @@ const codelabs = () => {
     }
 
     const deleteSelectedCodelabs = () => {
-        let _Codelabs = codelabs.filter(val => !selectedCodelabs.includes(val));
+        let _Codelabs = steps.filter(val => !selectedCodelabs.includes(val));
         setCodelabs(_Codelabs);
         setDeleteCodelabsDialog(false);
         setSelectedCodelabs(null);
         toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Codelabs supprimés avec succès', life: 3000 });
     }
 
-    // const onInputChange = (e, name) => {
-    //     const val = (e.target && e.target.value) || '';
-    //     let _User = {...codelab};
-    //     _User[`${name}`] = val;
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || '';
+        let _User = {...codelab};
+        _User[`${name}`] = val;
 
-    //     setCodelab(_User);
-    // }
-
-    // const onInputNumberChange = (e, name) => {
-    //     const val = e.value || 0;
-    //     let _User = {...codelab};
-    //     _User[`${name}`] = val;
-
-    //     setCodelab(_User);
-    // }
-    
-    const titleBodyTemplate = (rowData) => {
-        return <span>{rowData.title}</span>
+        setCodelab(_User);
     }
 
+    
+    const titleBodyTemplate = (rowData) => {
+        return <span>{rowData.name}</span>
+    }
 
+    const durationBodyTemplate = (rowData) => {
+        return <span>{msToTime(rowData.duration)}</span>
+    }
+
+    function msToTime(duration) {
+        let milliseconds = parseInt((duration % 1000) / 100),
+        seconds = Math.floor((duration / 1000) % 60),
+        minutes = Math.floor((duration / (1000 * 60)) % 60),
+        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+        
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    }
+
+    const levelBodyTemplate = (rowData) => {
+        return <span className={`lab-badger lab-status-${rowData.level}`}>{rowData.level}</span>
+    }
+
+    const chapterBodyTemplate = (rowData) => {
+        return <span>{rowData.chapter}</span>
+    }
+
+    const stepsBodyTemplate = (rowData) => {
+        return <span>{rowData.steps}</span>
+    }
     const filterApplyTemplate = (options) => {
         return <Button type="button" icon="pi pi-check" onClick={options.filterApplyCallback} className="p-button-success"></Button>
     }
@@ -230,8 +239,12 @@ const codelabs = () => {
     //     return <span className={`codelab-badge status-${rowData.status}`}>{rowData.status}</span>;
     // }
 
-    const dateBodyTemplate = (rowData) => {
-        return formatDate(rowData.dateOfCreation);
+    const createdDateBodyTemplate = (rowData) => {
+        return formatDate(new Date(rowData.createdAt));
+    }
+
+    const updatedDateBodyTemplate = (rowData) => {
+        return formatDate(new Date(rowData.updatedAt));
     }
 
     const dateFilterTemplate = (options) => {
@@ -241,7 +254,7 @@ const codelabs = () => {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editCodelab(rowData)} />
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning mr-2" onClick={() => editCodelab(rowData)} />
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteCodelab(rowData)} />
             </React.Fragment>
         );
@@ -265,12 +278,12 @@ const codelabs = () => {
             </span>
         </div>
     );
-    // const UserDialogFooter = (
-    //     <React.Fragment>
-    //         <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-    //         <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveUser} />
-    //     </React.Fragment>
-    // );
+    const CodelabDialogFooter = (
+        <React.Fragment>
+            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
+            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveUser} />
+        </React.Fragment>
+    );
     const deleteCodelabDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCodelabDialog} />
@@ -295,18 +308,24 @@ const codelabs = () => {
                 <Toast ref={toast} />
                 {!isLoading ?
                 <div className="card">
-                    <DataTable ref={dt} value={codelabs} selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
+                    <DataTable ref={dt} value={steps} selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
                         dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} codelabs"
+                        currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} steps"
                         globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun codelab trouvé." responsiveLayout="scroll">
                         <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                        <Column field="code" header="Code" style={{ minWidth: '0rem' }}></Column>
-                        <Column field="title" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                        <Column field="description" header="Description"  style={{ minWidth: '20rem' }}></Column>
-                        <Column field="chapiter" header="Chapiter" body={chapiterBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                        <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column>
-                        <Column field="dateOfCreation" header="Date de creation" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
+                        <Column field="id" header="Id" sortable style={{ minWidth: '0rem' }}></Column>
+                        <Column field="name" header="Title" sortable body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="duration" header="Durée" body={durationBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="chapter" header="Chapiter" sortable body={chapterBodyTemplate} style={{ minWidth: '0rem' }}></Column>
+                        <Column field="steps" header="Step" body={stepsBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        {/* <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column> */}
+                        {/* <Column field="title" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
+                        {/* <Column field="cours" header="Cours" body={coursBodyTemplate}  style={{ minWidth: '0rem' }}></Column> */}
+                        <Column field="createdAt" header="Créé à" filterField="createdAt" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}
+                            filter filterElement={dateFilterTemplate} ></Column>
+                        <Column field="updatedAt" header="Modifié à" filterField="updatedAt" body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}
                             filter filterElement={dateFilterTemplate} ></Column>
                         <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                     </DataTable>
@@ -330,7 +349,7 @@ const codelabs = () => {
                     <Skeleton count={8} height={25}/>
                 </div>
                 }
-                {/* <Dialog visible={UserDialog} style={{ width: '450px' }} header="codelab Details" modal className="p-fluid" footer={UserDialogFooter} onHide={hideDialog}>
+                <Dialog visible={CodelabDialog} style={{ width: '450px' }} header="codelab Details" modal className="p-fluid" footer={CodelabDialogFooter} onHide={hideDialog}>
                     {codelab.image && <img src={`images/codelab/${codelab.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={codelab.image} className="codelab-image block m-auto pb-3" />}
                     <div className="field">
                         <label htmlFor="name">Name</label>
@@ -341,25 +360,25 @@ const codelabs = () => {
                         <label htmlFor="description">Description</label>
                         <InputTextarea id="description" value={codelab.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
                     </div>
-
+                    {/*
                     <div className="field">
-                        <label className="mb-3">Category</label>
+                        <label className="mb-3">Labs</label>
                         <div className="formgrid grid">
                             <div className="field-radiobutton col-6">
-                                <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={codelab.category === 'Accessories'} />
-                                <label htmlFor="category1">Accessories</label>
+                                <RadioButton inputId="Labs1" name="Labs" value="Accessories" onChange={onLabsChange} checked={codelab.Labs === 'Accessories'} />
+                                <label htmlFor="Labs1">Accessories</label>
                             </div>
                             <div className="field-radiobutton col-6">
-                                <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={codelab.category === 'Clothing'} />
-                                <label htmlFor="category2">Clothing</label>
+                                <RadioButton inputId="Labs2" name="Labs" value="Clothing" onChange={onLabsChange} checked={codelab.Labs === 'Clothing'} />
+                                <label htmlFor="Labs2">Clothing</label>
                             </div>
                             <div className="field-radiobutton col-6">
-                                <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={codelab.category === 'Electronics'} />
-                                <label htmlFor="category3">Electronics</label>
+                                <RadioButton inputId="Labs3" name="Labs" value="Electronics" onChange={onLabsChange} checked={codelab.Labs === 'Electronics'} />
+                                <label htmlFor="Labs3">Electronics</label>
                             </div>
                             <div className="field-radiobutton col-6">
-                                <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={codelab.category === 'Fitness'} />
-                                <label htmlFor="category4">Fitness</label>
+                                <RadioButton inputId="Labs4" name="Labs" value="Fitness" onChange={onLabsChange} checked={codelab.Labs === 'Fitness'} />
+                                <label htmlFor="Labs4">Fitness</label>
                             </div>
                         </div>
                     </div>
@@ -373,8 +392,8 @@ const codelabs = () => {
                             <label htmlFor="quantity">Quantity</label>
                             <InputNumber id="quantity" value={codelab.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
                         </div>
-                    </div>
-                </Dialog> */}
+                    </div>*/}
+                </Dialog> 
 
                 <Dialog visible={deleteCodelabDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>
                     <div className="confirmation-content">
@@ -386,7 +405,7 @@ const codelabs = () => {
                 <Dialog visible={deleteCodelabsDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabsDialogFooter} onHide={hideDeleteCodelabsDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                        {codelab && <span>Êtes-vous sûr de vouloir supprimer les codelabs sélectionnés?</span>}
+                        {codelab && <span>Êtes-vous sûr de vouloir supprimer les steps sélectionnés?</span>}
                     </div>
                 </Dialog>
             </div>
@@ -394,4 +413,4 @@ const codelabs = () => {
     );
 }
                 
-export default codelabs;
+export default steps;

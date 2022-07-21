@@ -11,8 +11,8 @@ import Home from "./pages/home";
 import Users from './pages/users';
 import NewCategorie from "./pages/newCategorie";
 import Categories from "./pages/Categories";
-import NewCodeLabs from "./pages/CodeLabs";
-import CodeLabs from "./pages/CodelabsList";
+import NewLab from "./pages/newLab";
+import Labs from "./pages/labsList";
 import NewChapiter from "./pages/newChapiter";
 import Chapiter from "./pages/ChapiterList";
 import NewCours from "./pages/newCourse";
@@ -28,7 +28,6 @@ import { useStateContext } from './contexts/ContextProvider';
 const App = () => {
     const {pathname, activeMenu, setPathName} = useStateContext();
 
-  
     // useEffect(() => {
     //     const currentPath = localStorage.getItem('currentPath');
     //     console.log("currentPath: ", currentPath)
@@ -70,8 +69,8 @@ const App = () => {
                                 <Route path="users" element={<Users />} />
                                 <Route path="NewCategorie" element={<NewCategorie />} />
                                 <Route path="categories" element={<Categories />} />
-                                {/* <Route path="NewCodelab" element={<NewCodeLabs />} /> */}
-                                <Route path="codelabs" element={<CodeLabs />} />
+                                {/* <Route path="NewLab" element={<NewLab />} /> */}
+                                <Route path="labs" element={<Labs />} />
                                 <Route path="NewChapiter" element={<NewChapiter />} /> 
                                 <Route path="chapiters" element={<Chapiter />} />
                                 <Route path="NewCours" element={<NewCours />} />

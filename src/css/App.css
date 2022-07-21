@@ -156,8 +156,8 @@ to { transform: rotate(1turn) }
   color: #805B36;
 }
 
-.user-badge {
-  border-radius: 2px;
+.user-badge, .lab-badger {
+  border-radius: 8px;
   padding: .25em .5rem;
   text-transform: uppercase;
   font-weight: 700;
@@ -174,6 +174,22 @@ to { transform: rotate(1turn) }
 .status-offline{
   background: #FFCDD2;
   color: #C63737;
+  padding:8px 15px;
+}
+
+.lab-status-hard{
+  background: #FFCDD2;
+  color: #C63737;
+  padding:8px 15px;
+}
+.lab-status-medium{
+  background: #f3bb7f;
+  color: #eeb67b;
+  padding:8px 15px;
+}
+.lab-status-easy{
+  background: #C8E6C9;
+  color: #1f4d23;
   padding:8px 15px;
 }
 

@@ -17,7 +17,7 @@ export default function NewCategory(){
         <>
         <Helmet>
                 <script>
-                    document.title = "New Category"
+                    document.title = "Nouvelle Catégorie"
                 </script>
         </Helmet>
         <Toast ref={toast} />
@@ -25,10 +25,10 @@ export default function NewCategory(){
             <div className="max-w-screen-md mx-auto p-5">
                 <div className="text-center mb-16">
                     <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
-                        New Category
+                        Nouvelle Catégorie
                     </p>
                     <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-                        Create a New <span className="text-indigo-600">Category</span>
+                        Créer un nouveau <span className="text-indigo-600">Catégorie</span>
                     </h3>
                 </div>
                 <Formik
@@ -90,17 +90,16 @@ export default function NewCategory(){
                 >
                     {(formik) => (
                         <form className="w-full" onSubmit={formik.handleSubmit} encType="multipart/form-data">
-                            {formik.isSubmitting && <div>Loading...</div>}
                             <div className="flex flex-wrap -mx-3 mb-6">
                                 <div className="w-full px-3 mb-6 md:mb-0">
                                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
-                                        Name
+                                        Nom
                                     </label>
                                     <input
                                         className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         id="name" 
                                         type="text"
-                                        placeholder="Desktop Dev" 
+                                        placeholder="Nom de Catégorie" 
                                         {...formik.getFieldProps('name')}
                                     />
                                     {formik.touched.name && formik.errors.name ? (
@@ -111,7 +110,7 @@ export default function NewCategory(){
                             <div className="flex flex-wrap -mx-3 mb-6">
                                 <div className="w-full px-3 mb-6 md:mb-0">
                                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="image">
-                                        Upload image
+                                        Upload une image
                                     </label>
                                     <input
                                         ref={inputRef}
@@ -144,6 +143,7 @@ export default function NewCategory(){
                                     </label>
                                     <textarea 
                                         id="description"
+                                        placeholder="Description"
                                         rows="5" 
                                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                         {...formik.getFieldProps('description')}
@@ -158,7 +158,7 @@ export default function NewCategory(){
                                     type="submit"
                                     disabled={formik.isSubmitting}
                                     >
-                                        Create Category
+                                        {formik.isSubmitting ? "Creating..." : "Créer une Catégorie"}
                                     </button>
                                 </div>
                             </div>

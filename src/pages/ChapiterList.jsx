@@ -52,6 +52,7 @@ const Chapter = () => {
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -75,7 +76,7 @@ const Chapter = () => {
         }
         fetchData();
         initFilters();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -202,6 +203,8 @@ const Chapter = () => {
         catch (err){
             toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
         } 
+        setIsDeleted(preIsDeleted => (!preIsDeleted));
+        setDeleteCoursesDialog(false);
         setDeleteChapiterDialog(false);
         setChapiter(emptyChapiter);
     }
@@ -470,8 +473,8 @@ const Chapter = () => {
                     globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} 
                     emptyMessage="Aucun Chapiter trouvé." responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                    <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
-                    <Column field="name" header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="id" sortable header="Id" style={{ minWidth: '0rem' }}></Column>
+                    <Column field="name" sortable header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
                     {/* <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
                     {/* <Column field="Nchapiters" header="Nombre de Chapiter" body={nchapitersBodyTemplate} style={{ minWidth: '10rem' }}></Column> */}
@@ -487,7 +490,7 @@ const Chapter = () => {
             </div>
             :
             <div className="card py-4">
-                <div class="flex flex-wrap justify-between mb-3">
+                <div className="flex flex-wrap justify-between mb-3">
                     <div className='flex'>
                         <div className='mr-3'>
                             <Skeleton width={100} height={50}/>

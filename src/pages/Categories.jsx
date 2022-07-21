@@ -15,13 +15,10 @@ import { FileUpload } from 'primereact/fileupload';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { classNames } from 'primereact/utils';
-import { CategoryService } from '../service/CategoryService';
 import { Toast } from 'primereact/toast';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 
@@ -52,13 +49,14 @@ const Categories = () => {
     const fileUploadRef = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
         GetCategory().then(data => setCategories(data));
         setIsLoading(false);
         initFilters();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // const updateDateCategory = (rowData) => {
     //     return [...rowData || []].map(d => {
@@ -89,9 +87,7 @@ const Categories = () => {
     const initFilters = () => {
         setFilters({
             'global': { value: null, matchMode: FilterMatchMode.CONTAINS }, 
-            // 'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
             'date': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-            // 'status': { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
         });
         setGlobalFilter('');
     }
@@ -194,6 +190,7 @@ const Categories = () => {
         catch (err){
             toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
         } 
+        setIsDeleted(preIsDeleted => (!preIsDeleted));
         setDeleteCategoryDialog(false);
         setCategory(emptyCategory);
     }
@@ -447,8 +444,8 @@ const Categories = () => {
                     globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} 
                     emptyMessage="Aucun Category trouvé." responsiveLayout="scroll" className="p-datatable-striped">
                     <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
-                    <Column field="id" header="Id" tyle={{ minWidth: '0rem' }}></Column>
-                    <Column field="name" header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                    <Column field="id" sortable header="Id" style={{ minWidth: '0rem' }}></Column>
+                    <Column field="name" sortable header="Title" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
                     <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '13rem' }}
