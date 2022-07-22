@@ -18,7 +18,7 @@ import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-
+import {useStateContext} from '../contexts/ContextProvider'
 import '../css/DataTableCrud.css';
 
 import {GetSteps, PutSteps, DelSteps} from '../service/StepsService';
@@ -48,6 +48,11 @@ const steps = () => {
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [displayMaximizable, setDisplayMaximizable] = useState(false);
+    const [showContent, setShowContent] = useState("");
+    const {activeMenu, setActiveMenu} = useStateContext();
+
+    console.log(showContent)
 
     useEffect(() => {
         setIsLoading(true);
@@ -208,7 +213,38 @@ const steps = () => {
     }
 
     const contentBodyTemplate = (rowData) => {
-        return <span>{rowData.content}</span>
+        return <Button label="Preview" icon="pi pi-external-link" onClick={() => onClick('displayMaximizable', undefined ,rowData)} />
+    }
+
+    const dialogFuncMap = {
+        'displayMaximizable': setDisplayMaximizable,
+    }
+
+    const onClick = (name, position, rowData) => {
+        dialogFuncMap[`${name}`](true);
+        setActiveMenu(false)
+        setShowContent(rowData);
+        if (position) {
+            setPosition(position);
+        }
+    }
+
+    const onHide = (name) => {
+        setActiveMenu(true)
+        dialogFuncMap[`${name}`](false);
+    }
+
+    const renderFooter = (name) => {
+        return (
+            <div>
+                <Button label="No" icon="pi pi-times" onClick={() => onHide(name)} className="p-button-text" />
+                <Button label="Yes" icon="pi pi-check" onClick={() => onHide(name)} autoFocus />
+            </div>
+        );
+    }
+
+    const PreviewContent = (rowData) => {
+        return  rowData.content
     }
 
     const filterApplyTemplate = (options) => {
@@ -316,13 +352,11 @@ const steps = () => {
                         <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
                         <Column field="id" header="Id" sortable style={{ minWidth: '0rem' }}></Column>
                         <Column field="name" header="Title" sortable body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
-                        <Column field="content" header="Content" body={contentBodyTemplate} style={{ minWidth: '35rem' }}></Column>
+                        <Column field="content" header="Content" body={contentBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="lab" header="Lab" sortable body={labBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="rang" header="Rang" body={rangBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                        <Column field="createdAt" header="Créé à" filterField="createdAt" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}
-                            filter filterElement={dateFilterTemplate} ></Column>
-                        <Column field="updatedAt" header="Modifié à" filterField="updatedAt" body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}
-                            filter filterElement={dateFilterTemplate} ></Column>
+                        <Column field="createdAt" header="Créé à" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}></Column>
+                        <Column field="updatedAt" header="Modifié à"  body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}></Column>
                         <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                     </DataTable>
                 </div>
@@ -345,6 +379,10 @@ const steps = () => {
                     <Skeleton count={8} height={25}/>
                 </div>
                 }
+                <Dialog header="Aperçu le Step" visible={displayMaximizable} maximizable blockScroll modal style={{ width: '70vw', height:'50vw'}} baseZIndex={2000000000000} footer={renderFooter('displayMaximizable')} onHide={() => onHide('displayMaximizable')}>
+                    <iframe className='previewStep' srcdoc={PreviewContent(showContent)} height="100%" width="100%"></iframe>
+                    
+                </Dialog>
                 <Dialog visible={StepDialog} style={{ width: '450px' }} header="step Details" modal className="p-fluid" footer={StepDialogFooter} onHide={hideDialog}>
                     {step.image && <img src={`images/step/${step.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={step.image} className="step-image block m-auto pb-3" />}
                     <div className="field">
