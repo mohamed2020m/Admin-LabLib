@@ -134,6 +134,14 @@ export const levels =[
   }
 ]
 
+export const StepsBar = [
+  {label: 'Title'},
+  {label: 'Duration'},
+  {label: 'Lab'},
+  {label: 'Content'},
+  {label: 'Done'}
+];
+
 export const userProfileData = [
   {
     icon: <CgProfile />,

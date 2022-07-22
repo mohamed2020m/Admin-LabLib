@@ -132,7 +132,6 @@ const steps = () => {
 
     const deleteStep = async () => {
         let _Steps = steps.filter(val => val.id !== step.id);
-        setSteps(_Steps);
         try{
             let res = await DelSteps(step.id);
             if (!res.ok){
@@ -142,6 +141,7 @@ const steps = () => {
             }
             else{
                 toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'le Lab supprimé avec succès', life: 3000 });
+                setSteps(_Steps);
             }
         }
         catch (err){
@@ -150,7 +150,6 @@ const steps = () => {
         setIsDeleted(preIsDeleted => (!preIsDeleted))
         setDeleteStepDialog(false);
         setStep(emptyStep);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Le Lab supprimé avec succès', life: 3000 });
     }
 
     const editStep = (step) => {
@@ -164,8 +163,7 @@ const steps = () => {
 
     const deleteSelectedSteps = async () => {
         let allDelelted = 0;
-        let _Steps = codelabs.filter(val => !selectedSteps.includes(val));
-        setSteps(_Steps);
+        let _Steps = steps.filter(val => !selectedSteps.includes(val));
         for(let item of selectedSteps){
             try{
                 let res = await DelSteps(item.id);
@@ -185,7 +183,7 @@ const steps = () => {
         }
         setDeleteStepsDialog(false);
         setSelectedSteps(null);
-        allDelelted === selectedSteps.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
+        allDelelted === selectedSteps.length &&  setSteps(_Steps); toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
     }
 
     const onInputChange = (e, name) => {
@@ -319,8 +317,8 @@ const steps = () => {
                         <Column field="id" header="Id" sortable style={{ minWidth: '0rem' }}></Column>
                         <Column field="name" header="Title" sortable body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="content" header="Content" body={contentBodyTemplate} style={{ minWidth: '35rem' }}></Column>
-                        <Column field="lab" header="Lab" sortable body={labBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                        <Column field="rang" header="Rang" body={rangBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="lab" header="Lab" sortable body={labBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="rang" header="Rang" body={rangBodyTemplate} style={{ minWidth: '0rem' }}></Column>
                         <Column field="createdAt" header="Créé à" filterField="createdAt" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}
                             filter filterElement={dateFilterTemplate} ></Column>
                         <Column field="updatedAt" header="Modifié à" filterField="updatedAt" body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}

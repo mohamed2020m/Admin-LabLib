@@ -5,19 +5,22 @@ import { Steps } from 'primereact/steps';
 import { Editor } from 'primereact/editor';
 import { Formik, Field} from 'formik';
 import * as Yup from 'yup';
-import {PostLabs} from '../service/LabsService';
+import {PostSteps} from '../service/StepsService';
 import {GetCategoryItem, GetCategory} from '../service/CategoryService';
 import {GetCourseItem} from './../service/CourseService'
-import {levels} from '../data/dummy'
+import {GetChapiterItem} from './../service/ChapiterService'
+import {StepsBar} from '../data/dummy'
 
 export default function NewLabs(){
     const [categories, setCategories] = useState([]);
     const [courses, setCourses] = useState([]);
     const [chapiters, setChapiters] = useState([]);
+    const [labs, setLabs] = useState([]);
     const [idCategory, setIdCategory] = useState("");
     const [idCourse, setIdCourse] = useState("");
+    const [idChapiter, setIdChapiter] = useState("");
     const [currentBox, setCurrentBox] = useState(0);
-    const [text, setText] = useState('<div>Hello World app!</div>');
+    // const [text, setText] = useState('<div>Hello World app!</div>');
 
     const toast = useRef(null);
     // const inputRef = useRef(null);
@@ -25,26 +28,18 @@ export default function NewLabs(){
     useEffect(() => {
         // getting categories from db
         GetCategory().then(data => setCategories(data));
-        // GetCourse().then(data => setCourses(data));
         idCategory && GetCategoryItem(idCategory).then(data => setCourses(data));
         idCourse && GetCourseItem(idCourse).then(data => setChapiters(data));
-    }, [idCategory, idCourse]); // eslint-disable-line react-hooks/exhaustive-deps
+        idChapiter && GetChapiterItem(idChapiter).then(data => setLabs(data));
+    }, [idCategory, idCourse, idChapiter]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const items = [
-        {label: 'Title'},
-        {label: 'Duration'},
-        {label: 'Lab'},
-        {label: 'Editing'},
-        {label: 'Done'}
-    ];
-
-
+    console.log("lab: ", labs);
     return(
         <>
         <Helmet>
-                <script>
-                    document.title = "Nouveau Step"
-                </script>
+            <script>
+                document.title = "Nouveau Step"
+            </script>
         </Helmet>
         <Toast ref={toast} />
         <div className='flex justify-center border-2 p-3 m-5'>
@@ -58,7 +53,7 @@ export default function NewLabs(){
                     </h3>
                 </div>
                 <Formik
-                    initialValues={{name: '', duration: '', lab: "", content:"", chapter:"",  category:"", course:""}}
+                    initialValues={{name: '', demo:null, rang:1, duration: '', lab: "", content:"kotlin is a programming....", chapter:"",  category:"", course:""}}
                     validationSchema={Yup.object({
                         name: Yup.string()
                         .max(45, 'Must be 15 characters or less'),
@@ -72,6 +67,7 @@ export default function NewLabs(){
                         })
                     }
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        console.log("values: ", values);
                         let data = new FormData();
                         for (let value in values) {
                             data.append(value, values[value]);
@@ -85,10 +81,10 @@ export default function NewLabs(){
                         };
                         
                         try{
-                            let res = await PostLabs(requestOptions)
+                            let res = await PostSteps(requestOptions)
                             if (res.ok){
                                 let d = await res.json();
-                                toast.current.show({ severity: 'success', summary: 'Created!', detail: "Le lab a été créé avec succès", life: 3000 });
+                                toast.current.show({ severity: 'success', summary: 'Created!', detail: "Le Step a été créé avec succès", life: 3000 });
                                 resetForm();
                             }
                             else{
@@ -107,7 +103,7 @@ export default function NewLabs(){
                     {(formik) => (
                         <>
                             <div className='pb-3 mb-3'>
-                                <Steps model={items} activeIndex={currentBox}  style={{height: '10%' }}/>
+                                <Steps model={StepsBar} activeIndex={currentBox}  style={{marginBottom: '20px' }}/>
                             </div>
                             <div className='mt-3'>
                             <form className="w-full" onSubmit={formik.handleSubmit} encType="multipart/form-data">
@@ -192,7 +188,6 @@ export default function NewLabs(){
                                         :
                                         <Field 
                                             id="course" name="course" as="select" disabled
-                                            value={formik.values.course} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
                                             className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         >
                                             <option disabled>Sélectionnez un Cours</option>
@@ -213,7 +208,7 @@ export default function NewLabs(){
                                         {idCourse ?
                                         <Field 
                                             id="chapter" name="chapter" as="select" 
-                                            value={formik.values.chapter ? formik.values.chapter : "Sélectionnez un Chapiter"} onChange={(e) => {formik.setFieldValue("chapter", e.target.value)}}
+                                            value={formik.values.chapter ? formik.values.chapter : "Sélectionnez un Chapiter"} onChange={(e) => {formik.setFieldValue("chapter", e.target.value); setIdChapiter(e.target.value)}}
                                             className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         >
                                             <option disabled>Sélectionnez un Chapiter</option>
@@ -223,11 +218,10 @@ export default function NewLabs(){
                                         </Field>
                                         :
                                         <Field 
-                                            id="course" name="course" as="select" disabled
-                                            value={formik.values.course} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
+                                            id="chapter" name="chapter" as="select" disabled
                                             className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         >
-                                            <option disabled>Sélectionnez un Cours</option>
+                                            <option disabled>Sélectionnez un Chapiter</option>
                                         </Field>
                                         }
                                         {formik.touched.chapter && formik.errors.chapter ? (
@@ -236,9 +230,44 @@ export default function NewLabs(){
                                     </div>
                                 </div>
                                 }
+                                {currentBox === 2 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="justify-between w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="lab">
+                                            Sélectionnez un Lab
+                                        </label>
+                                        {idChapiter ?
+                                        <Field 
+                                            id="lab" name="lab" as="select" 
+                                            value={formik.values.lab ? formik.values.lab : "Sélectionnez un Lab"} onChange={(e) => {formik.setFieldValue("lab", e.target.value)}}
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Lab</option>
+                                            {labs !== [] && labs.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.name}</option>
+                                            ))}
+                                        </Field>
+                                        :
+                                        <Field 
+                                            id="lab" name="lab" as="select" disabled
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Lab</option>
+                                        </Field>
+                                        }
+                                        {formik.touched.lab && formik.errors.lab ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.lab}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
                                 {currentBox === 3 &&
                                 <div className='my-3'>
-                                    <Editor style={{ height: '320px' }} value={text} onTextChange={(e) => setText(e.htmlValue)} />
+                                    <Editor 
+                                        id="content" style={{ height: '320px' }} name="content"
+                                        value={formik.values.content} onTextChange={(e) => formik.setFieldValue("content", e.target.value)} 
+                                        placeholder="Wring your Step here"
+                                    />
                                 </div>
                                 }
                                 <div className="flex  mb-6">
