@@ -143,7 +143,7 @@ const steps = () => {
                 throw r[0].message;
             }
             else{
-                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'le Lab supprimé avec succès', life: 3000 });
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'le Step supprimé avec succès', life: 3000 });
                 setSteps(_Steps);
             }
         }
@@ -186,7 +186,7 @@ const steps = () => {
         }
         setDeleteStepsDialog(false);
         setSelectedSteps(null);
-        allDelelted === selectedSteps.length &&  setSteps(_Steps); toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
+        allDelelted === selectedSteps.length &&  setSteps(_Steps); toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Steps supprimés avec succès', life: 3000 });
     }
 
     const onInputChange = (e, name) => {
@@ -341,7 +341,7 @@ const steps = () => {
                 <Toast ref={toast} />
                 {!isLoading ?
                 <div className="card">
-                    <DataTable ref={dt} value={steps} selection={selectedSteps} onSelectionChange={(e) => setSelectedSteps(e.value)}
+                    <DataTable ref={dt} value={steps} stripedRows removableSort selection={selectedSteps} onSelectionChange={(e) => setSelectedSteps(e.value)}
                         dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} steps"

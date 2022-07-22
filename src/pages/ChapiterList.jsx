@@ -197,7 +197,7 @@ const Chapter = () => {
                 throw r[0].message;
             }
             else{
-                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Category supprimé avec succès', life: 3000 });
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'le Chapiter supprimé avec succès', life: 3000 });
             }
         }
         catch (err){
@@ -488,7 +488,7 @@ const Chapter = () => {
             <Toast ref={toast} />
             {!isLoading ?
             <div className="card">
-                <DataTable ref={dt} value={chapiters} selection={selectedChapiters}
+                <DataTable ref={dt} value={chapiters} stripedRows removableSort  selection={selectedChapiters}
                     onSelectionChange={(e) => setSelectedChapiters(e.value)}
                     dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"

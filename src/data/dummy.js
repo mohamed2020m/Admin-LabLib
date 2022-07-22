@@ -88,7 +88,7 @@ export const links = [
     ],
   },
   {
-    title: 'CodeLabs',
+    title: 'Labs',
     links: [
       {
         name: 'Gerer les Labs',
@@ -122,15 +122,15 @@ export const links = [
 export const levels =[
   {
     id:1,
-    name:"Easy",
+    name:"Facile",
   },
   {
     id:2,
-    name:"Medium",
+    name:"Moyen",
   },
   {
     id:3,
-    name:"Hard",
+    name:"Difficile",
   }
 ]
 

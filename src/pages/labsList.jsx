@@ -219,7 +219,13 @@ const codelabs = () => {
     }
 
     const levelBodyTemplate = (rowData) => {
-        return <span className={`lab-badger lab-status-${rowData.level}`}>{rowData.level}</span>
+        if(rowData.level === 1){
+            return <span className={`lab-badger lab-status-Easy`}>Facile</span>
+        }else if(rowData.level === 2){
+            return  <span className={`lab-badger lab-status-Medium`}>Moyen</span>
+        }else if(rowData.level === 3){
+            return <span className={`lab-badger lab-status-Hard`}>Difficile</span>
+        }
     }
 
     const chapterBodyTemplate = (rowData) => {
@@ -330,7 +336,7 @@ const codelabs = () => {
                 <Toast ref={toast} />
                 {!isLoading ?
                 <div className="card">
-                    <DataTable ref={dt} value={codelabs} selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
+                    <DataTable ref={dt} value={codelabs} stripedRows removableSort selection={selectedCodelabs} onSelectionChange={(e) => setSelectedCodelabs(e.value)}
                         dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Montrant {first} à {last} des {totalRecords} codelabs"

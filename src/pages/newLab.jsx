@@ -62,7 +62,6 @@ export default function NewLabs(){
                         })
                     }
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
-                        console.log("values: ", values);
                         let data = new FormData();
                         for (let value in values) {
                             if(value === "duration") values[value] = Time(values[value])
@@ -125,7 +124,7 @@ export default function NewLabs(){
                                         className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         id="duration" 
                                         type="text"
-                                        placeholder="Example: 30:45" 
+                                        placeholder="Example: 01:45" 
                                         {...formik.getFieldProps('duration')}
                                     />
                                     {formik.touched.duration && formik.errors.duration ? (
@@ -146,7 +145,7 @@ export default function NewLabs(){
                                     >
                                         <option disabled>Sélectionnez le Niveau</option>
                                         {levels.map((item) => (
-                                            <option key={item.id} value={item.name}>{item.name}</option>
+                                            <option key={item.id} value={item.id}>{item.name}</option>
                                         ))}
                                     </Field>
                                     

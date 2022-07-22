@@ -451,7 +451,7 @@ const Categories = () => {
             <Toast ref={toast} />
             {!isLoading ?
             <div className="card">
-                <DataTable ref={dt} value={categories} selection={selectedCategories}
+                <DataTable ref={dt} value={categories}  stripedRows removableSort selection={selectedCategories}
                     onSelectionChange={(e) => setSelectedCategories(e.value)}
                     dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
