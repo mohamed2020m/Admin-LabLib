@@ -210,15 +210,30 @@ const Categories = () => {
         setDeleteCategoriesDialog(true);
     }
 
-    const deleteSelectedCategories = () => {
+    const deleteSelectedCategories = async () => {
+        let allDelelted = 0;
         let _categories = categories.filter(val => !selectedCategories.includes(val));
         setCategories(_categories);
-        selectedCategories.map((item) => {
-            DelCategory(item.id);
-        })
+        for(let item of selectedCategories){
+            try{
+                let res = await DelCategory(item.id);
+                if (!res.ok){
+                    if(Array.isArray(res) && res.length === 0) return "error";
+                    let r = await res.json()
+                    throw r[0].message;
+                }
+                else{
+                    allDelelted += 1;
+                }
+            }
+            catch (err){
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                break;
+            } 
+        }
         setDeleteCategoriesDialog(false);
         setSelectedCategories(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les categories supprimés avec succès', life: 3000 });
+        allDelelted === selectedCategories.length && toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les categories supprimés avec succès', life: 3000 });
     }
 
     const onInputFileChange = (e, name) => {

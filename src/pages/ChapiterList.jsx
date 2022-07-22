@@ -185,10 +185,10 @@ const Chapter = () => {
     }
 
     const deleteCategory = async () => {
-        let _categories = chapiters.filter((val) => {
+        let _chapiters = chapiters.filter((val) => {
             val.id !== chapiter.id;
         });
-        setChapiters(_categories);
+        setChapiters(_chapiters);
         try{
             let res = await DelChapiter(chapiter.id)
             if (!res.ok){
@@ -224,15 +224,30 @@ const Chapter = () => {
         setDeleteChapitersDialog(true);
     }
 
-    const deleteSelectedCategories = () => {
-        let _categories = chapiters.filter(val => !selectedChapiters.includes(val));
-        setChapiters(_categories);
-        selectedChapiters.map((item) => {
-            DelChapiter(item.id);
-        })
+    const deleteSelectedCategories = async () => {
+        let allDelelted = 0;
+        let _chapiters = chapiters.filter(val => !selectedChapiters.includes(val));
+        setChapiters(_chapiters);
+        for(let item of selectedChapiters){
+            try{
+                let res = await DelChapiter(item.id);;
+                if (!res.ok){
+                    if(Array.isArray(res) && res.length === 0) return "error";
+                    let r = await res.json()
+                    throw r[0].message;
+                }
+                else{
+                    allDelelted += 1;
+                }
+            }
+            catch (err){
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                break
+            }
+        }
         setDeleteChapitersDialog(false);
         setSelectedChapiters(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les chapiters supprimés avec succès', life: 3000 });
+        allDelelted === selectedChapiters.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les chapiters supprimés avec succès', life: 3000 });
     }
 
     const onInputFileChange = (e, name) => {

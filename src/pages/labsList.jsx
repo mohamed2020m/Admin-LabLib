@@ -164,25 +164,29 @@ const codelabs = () => {
     }
 
     const deleteSelectedCodelabs = async () => {
+        let allDelelted = 0;
         let _Codelabs = codelabs.filter(val => !selectedCodelabs.includes(val));
         setCodelabs(_Codelabs);
-        try{
-            let res = await DelLabs(codelab.id)
-            if (!res.ok){
-                if(Array.isArray(res) && res.length === 0) return "error";
-                let r = await res.json()
-                throw r[0].message;
+        for(let item of selectedCodelabs){
+            try{
+                let res = await DelLabs(item.id);
+                if (!res.ok){
+                    if(Array.isArray(res) && res.length === 0) return "error";
+                    let r = await res.json()
+                    throw r[0].message;
+                }
+                else{
+                    allDelelted += 1;
+                }
             }
-            else{
-                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Category supprimé avec succès', life: 3000 });
+            catch (err){
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                break;
             }
         }
-        catch (err){
-            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
-        } 
         setDeleteCodelabsDialog(false);
         setSelectedCodelabs(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Codelabs supprimés avec succès', life: 3000 });
+        allDelelted === selectedCodelabs.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
     }
 
     const onInputChange = (e, name) => {
@@ -371,39 +375,6 @@ const codelabs = () => {
                         <label htmlFor="description">Description</label>
                         <InputTextarea id="description" value={codelab.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
                     </div>
-                    {/*
-                    <div className="field">
-                        <label className="mb-3">Labs</label>
-                        <div className="formgrid grid">
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs1" name="Labs" value="Accessories" onChange={onLabsChange} checked={codelab.Labs === 'Accessories'} />
-                                <label htmlFor="Labs1">Accessories</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs2" name="Labs" value="Clothing" onChange={onLabsChange} checked={codelab.Labs === 'Clothing'} />
-                                <label htmlFor="Labs2">Clothing</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs3" name="Labs" value="Electronics" onChange={onLabsChange} checked={codelab.Labs === 'Electronics'} />
-                                <label htmlFor="Labs3">Electronics</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs4" name="Labs" value="Fitness" onChange={onLabsChange} checked={codelab.Labs === 'Fitness'} />
-                                <label htmlFor="Labs4">Fitness</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="formgrid grid">
-                        <div className="field col">
-                            <label htmlFor="price">Price</label>
-                            <InputNumber id="price" value={codelab.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                        </div>
-                        <div className="field col">
-                            <label htmlFor="quantity">Quantity</label>
-                            <InputNumber id="quantity" value={codelab.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
-                        </div>
-                    </div>*/}
                 </Dialog> 
 
                 <Dialog visible={deleteCodelabDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>

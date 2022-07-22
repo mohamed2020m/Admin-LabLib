@@ -131,7 +131,7 @@ export default function NewChapiter(){
                             </div>
                             <div className="flex flex-wrap -mx-3 mb-6">
                                 <div className="justify-between w-full px-3">
-                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="course">
                                         Sélectionnez un Cours
                                     </label>
                                     {id ? 
@@ -154,6 +154,7 @@ export default function NewChapiter(){
                                         <option disabled>Sélectionnez un Cours</option>
                                     </Field>
                                     }
+                                    
                                     {formik.touched.course && formik.errors.course ? (
                                         <div className="text-red-500 text-xs italic">{formik.errors.course}</div>
                                     ) : null}

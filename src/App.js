@@ -75,7 +75,7 @@ const App = () => {
                                 <Route path="cours" element={<Cours />} />
                                 <Route path="NewChapiter" element={<NewChapiter />} /> 
                                 <Route path="chapiters" element={<Chapiter />} />
-                                {/* <Route path="NewLab" element={<NewLab />} /> */}
+                                <Route path="NewLab" element={<NewLab />} />
                                 <Route path="labs" element={<Labs />} />
                                 <Route path="steps" element={<Steps />} />
                                 {/* <Route path="NewSteps" element={<NewSteps />} /> */}

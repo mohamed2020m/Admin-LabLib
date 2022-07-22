@@ -119,6 +119,20 @@ export const links = [
   }
 ];
 
+export const levels =[
+  {
+    id:1,
+    name:"Easy",
+  },
+  {
+    id:2,
+    name:"Medium",
+  },
+  {
+    id:3,
+    name:"Hard",
+  }
+]
 
 export const userProfileData = [
   {

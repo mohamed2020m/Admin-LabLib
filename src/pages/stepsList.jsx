@@ -92,15 +92,15 @@ const steps = () => {
         // setUserDialog(false);
     }
 
-    const hideDeleteCodelabDialog = () => {
+    const hideDeleteStepDialog = () => {
         setDeleteStepDialog(false);
     }
 
-    const hideDeleteCodelabsDialog = () => {
+    const hideDeleteStepsDialog = () => {
         setDeleteStepsDialog(false);
     }
 
-    const saveUser = () => {
+    const saveStep = () => {
         setSubmitted(true);
 
         if (step.name.trim()) {
@@ -125,12 +125,12 @@ const steps = () => {
         }
     }
 
-    const confirmDeleteCodelab = (step) => {
+    const confirmDeleteStep = (step) => {
         setStep(step);
         setDeleteStepDialog(true);
     }
 
-    const deleteCodelab = async () => {
+    const deleteStep = async () => {
         let _Steps = steps.filter(val => val.id !== step.id);
         setSteps(_Steps);
         try{
@@ -153,7 +153,7 @@ const steps = () => {
         toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Le Lab supprimé avec succès', life: 3000 });
     }
 
-    const editCodelab = (step) => {
+    const editStep = (step) => {
         setStep({...step});
         setStepDialog(true);
     }
@@ -162,12 +162,30 @@ const steps = () => {
         setDeleteStepsDialog(true);
     }
 
-    const deleteSelectedCodelabs = () => {
-        let _Steps = steps.filter(val => !selectedSteps.includes(val));
+    const deleteSelectedSteps = async () => {
+        let allDelelted = 0;
+        let _Steps = codelabs.filter(val => !selectedSteps.includes(val));
         setSteps(_Steps);
+        for(let item of selectedSteps){
+            try{
+                let res = await DelSteps(item.id);
+                if (!res.ok){
+                    if(Array.isArray(res) && res.length === 0) return "error";
+                    let r = await res.json()
+                    throw r[0].message;
+                }
+                else{
+                    allDelelted += 1;
+                }
+            }
+            catch (err){
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                break;
+            }
+        }
         setDeleteStepsDialog(false);
         setSelectedSteps(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Codelabs supprimés avec succès', life: 3000 });
+        allDelelted === selectedSteps.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
     }
 
     const onInputChange = (e, name) => {
@@ -238,8 +256,8 @@ const steps = () => {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning mr-2" onClick={() => editCodelab(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteCodelab(rowData)} />
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning mr-2" onClick={() => editStep(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteStep(rowData)} />
             </React.Fragment>
         );
     }
@@ -262,22 +280,22 @@ const steps = () => {
             </span>
         </div>
     );
-    const CodelabDialogFooter = (
+    const StepDialogFooter = (
         <React.Fragment>
             <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveUser} />
+            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveStep} />
         </React.Fragment>
     );
-    const deleteCodelabDialogFooter = (
+    const deleteStepDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCodelabDialog} />
-            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteCodelab} />
+            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteStepDialog} />
+            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteStep} />
         </React.Fragment>
     );
-    const deleteCodelabsDialogFooter = (
+    const deleteStepsDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCodelabsDialog} />
-            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedCodelabs} />
+            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteStepsDialog} />
+            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedSteps} />
         </React.Fragment>
     );
 
@@ -329,7 +347,7 @@ const steps = () => {
                     <Skeleton count={8} height={25}/>
                 </div>
                 }
-                <Dialog visible={StepDialog} style={{ width: '450px' }} header="step Details" modal className="p-fluid" footer={CodelabDialogFooter} onHide={hideDialog}>
+                <Dialog visible={StepDialog} style={{ width: '450px' }} header="step Details" modal className="p-fluid" footer={StepDialogFooter} onHide={hideDialog}>
                     {step.image && <img src={`images/step/${step.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={step.image} className="step-image block m-auto pb-3" />}
                     <div className="field">
                         <label htmlFor="name">Name</label>
@@ -340,49 +358,16 @@ const steps = () => {
                         <label htmlFor="description">Description</label>
                         <InputTextarea id="description" value={step.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
                     </div>
-                    {/*
-                    <div className="field">
-                        <label className="mb-3">Labs</label>
-                        <div className="formgrid grid">
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs1" name="Labs" value="Accessories" onChange={onLabsChange} checked={step.Labs === 'Accessories'} />
-                                <label htmlFor="Labs1">Accessories</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs2" name="Labs" value="Clothing" onChange={onLabsChange} checked={step.Labs === 'Clothing'} />
-                                <label htmlFor="Labs2">Clothing</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs3" name="Labs" value="Electronics" onChange={onLabsChange} checked={step.Labs === 'Electronics'} />
-                                <label htmlFor="Labs3">Electronics</label>
-                            </div>
-                            <div className="field-radiobutton col-6">
-                                <RadioButton inputId="Labs4" name="Labs" value="Fitness" onChange={onLabsChange} checked={step.Labs === 'Fitness'} />
-                                <label htmlFor="Labs4">Fitness</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="formgrid grid">
-                        <div className="field col">
-                            <label htmlFor="price">Price</label>
-                            <InputNumber id="price" value={step.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                        </div>
-                        <div className="field col">
-                            <label htmlFor="quantity">Quantity</label>
-                            <InputNumber id="quantity" value={step.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} integeronly />
-                        </div>
-                    </div>*/}
                 </Dialog> 
 
-                <Dialog visible={deleteStepDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>
+                <Dialog visible={deleteStepDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteStepDialogFooter} onHide={hideDeleteStepDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
                         {step && <span>Êtes-vous sûr de vouloir supprimer <b>{step.title}</b>?</span>}
                     </div>
                 </Dialog>
 
-                <Dialog visible={deleteStepsDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabsDialogFooter} onHide={hideDeleteCodelabsDialog}>
+                <Dialog visible={deleteStepsDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteStepsDialogFooter} onHide={hideDeleteStepsDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
                         {step && <span>Êtes-vous sûr de vouloir supprimer les steps sélectionnés?</span>}

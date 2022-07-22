@@ -1,263 +1,256 @@
-import React, { useEffect, useState , useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react'
 import Helmet from "react-helmet"
-import { FileUpload } from 'primereact/fileupload';
-import { useFormik } from 'formik';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { Dialog } from 'primereact/dialog';
-import { classNames } from 'primereact/utils';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
-import './../css/Form.css';
-import htmlLogo96 from '../data/html-5-96.png'
+import { Toast } from 'primereact/toast';
+import { Formik, Field} from 'formik';
+import * as Yup from 'yup';
+import {PostLabs} from '../service/LabsService';
+import {GetCategoryItem, GetCategory} from '../service/CategoryService';
+import {GetCourseItem} from './../service/CourseService'
+import {levels} from '../data/dummy'
 
-
-const Codelab = () => {
-    const [showMessage, setShowMessage] = useState(false);
-    const [formData, setFormData] = useState({});
-    const [listCours, setListCours] = useState(null);
-    const [coursSelected, setCoursSelected] = useState(false);
-    const [listChapitres, setListChapitres] = useState(null);
-    const [listChapitre, setListChapitre] = useState(null);
-    const [description, setDescription] = useState('');
-    const [totalSize, setTotalSize] = useState(0);
+export default function NewLabs(){
+    const [categories, setCategories] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [chapiters, setChapiters] = useState([]);
+    const [idCategory, setIdCategory] = useState("");
+    const [idCourse, setIdCourse] = useState("");
     const toast = useRef(null);
-    const fileUploadRef = useRef(null);
+    // const inputRef = useRef(null);
 
-    const dataList = [
-        {
-            name: 'Application Mobile', 
-            chapitres:[
-                {name: 'Kotlin'},
-                {name: 'Java'},
-                {name: 'Flutter'},
-                {name: 'C#'},
-                {name: 'Android Studio'}
-            ]
-        },
-        {
-            name: 'Application Web', 
-            chapitres:[
-                {name: 'HTML'},
-                {name: 'CSS'},
-                {name: 'PHP'},
-                {name: 'JQuery'},
-                {name: 'Boostrap'},
-                {name: 'Javascript'}
-            ]
-        },
-        {
-            name: 'Application Desktop',
-            chapitres:[
-                {name: 'C#'},
-                {name: '.NET'},
-                {name: 'VBScript'},
-            ]
-        },
-        {
-            name: 'ERP', 
-            chapitres:[
-                {name: 'introduction a ERP'},
-                {name: 'Cloud ERP'},
-            ]
-        }
-    ];
+    useEffect(() => {
+        // getting categories from db
+        GetCategory().then(data => setCategories(data));
+        // GetCourse().then(data => setCourses(data));
+        idCategory && GetCategoryItem(idCategory).then(data => setCourses(data));
+        idCourse && GetCourseItem(idCourse).then(data => setChapiters(data));
+    }, [idCategory, idCourse]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const onCoursChange = (e) => {
-        setListCours(e.value);
-        setCoursSelected(true);
-        setListChapitres(e.value.chapitres)
-    }
 
-    const onChapiterChange = (e) => {
-        setListChapitre(e.value);
-    }
-
-    const formik = useFormik({
-        initialValues: {
-            title: '',
-            chapitre: '',
-            cours: ''
-        },
-        validate: (data) => {
-            let errors = {};
-
-            if (!data.title) {
-                errors.title = 'Le titre est requis.';
-            }
-
-            if (!data.chapitre) {
-                errors.chapitre = 'chapitre est requis.';
-            }
-            else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.chapitre)) {
-                errors.chapitre = 'Invalid chapitre address. E.g. example@chapitre.com';
-            }
-
-            if (!data.cours) {
-                errors.cours = 'cours est requis.';
-            }
-
-            if (!data.description) {
-                errors.description = 'description est requis.';
-            }
-            return errors;
-        },
-        onSubmit: (data) => {
-            setFormData(data);
-            setShowMessage(true);
-
-            formik.resetForm();
-        }
-    });
-
-    const isFormFieldValid = (name) => !!(formik.touched[name] && formik.errors[name]);
-    const getFormErrorMessage = (name) => {
-        return isFormFieldValid(name) && <small className="p-error">{formik.errors[name]}</small>;
-    };
-
-    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
-
-    // upload a file
-    const onTemplateSelect = (e) => {
-        console.log(e.files)
-        let _totalSize = totalSize;
-        _totalSize = e.files[0].size;
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = 0;
-        e.files.forEach(file => {
-            _totalSize += (file.size || 0);
-        });
-
-        setTotalSize(_totalSize);
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
-
-    const headerTemplate = (options) => {
-        const { className, chooseButton, cancelButton } = options;
-        const value = totalSize/10000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
-
-        return (
-            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
-                {chooseButton}
-                {cancelButton}
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
-            </div>
-        );
-    }
-
-    const itemTemplate = (file, props) => {
-        return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{width: '60%', border:'3px solid red;'}}>
-                    <img alt={file.name} role="presentation" src={htmlLogo96} width={100} />
-                    <span className="flex flex-column text-left ml-3">
-                        {file.name}
-                        <small>{new Date().toLocaleDateString()}</small>
-                    </span>
-                </div>
-                <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                {/* <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} /> */}
-            </div>
-        )
-    }
-
-    const emptyTemplate = () => {
-        return (
-            <div className="flex align-items-center flex-column">
-                <img src={htmlLogo96} className="mt-3 p-5" style={{'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}} />
-                <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5">Drag and Drop Html File Here</span>
-            </div>
-        )
-    }
-
-    const chooseOptions = {label: 'Choisir', icon: 'pi pi-fw pi-plus', className: 'color-[#03c9d7]'};
-    // const uploadOptions = {label: 'Uplaod', icon: 'pi pi-upload', className: 'p-button-success'};
-    const cancelOptions = {label: 'Annuler', icon: 'pi pi-times', className: 'p-button-danger'};
-
-    return (
+    return(
         <>
         <Helmet>
                 <script>
-                    document.title = "New Codelab"
+                    document.title = "Nouveau Lab"
                 </script>
-            </Helmet>
-        <div className="from">
-            <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
-                <div className="flex align-items-center flex-column pt-6 px-3">
-                    <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
-                    <h5>Codelab téléchargé avec succès</h5>
-                    <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-                        le Codelab titre <b>{formData.titre}</b> ; vérifie ici <b>{formData.chapitre}</b> dans le cours {formData.cours}.
+        </Helmet>
+        <Toast ref={toast} />
+        <div className='flex justify-center border-2 p-3 m-5'>
+            <div className="max-w-screen-md mx-auto p-5">
+                <div className="text-center mb-16">
+                    <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
+                        Nouveau Lab
                     </p>
+                    <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+                        Créer un Nouveau <span className="text-indigo-600">Lab</span>
+                    </h3>
                 </div>
-            </Dialog>
-            <h3 className='text-center mt-5 mb-3'>Créer un Codelab: </h3>
-            <div className="flex justify-center p-3">
-                <div className="card">
-                    <form onSubmit={formik.handleSubmit} className="p-fluid">
-                        <div className="field">
-                            <span className="p-float-label">
-                                <InputText id="title" name="title" value={formik.values.title} onChange={formik.handleChange} autoFocus className={classNames({ 'p-invalid': isFormFieldValid('title') })} />
-                                <label htmlFor="title" className={classNames({ 'p-error': isFormFieldValid('title') })}>Titre*</label>
-                            </span>
-                            {getFormErrorMessage('title')}
-                        </div>
-                        <div className="field">
-                            <span className="p-float-label">
-                                <InputTextarea id="description" name="description" value={formik.values.description} onChange={formik.handleChange} rows={3} cols={30} autoResize placeholder='Description' className={classNames({ 'p-invalid': isFormFieldValid('description') })}/>
-                            </span>
-                            {getFormErrorMessage('description')}
-                        </div>
-                        <div className='flex'>
-                            <div className="field flex-grow-1 ml-1">
-                                <span className="p-float-label p-input-icon-right">
-                                    <Dropdown disabled={!coursSelected} id="categorie" name="categorie" value={listChapitre} options={listChapitres} onChange={onChapiterChange} optionLabel="name" placeholder="Select a categorie" className={coursSelected && classNames({ 'p-invalid': isFormFieldValid('categorie') })} />
-                                </span>
-                                {coursSelected && getFormErrorMessage('categorie')}
+                <Formik
+                    initialValues={{name: '', duration: '', level: "", chapter:"",  category:"", course:""}}
+                    validationSchema={Yup.object({
+                        name: Yup.string()
+                        .max(45, 'Must be 15 characters or less'),
+                        // .required('Required'),
+                        duration: Yup.string(),
+                        // .required('Required'),
+                        level: Yup.string(),
+                        chapter: Yup.string(),
+                        course: Yup.string(),
+                        category: Yup.string()
+                        })
+                    }
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        let data = new FormData();
+                        for (let value in values) {
+                            data.append(value, values[value]);
+                        }
+                        setSubmitting(true);
+
+                        var requestOptions = {
+                            method: 'POST',
+                            body: data,
+                            redirect: 'follow'
+                        };
+                        
+                        try{
+                            let res = await PostLabs(requestOptions)
+                            if (res.ok){
+                                let d = await res.json();
+                                toast.current.show({ severity: 'success', summary: 'Created!', detail: "Le lab a été créé avec succès", life: 3000 });
+                                resetForm();
+                            }
+                            else{
+                                if(Array.isArray(res) && res.length === 0) return "error";
+                                let r = await res.json()
+                                throw r[0].message;
+                            }
+                        }
+                        catch (err){
+                            console.log("err: ", err);
+                            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                        } 
+                        setSubmitting(false);
+                    }}
+                >
+                    {(formik) => (
+                        <form className="w-full" onSubmit={formik.handleSubmit} encType="multipart/form-data">
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                                        Nom
+                                    </label>
+                                    <input
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="name" 
+                                        type="text"
+                                        placeholder="Nom de Lab" 
+                                        {...formik.getFieldProps('name')}
+                                    />
+                                    {formik.touched.name && formik.errors.name ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.name}</div>
+                                    ) : null}
+                                </div>
                             </div>
-                            <div className="field flex-grow-1 mr-1">
-                                <span className="p-float-label p-input-icon-right">
-                                    <Dropdown id="cours" name="cours" value={listCours} options={dataList} onChange={onCoursChange} optionLabel="name" placeholder="Select a Course" className={classNames({ 'p-invalid': isFormFieldValid('cours') })} />
-                                </span>
-                                {getFormErrorMessage('cours')}
+
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="duration">
+                                        duration
+                                    </label>
+                                    <input 
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="duration" 
+                                        type="number"
+                                        placeholder="Durée en milliseconde" 
+                                        {...formik.getFieldProps('duration')}
+                                    />
+                                    {formik.touched.description && formik.errors.description ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                    ) : null}
+                                </div>
                             </div>
-                            <div className="field flex-grow-1 ml-1">
-                                <span className="p-float-label p-input-icon-right">
-                                    <Dropdown disabled={!coursSelected} id="chapitre" name="chapitre" value={listChapitre} options={listChapitres} onChange={onChapiterChange} optionLabel="name" placeholder="Select a chapitre" className={coursSelected && classNames({ 'p-invalid': isFormFieldValid('chapitre') })} />
-                                </span>
-                                {coursSelected && getFormErrorMessage('chapitre')}
+
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="level">
+                                        Sélectionnez le Niveau
+                                    </label>
+                                    <Field 
+                                        id="level" name="level" as="select" 
+                                        value={formik.values.level ? formik.values.level : "Sélectionnez le Niveau"} onChange={(e) => {formik.setFieldValue("level", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez le Niveau</option>
+                                        {levels.map((item) => (
+                                            <option key={item.id} value={item.name}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    
+                                    {formik.touched.level && formik.errors.level ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.level}</div>
+                                    ) : null}
+                                </div>
                             </div>
-                        </div>
-                        <div className="field">
-                            <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" 
-                                accept=".html" maxFileSize={1000000}
-                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                                chooseOptions={chooseOptions} cancelOptions={cancelOptions}     
-                            />
-                        </div>
-                        <Button type="submit" label="Submit" className="mt-2" />
-                    </form>
-                </div>
+                            
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                        Sélectionnez une Catégorie
+                                    </label>
+                                    <Field 
+                                        id="category" name="category" as="select" 
+                                        value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value); setIdCategory(e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez une Catégorie</option>
+                                        {categories && categories.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    {formik.touched.category && formik.errors.category ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.category}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="course">
+                                        Sélectionnez un Cours
+                                    </label>
+                                    {idCategory ?
+                                    <Field 
+                                        id="course" name="course" as="select" 
+                                        value={formik.values.course ? formik.values.course : "Sélectionnez un Cours"} onChange={(e) => {formik.setFieldValue("course", e.target.value); setIdCourse(e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez un Cours</option>
+                                        {courses && courses.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    :
+                                    <Field 
+                                        id="course" name="course" as="select" disabled
+                                        value={formik.values.course} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez un Cours</option>
+                                    </Field>
+                                    }
+                                    {formik.touched.course && formik.errors.course ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.course}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="chapter">
+                                        Sélectionnez un Chapiter
+                                    </label>
+                                    {idCourse ?
+                                    <Field 
+                                        id="chapter" name="chapter" as="select" 
+                                        value={formik.values.chapter ? formik.values.chapter : "Sélectionnez un Chapiter"} onChange={(e) => {formik.setFieldValue("chapter", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez un Chapiter</option>
+                                        {chapiters !== [] && chapiters.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    :
+                                    <Field 
+                                        id="course" name="course" as="select" disabled
+                                        value={formik.values.course} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez un Cours</option>
+                                    </Field>
+                                    }
+                                    {formik.touched.chapter && formik.errors.chapter ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.chapter}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="flex justify-between w-full px-3">
+                                    <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                    type="submit"
+                                    disabled={formik.isSubmitting}
+                                    >
+                                        {formik.isSubmitting ? "Creating..." : "Créer un Lab"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            
+                        </form>
+                    )}
+                </Formik>
+
             </div>
         </div>
         </>
-    );
+    )
 }
-
-export default Codelab;

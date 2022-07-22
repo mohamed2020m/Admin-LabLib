@@ -8,6 +8,12 @@ export async function GetCourse() {
     return courses;
 }
 
+export async function GetCourseItem(id) {
+    const response = await fetch(`https://lablib-api.herokuapp.com/api/v1/course/${id}/list`);
+    const courses = await response.json();
+    return courses;
+}
+
 export async function PostCourse(newCourse) {
     return await fetch('https://lablib-api.herokuapp.com/api/v1/course', newCourse);
 }

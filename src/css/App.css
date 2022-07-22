@@ -177,17 +177,17 @@ to { transform: rotate(1turn) }
   padding:8px 15px;
 }
 
-.lab-status-hard{
+.lab-status-Hard{
   background: #FFCDD2;
   color: #C63737;
   padding:8px 15px;
 }
-.lab-status-medium{
+.lab-status-Medium{
   background: #f3bb7f;
   color: #eeb67b;
   padding:8px 15px;
 }
-.lab-status-easy{
+.lab-status-Easy, .lab-status-easy{
   background: #C8E6C9;
   color: #1f4d23;
   padding:8px 15px;
