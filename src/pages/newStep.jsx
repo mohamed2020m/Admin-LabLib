@@ -33,7 +33,6 @@ export default function NewLabs(){
         idChapiter && GetChapiterItem(idChapiter).then(data => setLabs(data));
     }, [idCategory, idCourse, idChapiter]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    console.log("lab: ", labs);
     return(
         <>
         <Helmet>
