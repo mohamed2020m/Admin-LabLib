@@ -339,3 +339,14 @@ img.flag {
       display: none;
   }
 }
+
+@media screen and (max-width:400px) {
+  .p-steps-title{
+    font-size: 10px !important;
+  }
+}
+
+.p-menuitem-link{
+  background-color: #fafbfb !important;
+  /* padding: 8px 6px; */
+}
