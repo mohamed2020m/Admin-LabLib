@@ -264,7 +264,7 @@ export default function NewLabs(){
                                 <div className='my-3'>
                                     <Editor 
                                         id="content" style={{ height: '320px' }} name="content"
-                                        value={formik.values.content} onTextChange={(e) => formik.setFieldValue("content", e.target.value)} 
+                                        value={formik.values.content} onTextChange={(e) => formik.setFieldValue("content", e.htmlValue)} 
                                         placeholder="Wring your Step here"
                                     />
                                 </div>
