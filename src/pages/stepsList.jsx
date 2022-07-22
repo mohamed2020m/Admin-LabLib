@@ -235,8 +235,7 @@ const steps = () => {
     const renderFooter = (name) => {
         return (
             <div>
-                <Button label="No" icon="pi pi-times" onClick={() => onHide(name)} className="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" onClick={() => onHide(name)} autoFocus />
+                <Button label="Close" icon="pi pi-times" onClick={() => onHide(name)} className="p-button-text" />
             </div>
         );
     }
