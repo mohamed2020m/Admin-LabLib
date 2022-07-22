@@ -10,6 +10,7 @@ import {GetCategoryItem, GetCategory} from '../service/CategoryService';
 import {GetCourseItem} from './../service/CourseService'
 import {GetChapiterItem} from './../service/ChapiterService'
 import {StepsBar} from '../data/dummy'
+import {Time} from '../helpers/convertTimeToMilliSec'
 
 export default function NewLabs(){
     const [categories, setCategories] = useState([]);
@@ -52,7 +53,7 @@ export default function NewLabs(){
                     </h3>
                 </div>
                 <Formik
-                    initialValues={{name: '', demo:null, rang:1, duration: '', lab: "", content:"kotlin is a programming....", chapter:"",  category:"", course:""}}
+                    initialValues={{name: '', demo:null, rang:1, duration: '', lab: "", content:"", chapter:"",  category:"", course:""}}
                     validationSchema={Yup.object({
                         name: Yup.string()
                         .max(45, 'Must be 15 characters or less'),
@@ -66,9 +67,9 @@ export default function NewLabs(){
                         })
                     }
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
-                        console.log("values: ", values);
                         let data = new FormData();
                         for (let value in values) {
+                            if(value === "duration") values[value] = Time(values[value])
                             data.append(value, values[value]);
                         }
                         setSubmitting(true);
@@ -130,13 +131,13 @@ export default function NewLabs(){
                                 <div className="flex flex-wrap -mx-3 mb-6">
                                     <div className="w-full px-3">
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="duration">
-                                            duration
+                                            Duration
                                         </label>
                                         <input 
                                             className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                             id="duration" 
-                                            type="number"
-                                            placeholder="Durée en milliseconde" 
+                                            type="text"
+                                            placeholder="Example: 30:45" 
                                             {...formik.getFieldProps('duration')}
                                         />
                                         {formik.touched.description && formik.errors.description ? (
@@ -265,14 +266,19 @@ export default function NewLabs(){
                                     <Editor 
                                         id="content" style={{ height: '320px' }} name="content"
                                         value={formik.values.content} onTextChange={(e) => formik.setFieldValue("content", e.htmlValue)} 
-                                        placeholder="Wring your Step here"
+                                        placeholder="Commencer à écrire le Step"
                                     />
                                 </div>
                                 }
+                                {/* {currentBox === 4 &&
+                                <div className='my-3'>
+                                    That's it Click now on Create step and it's done.
+                                </div>
+                                } */}
                                 <div className="flex  mb-6">
                                     {currentBox !== 0 && 
                                     <div className="flex justify-start w-full px-3">
-                                        <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                        <button className="shadow bg-slate-600 hover:bg-slate-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
                                         type="button"
                                         onClick={() => setCurrentBox(currentBox-1)}
                                         >
@@ -282,7 +288,7 @@ export default function NewLabs(){
                                     }
                                     { currentBox !== 4 &&
                                     <div className="flex justify-end w-full px-3">
-                                        <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                        <button className="shadow bg-green-700 hover:bg-green-400  focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
                                         type="button"
                                         onClick={() => setCurrentBox(currentBox+1)}
                                         >
@@ -296,7 +302,7 @@ export default function NewLabs(){
                                         type="submit"
                                         disabled={formik.isSubmitting}
                                         >
-                                            {formik.isSubmitting ? "Creating..." : "Créer un Lab"}
+                                            {formik.isSubmitting ? "Creating..." : "Créer un Step"}
                                         </button>
                                     </div>
                                     }  

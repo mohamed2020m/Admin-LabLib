@@ -52,8 +52,6 @@ const steps = () => {
     const [showContent, setShowContent] = useState("");
     const {activeMenu, setActiveMenu} = useStateContext();
 
-    console.log(showContent)
-
     useEffect(() => {
         setIsLoading(true);
         GetSteps().then(data =>{
@@ -379,8 +377,8 @@ const steps = () => {
                     <Skeleton count={8} height={25}/>
                 </div>
                 }
-                <Dialog header="Aperçu le Step" visible={displayMaximizable} maximizable blockScroll modal style={{ width: '70vw', height:'50vw'}} baseZIndex={2000000000000} footer={renderFooter('displayMaximizable')} onHide={() => onHide('displayMaximizable')}>
-                    <iframe className='previewStep' srcdoc={PreviewContent(showContent)} height="100%" width="100%"></iframe>
+                <Dialog header="Aperçu le Step" visible={displayMaximizable} maximizable modal style={{ width: '70vw', height:'50vw'}} baseZIndex={2000000000000} footer={renderFooter('displayMaximizable')} onHide={() => onHide('displayMaximizable')}>
+                    <iframe className='previewStep' srcDoc={PreviewContent(showContent)} height="100%" width="100%"></iframe>
                     
                 </Dialog>
                 <Dialog visible={StepDialog} style={{ width: '450px' }} header="step Details" modal className="p-fluid" footer={StepDialogFooter} onHide={hideDialog}>

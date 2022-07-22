@@ -286,7 +286,7 @@ const Chapter = () => {
     }
     
     const labsBodyTemplate = (rowData) => {
-        return <span>{rowData.labs || "None"}</span>
+        return <span>{rowData.labs}</span>
     }
 
     const orderBodyTemplate = (rowData) => {

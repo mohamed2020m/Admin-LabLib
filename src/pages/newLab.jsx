@@ -7,6 +7,7 @@ import {PostLabs} from '../service/LabsService';
 import {GetCategoryItem, GetCategory} from '../service/CategoryService';
 import {GetCourseItem} from './../service/CourseService'
 import {levels} from '../data/dummy'
+import {Time} from '../helpers/convertTimeToMilliSec'
 
 export default function NewLabs(){
     const [categories, setCategories] = useState([]);
@@ -45,10 +46,12 @@ export default function NewLabs(){
                     </h3>
                 </div>
                 <Formik
-                    initialValues={{name: '', duration: '', level: "", chapter:"",  category:"", course:""}}
+                    initialValues={{name: '', description:'', duration: '', level: "", chapter:"",  category:"", course:""}}
                     validationSchema={Yup.object({
                         name: Yup.string()
                         .max(45, 'Must be 15 characters or less'),
+                        description: Yup.string()
+                        .max(250, 'Must be 250 characters or less'),
                         // .required('Required'),
                         duration: Yup.string(),
                         // .required('Required'),
@@ -59,8 +62,10 @@ export default function NewLabs(){
                         })
                     }
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        console.log("values: ", values);
                         let data = new FormData();
                         for (let value in values) {
+                            if(value === "duration") values[value] = Time(values[value])
                             data.append(value, values[value]);
                         }
                         setSubmitting(true);
@@ -114,17 +119,17 @@ export default function NewLabs(){
                             <div className="flex flex-wrap -mx-3 mb-6">
                                 <div className="w-full px-3">
                                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="duration">
-                                        duration
+                                        Duration
                                     </label>
                                     <input 
                                         className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         id="duration" 
-                                        type="number"
-                                        placeholder="Durée en milliseconde" 
+                                        type="text"
+                                        placeholder="Example: 30:45" 
                                         {...formik.getFieldProps('duration')}
                                     />
-                                    {formik.touched.description && formik.errors.description ? (
-                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                    {formik.touched.duration && formik.errors.duration ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.duration}</div>
                                     ) : null}
                                 </div>
                             </div>
@@ -229,6 +234,25 @@ export default function NewLabs(){
                                     }
                                     {formik.touched.chapter && formik.errors.chapter ? (
                                         <div className="text-red-500 text-xs italic">{formik.errors.chapter}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                        Description
+                                    </label>
+                                    <textarea 
+                                        id="description"
+                                        rows="5" 
+                                        placeholder='Description'
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        {...formik.getFieldProps('description')}
+                                    >
+                                    </textarea>
+                                    {formik.touched.description && formik.errors.description ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
                                     ) : null}
                                 </div>
                             </div>

@@ -229,6 +229,10 @@ const codelabs = () => {
     const stepsBodyTemplate = (rowData) => {
         return <span>{rowData.steps}</span>
     }
+
+    const descriptionBodyTemplate = (rowData) => {
+        return <span>{rowData.description || "Empty!"}</span>
+    }
     const filterApplyTemplate = (options) => {
         return <Button type="button" icon="pi pi-check" onClick={options.filterApplyCallback} className="p-button-success"></Button>
     }
@@ -278,7 +282,7 @@ const codelabs = () => {
         );
     }
 
-    let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
+    // let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
 
     const header = (
         <div className="table-header">
@@ -338,6 +342,7 @@ const codelabs = () => {
                         <Column field="level" header="Niveau" body={levelBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="chapter" header="Chapiter" sortable body={chapterBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                         <Column field="steps" header="Step" body={stepsBodyTemplate} style={{ minWidth: '1=0rem' }}></Column>
+                        <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
                         <Column field="createdAt" header="Créé à" filterField="createdAt" body={createdDateBodyTemplate} style={{ minWidth: '13rem' }}
                             filter filterElement={dateFilterTemplate} ></Column>
                         <Column field="updatedAt" header="Modifié à" filterField="updatedAt" body={updatedDateBodyTemplate} style={{ minWidth: '13rem' }}
