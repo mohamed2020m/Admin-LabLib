@@ -21,10 +21,13 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Formik, Field} from 'formik';
+import * as Yup from 'yup';
 import '../css/DataTableCrud.css';
 
 
-import {GetCourse, PostCourse, PutCourse, DelCourse} from '../service/CourseService';
+import {GetCourse, PutCourse, DelCourse} from '../service/CourseService';
+import {GetCategory} from '../service/CategoryService';
 
 const Cours = () => {
     const url = 'https://lablib-api.herokuapp.com/api/v1/image';
@@ -49,10 +52,13 @@ const Cours = () => {
     const toast = useRef(null);
     // const [file, setFile] = useState(null);
     const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
     const dt = useRef(null);
+    const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isEdited, setIsEdited] = useState(false);
+    const [file, setFile] = useState(null);
+    const [fileDataURL, setFileDataURL] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -61,14 +67,32 @@ const Cours = () => {
             setIsLoading(false);
         });
         initFilters();
-    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
+        let fileReader, isCancel = false;
+        if (file) {
+            fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                const { result } = e.target;
+                if (result && !isCancel) {
+                setFileDataURL(result)
+                }
+            }
+            fileReader.readAsDataURL(file);
+        }
+        return () => {
+            isCancel = true;
+            if (fileReader && fileReader.readyState === 1) {
+                fileReader.abort();
+            }
+        }
+    }, [isDeleted, isEdited, file]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // const updateDateCategory = (rowData) => {
-    //     return [...rowData || []].map(d => {
-    //         d.dateOfCreation = new Date(d.dateOfCreation);
-    //         return d;
-    //     });
-    // }
+    const imageMimeType = /image\/(png|jpg|jpeg)/i;
+
+    const inputRef = useRef(null);
+
+    const resetFileInput = () => {
+        inputRef.current.value = null;
+    };
 
     const formatDate = (value) => {
         if(value){
@@ -99,12 +123,6 @@ const Cours = () => {
         setGlobalFilter('');
     }
 
-    // const openNew = () => {
-    //     setCourse(emptyCourse);
-    //     setSubmitted(false);
-    //     setCourseDialog(true);
-    // }
-
     const hideDialog = () => {
         setSubmitted(false);
         setCourseDialog(false);
@@ -118,52 +136,59 @@ const Cours = () => {
         setDeleteCoursesDialog(false);
     }
 
-    const saveCategory = async (File) => {
-        setSubmitted(true);
+    // const saveCategory = async (File) => {
+    //     setSubmitted(true);
 
-        if (course.name.trim()) {
-            let _Categories = [...courses];
-            let _Category = {...course};
+    //     if (course.name.trim()) {
+    //         let _Categories = [...courses];
+    //         let _Category = {...course};
 
-            if (course.id) {
-                const index = findIndexById(course.id);
-                _Categories[index] = _Category;
-                try{
-                    let res = await PutCourse(course.id, _Category);
-                    if (res.ok){
-                        let d = await res.json();
-                        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
-                    }
-                    else{
-                        if(Array.isArray(res) && res.length === 0) return "error";
-                        let r = await res.json()
-                        throw r[0].message;
-                    }
-                }
-                catch (err){
-                    toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
-                } 
-            }
-            else {
-                // this block is not used yet! by leeuw
-                // console.log("creating... ")
-                // let res = await PostCourse(formData)
-                // console.log("finished!");
-                console.log("res: ", res);
-                _Categories.push(_Category);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
-            }
-            setCourses(_Categories);
-            setCourseDialog(false);
-            setCourse(emptyCourse);
-        }
-    }
+    //         if (course.id) {
+    //             const index = findIndexById(course.id);
+    //             _Categories[index] = _Category;
+    //             try{
+    //                 let res = await PutCourse(course.id, _Category);
+    //                 if (res.ok){
+    //                     let d = await res.json();
+    //                     toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
+    //                 }
+    //                 else{
+    //                     if(Array.isArray(res) && res.length === 0) return "error";
+    //                     let r = await res.json()
+    //                     throw r[0].message;
+    //                 }
+    //             }
+    //             catch (err){
+    //                 toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+    //             } 
+    //         }
+    //         else {
+    //             // this block is not used yet! by leeuw
+    //             // console.log("creating... ")
+    //             // let res = await PostCourse(formData)
+    //             // console.log("finished!");
+    //             console.log("res: ", res);
+    //             _Categories.push(_Category);
+    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
+    //         }
+    //         setCourses(_Categories);
+    //         setCourseDialog(false);
+    //         setCourse(emptyCourse);
+    //     }
+    // }
 
     const editCategory = (course) => {
+        GetCategory().then(data => setCategories(data));
         setCourse({...course});
         setCourseDialog(true);
     }
 
+    const findIdCategory = (name) => {
+        const _category =  categories.filter(item => (
+            item.name === name
+        ));
+        if(_category.length) return _category[0].id
+    }
     const confirmDeleteCategory = (course) => {
         setCourse(course);
         setDeleteCourseDialog(true);
@@ -191,17 +216,6 @@ const Cours = () => {
         setIsDeleted(preIsDeleted => (!preIsDeleted));
         setDeleteCourseDialog(false);
         setCourse(emptyCourse);
-    }
-
-    const findIndexById = (id) => {
-        let index = -1;
-        for (let i = 0; i < courses.length; i++) {
-            if (courses[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-        return index;
     }
 
     const confirmDeleteSelected = () => {
@@ -234,28 +248,13 @@ const Cours = () => {
         allDelelted === selectedCourses.length && toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les courses supprimés avec succès', life: 3000 });
     }
 
-    const onInputFileChange = (e, name) => {
-        console.log("image: ", e);
-        const val = (e.files && e.files[0].name) || '';
-        let _Category = {...course};
-        _Category[`${name}`] = val;
-        setCourse(_Category);
-    }
-    
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _Category = {...course};
-        _Category[`${name}`] = val;
-        setCourse(_Category);
-    }
-
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
 
-    const levelBodyTemplate = (rowData) => {
-        return <span>{rowData.level || "None"}</span>
-    }
+    // const levelBodyTemplate = (rowData) => {
+    //     return <span>{rowData.level || "None"}</span>
+    // }
 
     const nchapitersBodyTemplate = (rowData) => {
         return <span>{rowData.chapters || 0}</span>
@@ -273,15 +272,14 @@ const Cours = () => {
         return <img src={`${url}/${rowData.image}`} onError={(e) => e.target.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAABmJLR0QA/wD/AP+gvaeTAAAE9ElEQVRoge2Ze2xTVRzHP/f2tmtHH2u3sQePhQ3lsYSgPEJC1EEIiCivgRgICzImI0wIExAVNJI4EzATGTrCIwoBIYIhIcFACCgKiCAvN2JiEGGQzbCtZYy+H9c/yupK260bhULS7z899/f7nfP73HNOT36nFQaMnqzD66sUoBAw8uTLAuxXqDXl0n3wBfEm6oKMQInXYUcUYHq8abqpQgkwtT2VyhZyfS4ADotajgs9ABjUy0rZy3UAuDwCy3YMDIzgfQkwCgAItTLi1ceEDiap/VOuz0U+TgAuoA7YdRoPQ3JaAT98e8npIPf0txXXBUB+hLzBEh9bpkegoJk/LGoDM17TbuZvmdVsO9YbAI8veObFWgG0/tkWGoJ9j1rCwFGvPr51jrGe7m0zVHbEm6HbEv4eMSSxbeKhBHy8lICPlxLw8VJ08IKAZuQoEKMLV6Snk/xiAT0KxqLsm9MFGtGfR4iuRpI6DwHDrNmklq+kYVEx9vO/R86tN5D27gdox40PAnBcPE/jJx/jrrvRYR5j8UKMJaXcmj0T19W/Hh5eYUjBuGAh7uvXcFy+FBlcqyV7y9eocvOwnjiO7cRPyE4H6uEj0U+ZTvb2ndQXF0V8ASkjk5S583D+eQXXtehuNJ3CmxYvQdQbuL3mPWSPJ2KcceFiVLl5NH++npY9uwL2e0ePYD12lKyN1aS//yH1pcVh+6cuW4GgUtG0rgJ8vqjgO9zESQMGops8DeuJH7H9eipinCBJ6CZNxllbQ8ve3SF++9kz3D2wH/Xzw1H26Rvi1wwbQY+x42g9dBDnldqowDuGFwRSy1cie72YN1aiMJrQvTYlbKiUkYmo1WK/cA7k8HWe7fRJAFT9n3mAQCT1nZX4bFbM1VVIGZloJ7zycPDa8RNRPzeMll07cN+sQztxEulr1qLs3Sf0PdX+W5fXYomYSLbb/bEaTZBdP2MWqv7PYtm6GW9TE7pphfRcW4Go03cPXlCrMS1egqfxNnd2bPfbJKXfKUV1QEUlUW/AWFKK+2Ydd/ftvZ9HAkHwf3bWP5zR+GYJUmYW5qoN+Gy2mME+KNOiMhSGFJor1yG7XF3uHwKv7NUbw5y5OGouc+/IDzGBDCdVbh66qYXYTv6M7dQv3RojZG1Mby9DUCUhSBIZFesCdmVOPwDSylfgs1oB8DQ3Y97wWbcSpy5fhaBQIOr1ZHy6PmBv+0Knr/4osBru+nrMmzaEHAYh8ApTKgBJg/JJGpQfklQzanSg7bWYubNtc+BcFhQd7NO20sLrj1WkpgGgHjI0bHjyCwWBtuffBixbq5EdwfftkGz1b80LO1hK0XxMZUu5+fpU3Nf/CfLJPhlkGVVuXkT2tlPK29QIwK1Z08LGmcqWklI0nxsTxuC1mCOOBzGqKn13W3BeqSW5YAxSVnaIX1CrMcwpwtfaiqPmj1ikBGJYEpurqxDVGrK++JKkwf9vNykrm8zKKpR9+mLZ8hWyyxmrlNFVldHIfu43GivWkrZqNb2++RZ33Q1ktxtVv1wQRVp276Tluz2xSgd0Ad5x8Tz2M6fxNNRHjGk9eADHpQvoZ75B0uB8BKWK1kMH/fYOKtL2sp87izKnH96WO53GJn50ipcS8PFSAj5eSsDHS089fMel25MrsyjD9/Gm6JYEeZ/ktHnLNcmSLCPPoN1f+U+wzAjyPofVt/w/cSyJn0mj7McAAAAASUVORK5CYII="} alt={rowData.image} className="course-image" />
     }
 
-    const filterApplyTemplate = (options) => {
-        return <Button type="button" icon="pi pi-check" onClick={options.filterApplyCallback} className="p-button-success"></Button>
-    }
+    // const filterApplyTemplate = (options) => {
+    //     return <Button type="button" icon="pi pi-check" onClick={options.filterApplyCallback} className="p-button-success"></Button>
+    // }
 
-    const filterClearTemplate = (options) => {
-        return <Button type="button" icon="pi pi-times" onClick={options.filterClearCallback} className="p-button-secondary"></Button>;
-    }
+    // const filterClearTemplate = (options) => {
+    //     return <Button type="button" icon="pi pi-times" onClick={options.filterClearCallback} className="p-button-secondary"></Button>;
+    // }
 
-    
     // const statusFilterTemplate = (options) => {
     //     return <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterCallback(e.value, options.index)} itemTemplate={statusItemTemplate} placeholder="Sélectionnez un statut" className="p-column-filter"/>;
     // }
@@ -336,12 +334,12 @@ const Cours = () => {
             </span>
         </div>
     );
-    const CategoryDialogFooter = (
-        <React.Fragment>
-            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveCategory} />
-        </React.Fragment>
-    );
+    // const CategoryDialogFooter = (
+    //     <React.Fragment>
+    //         <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
+    //         <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveCategory} />
+    //     </React.Fragment>
+    // );
     const deleteCategoryDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCategoryDialog} />
@@ -355,100 +353,6 @@ const Cours = () => {
         </React.Fragment>
     );
 
-
-    // Uploading file
-    
-    const onTemplateSelect = (e) => {
-        console.log("e: ", e.files[0]);
-        let _totalSize = e.files[0].size || 0;
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = e.files[0].size || 0;
-
-        setTotalSize(_totalSize);
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
-
-    const headerTemplate = (options) => {
-        const { className, chooseButton} = options;
-        const value = totalSize/10000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
-
-        return (
-            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
-                <div style={{width:"40px", heigth:"20px"}}>
-                    {chooseButton}
-                </div>
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
-            </div>
-        );
-    }
-
-    const itemTemplate = (file, props) => {
-        return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{width: '90%'}}>
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
-                    <div className='flex flex-grow-1'>
-                        <div style={{width: '100%'}}>
-                            <div className="text-left ml-3">
-                                {file.name}
-                            </div>
-                            <div className="text-left ml-3">
-                                <small>{new Date().toLocaleDateString()}</small>
-                            </div>
-                            <div className="text-left ml-3">
-                                <Tag value={props.formatSize} severity="warning" className="px-3 py-2"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <Button type="button" icon="pi pi-times" className="w-8 h-8 p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
-                </div>
-            </div>
-        )
-    }
-
-    const emptyTemplate = () => {
-        return (
-            <div className="flex flex-column justify-center items-center">
-                <div className='flex items-center justify-content-center'>
-                    <i className="pi pi-image mt-3 p-5" style={{'fontSize': '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
-                </div>
-                <div className='flex items-center justify-center'>
-                    <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5 ml-2">Faites glisser et déposez l'image ici</span>
-                </div>
-            </div>
-        )
-    }
-
-    const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'w-16 h-16 custom-choose-btn p-button-rounded p-button-outlined'};
-    const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
-    const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
-
-    const myUploader = (e) => {
-        const file = e.files[0];
-        console.log("Files: ", e.files[0], " file: ", file);
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-            console.log("inside the myUploader, e: ", e.target.result);
-            saveCategory(e.target.result);
-        };
-        fileReader.readAsDataURL(file);
-    };
-    //End uploading File
     return (
         <>
         <Helmet>
@@ -501,29 +405,157 @@ const Cours = () => {
                 <Skeleton count={8} height={25}/>
             </div>
             }
-            <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
-                <div className="field">
-                    <label htmlFor="name">Titre</label>
-                    <InputText id="name" value={course.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !course.name })} />
-                    {submitted && !course.name && <small className="p-error">Name is required.</small>}
-                </div>
-                {/* <div className="field">
-                    <label htmlFor="image">Upload Image</label>
-                    <FileUpload id="image" ref={fileUploadRef} name="image"
-                        accept="image/*" maxFileSize={1000000}
-                        onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                        headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                        chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}   
-                        className={classNames({ 'p-invalid': submitted && !course.image })}
-                        customUpload uploadHandler={myUploader} onChange={(e) => onInputFileChange(e, 'image')} required
-                    />
-                    {submitted && !course.image && <small className="p-error">image is required.</small>}
-                </div> */}
-                <div className="field">
-                    <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={course.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !course.description })}/>
-                    {submitted && !course.description && <small className="p-error">Description is required.</small>}
-                </div>
+            <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid"  onHide={hideDialog}>
+                <Formik
+                    initialValues={{name: course.name, description: course.description, category: findIdCategory(course.category) , image: `${url}/${course.image}`}}
+                    validationSchema={Yup.object({
+                        name: Yup.string()
+                        .max(15, 'Must be 15 characters or less'),
+                        // .required('Required'),
+                        description: Yup.string()
+                        .max(250, 'Must be 250 characters or less'),
+                        // .required('Required'),
+                        category: Yup.string(),
+
+                        // .required('Required'),
+                    })}
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        let data = new FormData();
+                        for (let value in values) {
+                            data.append(value, values[value]);
+                        }
+                        setSubmitting(true);
+
+                        let requestOptions = {
+                            method: 'PUT',
+                            body: data,
+                            redirect: 'follow'
+                        };
+                        
+                        try{
+                            let res = await PutCourse(course.id, requestOptions)
+                            if (res.ok){
+                                let d = await res.json();
+                                toast.current.show({ severity: 'success', summary: 'Créé avec succès!', detail: "Le cours a été modifie avec succès", life: 3000 });
+                                setIsEdited(preIsEdited => (!preIsEdited));
+                                setCourseDialog(false);
+                                resetForm();
+                                resetFileInput();
+                            }
+                            else{
+                                if(Array.isArray(res) && res.length === 0) return "error";
+                                let r = await res.json()
+                                throw r[0].message;
+                            }
+                        }
+                        catch (err){
+                            console.log("err: ", err);
+                            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                        } 
+                        setSubmitting(false);
+                    }}
+                >
+                    {formik => (
+                        <form className="w-full" onSubmit={formik.handleSubmit}>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                                        Nom
+                                    </label>
+                                    <input
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="name" 
+                                        type="text"
+                                        placeholder="Nom de cours" 
+                                        {...formik.getFieldProps('name')}
+                                    />
+                                    {formik.touched.name && formik.errors.name ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.name}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                        Sélectionnez une Catégorie
+                                    </label>
+                                    <Field 
+                                        id="category" name="category" as="select" 
+                                        value={formik.values.category} onChange={(e) => {formik.setFieldValue("category", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez une Catégorie</option>
+                                        {categories.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        )
+                                        )}
+                                    </Field>
+                                    {formik.touched.category && formik.errors.category ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.category}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                        Description
+                                    </label>
+                                    <textarea 
+                                        id="description"
+                                        rows="5" 
+                                        placeholder='Description'
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        {...formik.getFieldProps('description')}
+                                    >
+                                    </textarea>
+                                    {formik.touched.description && formik.errors.description ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="image">
+                                        Upload un image
+                                    </label>
+                                    <input
+                                        ref={inputRef}
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="image" 
+                                        type="file"
+                                        name="image"
+                                        accept='image/*'
+                                        onChange={(e) => {
+                                            const file = e.currentTarget.files[0];
+                                            if (!file.type.match(imageMimeType)) {
+                                                toast.current.show({ severity: 'danger', summary: 'Faild', detail: 'Image mime type is not valid', life: 3000 });
+                                                return;
+                                            }
+                                            setFile(file);
+                                            formik.setFieldValue("image", e.currentTarget.files[0])
+                                        }}
+                                    />
+                                    {formik.touched.image && formik.errors.image ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.image}</div>
+                                    ) : null}
+                                    {fileDataURL ?
+                                        <div className="justify-center">
+                                            <h3>Preview l'image</h3>
+                                            <img src={fileDataURL} alt="preview" />
+                                        </div> : null
+                                    }
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="flex justify-end w-full px-3">
+                                    <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" type="submit">
+                                        {formik.isSubmitting ? "Updating..." : "Update"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    )}
+                </Formik>
             </Dialog>
 
             <Dialog visible={deleteCourseDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>

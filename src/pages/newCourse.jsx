@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 import Helmet from "react-helmet"
 import { Formik, Field} from 'formik';
-import { Toast } from 'primereact/toast';
 import * as Yup from 'yup';
+import { Toast } from 'primereact/toast';
 import {GetCategory} from '../service/CategoryService';
 import {PostCourse} from '../service/CourseService';
 
@@ -107,14 +107,14 @@ export default function NewCourse(){
                             <div className="flex flex-wrap -mx-3 mb-6">
                                 <div className="justify-between w-full px-3">
                                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
-                                        Sélectionnez un Cours
+                                        Sélectionnez une Catégorie
                                     </label>
                                     <Field 
                                         id="category" name="category" as="select" 
-                                        value={formik.values.category ? formik.values.category : "Sélectionnez un Cours"} onChange={(e) => {formik.setFieldValue("category", e.target.value)}}
+                                        value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value)}}
                                         className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                     >
-                                        <option disabled>Sélectionnez un Cours</option>
+                                        <option disabled>Sélectionnez une Catégorie</option>
                                         {categories.map((item) => (
                                             <option key={item.id} value={item.id}>{item.name}</option>
                                         ))}
