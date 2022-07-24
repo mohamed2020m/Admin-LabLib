@@ -9,24 +9,22 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
-import { FileUpload } from 'primereact/fileupload';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { classNames } from 'primereact/utils';
 import { Toast } from 'primereact/toast';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Formik, Field} from 'formik';
+import * as Yup from 'yup';
 import '../css/DataTableCrud.css';
-import Img404 from './../data/Img404.png';
 
-import {GetChapiter, PostChapiter, PutChapiter, DelChapiter} from '../service/ChapiterService';
+import {GetCategory, GetCategoryItem} from '../service/CategoryService';
+import {GetChapiter, PutChapiter, DelChapiter} from '../service/ChapiterService';
+import {useStateContext} from '../contexts/ContextProvider'
+
+import {findIdCourse, findIdCategory} from '../helpers/convertTimeToMilliSec'
 
 const Chapter = () => {
     const url = 'https://lablib-api.herokuapp.com/api/v1/image';
@@ -43,18 +41,25 @@ const Chapter = () => {
     const [deleteChapitersDialog, setDeleteChapitersDialog] = useState(false);
     const [chapiter, setChapiter] = useState(emptyChapiter);
     const [selectedChapiters, setSelectedChapiters] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
-    // const [file, setFile] = useState(null);
-    const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
     const dt = useRef(null);
+    const [categories, setCategories] = useState([]);
+    const [courses, setCourses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isEdited, setIsEdited] = useState(false);
+    const [file, setFile] = useState(null);
+    const [fileDataURL, setFileDataURL] = useState(null);
+    const [id, setId] = useState("");
+    const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
+        GetCategory().then(data => setCategories(data));
+        !id ? setId(findIdCategory(chapiter.category, categories)) : null;
+        GetCategoryItem(id).then(data => setCourses(data)) 
+
         setIsLoading(true);
         async function fetchData(){
             try{
@@ -76,14 +81,33 @@ const Chapter = () => {
         }
         fetchData();
         initFilters();
-    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
+        // image preview 
+        let fileReader, isCancel = false;
+        if (file) {
+            fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                const { result } = e.target;
+                if (result && !isCancel) {
+                    setFileDataURL(result)
+                }
+            }
+            fileReader.readAsDataURL(file);
+        }
+        return () => {
+            isCancel = true;
+            if (fileReader && fileReader.readyState === 1) {
+                fileReader.abort();
+            }
+        }
+    }, [isDeleted, isEdited, file, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // const updateDateCategory = (rowData) => {
-    //     return [...rowData || []].map(d => {
-    //         d.dateOfCreation = new Date(d.dateOfCreation);
-    //         return d;
-    //     });
-    // }
+    const imageMimeType = /image\/(png|jpg|jpeg)/i;
+
+    const inputRef = useRef(null);
+
+    const resetFileInput = () => {
+        inputRef.current.value = null;
+    };
 
     const formatDate = (value) => {
         if(value){
@@ -114,15 +138,9 @@ const Chapter = () => {
         setGlobalFilter('');
     }
 
-    // const openNew = () => {
-    //     setChapiter(emptyChapiter);
-    //     setSubmitted(false);
-    //     setChapiterDialog(true);
-    // }
-
     const hideDialog = () => {
-        setSubmitted(false);
         setChapiterDialog(false);
+        setActiveMenu(true)
     }
 
     const hideDeleteCategoryDialog = () => {
@@ -133,50 +151,11 @@ const Chapter = () => {
         setDeleteChapitersDialog(false);
     }
 
-    const saveCategory = async (File) => {
-        setSubmitted(true);
-
-        if (chapiter.name.trim()) {
-            let _Categories = [...chapiters];
-            let _Category = {...chapiter};
-
-            if (chapiter.id) {
-                const index = findIndexById(chapiter.id);
-                _Categories[index] = _Category;
-                try{
-                    let res = await PutChapiter(chapiter.id, _Category);
-                    if (res.ok){
-                        let d = await res.json();
-                        console.log(d);
-                        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
-                    }
-                    else{
-                        if(Array.isArray(res) && res.length === 0) return "error";
-                        let r = await res.json()
-                        throw r[0].message;
-                    }
-                }
-                catch (err){
-                    toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
-                } 
-            }
-            else {
-                console.log("creating... ")
-                let res = await PostChapiter(formData)
-                console.log("finished!");
-                console.log("res: ", res);
-                _Categories.push(_Category);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
-            }
-            setChapiters(_Categories);
-            setChapiterDialog(false);
-            setChapiter(emptyChapiter);
-        }
-    }
-
     const editCategory = (chapiter) => {
         setChapiter({...chapiter});
         setChapiterDialog(true);
+        setFileDataURL(false);
+        setActiveMenu(false)
     }
 
     const confirmDeleteCategory = (chapiter) => {
@@ -209,17 +188,6 @@ const Chapter = () => {
         setChapiter(emptyChapiter);
     }
 
-    const findIndexById = (id) => {
-        let index = -1;
-        for (let i = 0; i < chapiters.length; i++) {
-            if (chapiters[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
     const confirmDeleteSelected = () => {
         setDeleteChapitersDialog(true);
     }
@@ -250,14 +218,6 @@ const Chapter = () => {
         allDelelted === selectedChapiters.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les chapiters supprimés avec succès', life: 3000 });
     }
 
-    const onInputFileChange = (e, name) => {
-        console.log("image: ", e);
-        const val = (e.files && e.files[0].name) || '';
-        let _Category = {...chapiter};
-        _Category[`${name}`] = val;
-        setChapiter(_Category);
-    }
-    
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
         let _Category = {...chapiter};
@@ -343,14 +303,11 @@ const Chapter = () => {
         );
     }
 
-    let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
+    // let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
 
     const header = (
         <div className="table-header">
             <div className='flex'>
-                {/* <div className="mt-2 mb-3 mx-1 p-0">
-                    <Button type="button" icon="pi pi-plus" label="New" className="p-button-success " onClick={openNew}/>
-                </div> */}
                 <div className="mt-2 mb-3 mx-1 p-0">
                     <Button type="button" icon="pi pi-filter-slash"  className=" m-0 p-button-outlined" onClick={clearFilter} />
                 </div>
@@ -364,12 +321,7 @@ const Chapter = () => {
             </span>
         </div>
     );
-    const CategoryDialogFooter = (
-        <React.Fragment>
-            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveCategory} />
-        </React.Fragment>
-    );
+
     const deleteCategoryDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCategoryDialog} />
@@ -383,100 +335,6 @@ const Chapter = () => {
         </React.Fragment>
     );
 
-
-    // Uploading file
-    
-    const onTemplateSelect = (e) => {
-        console.log("e: ", e.files[0]);
-        let _totalSize = e.files[0].size || 0;
-        setTotalSize(_totalSize);
-    }
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = e.files[0].size || 0;
-
-        setTotalSize(_totalSize);
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
-
-    const headerTemplate = (options) => {
-        const { className, chooseButton, uploadButton, cancelButton } = options;
-        const value = totalSize/10000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
-
-        return (
-            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
-                <div style={{width:"40px", heigth:"20px"}}>
-                    {chooseButton}
-                </div>
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
-            </div>
-        );
-    }
-
-    const itemTemplate = (file, props) => {
-        return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{width: '90%'}}>
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
-                    <div className='flex flex-grow-1'>
-                        <div style={{width: '100%'}}>
-                            <div className="text-left ml-3">
-                                {file.name}
-                            </div>
-                            <div className="text-left ml-3">
-                                <small>{new Date().toLocaleDateString()}</small>
-                            </div>
-                            <div className="text-left ml-3">
-                                <Tag value={props.formatSize} severity="warning" className="px-3 py-2"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <Button type="button" icon="pi pi-times" className="w-8 h-8 p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
-                </div>
-            </div>
-        )
-    }
-
-    const emptyTemplate = () => {
-        return (
-            <div className="flex flex-column justify-center items-center">
-                <div className='flex items-center justify-content-center'>
-                    <i className="pi pi-image mt-3 p-5" style={{'fontSize': '3em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
-                </div>
-                <div className='flex items-center justify-center'>
-                    <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5 ml-2">Faites glisser et déposez l'image ici</span>
-                </div>
-            </div>
-        )
-    }
-
-    const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'w-16 h-16 custom-choose-btn p-button-rounded p-button-outlined'};
-    const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
-    const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
-
-    const myUploader = (e) => {
-        const file = e.files[0];
-        console.log("Files: ", e.files[0], " file: ", file);
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-            console.log("inside the myUploader, e: ", e.target.result);
-            saveCategory(e.target.result);
-        };
-        fileReader.readAsDataURL(file);
-    };
-    //End uploading File
     return (
         <>
         <Helmet>
@@ -530,29 +388,187 @@ const Chapter = () => {
                 <Skeleton count={8} height={25}/>
             </div>
             }
-            <Dialog visible={ChapiterDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid" footer={CategoryDialogFooter} onHide={hideDialog}>
-                <div className="field">
-                    <label htmlFor="name">Title</label>
-                    <InputText id="name" value={chapiter.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !chapiter.name })} />
-                    {submitted && !chapiter.name && <small className="p-error">Name is required.</small>}
-                </div>
-                {/* <div className="field">
-                    <label htmlFor="image">Upload Image</label>
-                    <FileUpload id="image" ref={fileUploadRef} name="image"
-                        accept="image/*" maxFileSize={1000000}
-                        onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                        headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                        chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}   
-                        className={classNames({ 'p-invalid': submitted && !chapiter.image })}
-                        customUpload uploadHandler={myUploader} onChange={(e) => onInputFileChange(e, 'image')} required
-                    />
-                    {submitted && !chapiter.image && <small className="p-error">image is required.</small>}
-                </div> */}
-                <div className="field">
-                    <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={chapiter.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20}  className={classNames({ 'p-invalid': submitted && !chapiter.description })}/>
-                    {submitted && !chapiter.description && <small className="p-error">Description is required.</small>}
-                </div>
+            <Dialog visible={ChapiterDialog} style={{ width: '650px' }} header="Modifier Chapiters" modal className="p-fluid" onHide={hideDialog}>
+                <Formik
+                    initialValues={{name: chapiter.name, description: chapiter.description, course: findIdCourse(chapiter.course, courses), category: findIdCategory(chapiter.category, categories) , image: `${url}/${chapiter.image}`}}
+                    validationSchema={Yup.object({
+                        name: Yup.string()
+                        .max(45, 'Must be 15 characters or less'),
+                        // .required('Required'),
+                        description: Yup.string()
+                        .max(250, 'Must be 250 characters or less'),
+                        // .required('Required'),
+                        category: Yup.string(),
+
+                        // .required('Required'),
+                    })}
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        let data = new FormData();
+                        for (let value in values) {
+                            data.append(value, values[value]);
+                        }
+                        setSubmitting(true);
+
+                        let requestOptions = {
+                            method: 'PUT',
+                            body: data,
+                            redirect: 'follow'
+                        };
+                        
+                        try{
+                            let res = await PutChapiter(chapiter.id, requestOptions)
+                            if (res.ok){
+                                let d = await res.json();
+                                toast.current.show({ severity: 'success', summary: 'Créé avec succès!', detail: "Le chapiter a été modifie avec succès", life: 3000 });
+                                setIsEdited(preIsEdited => (!preIsEdited));
+                                setChapiterDialog(false);
+                                resetForm();
+                                resetFileInput();
+                            }
+                            else{
+                                if(Array.isArray(res) && res.length === 0) return "error";
+                                let r = await res.json()
+                                throw r[0].message;
+                            }
+                        }
+                        catch (err){
+                            console.log("err: ", err);
+                            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                        } 
+                        setSubmitting(false);
+                    }}
+                >
+                    {formik => (
+                        <form className="w-full" onSubmit={formik.handleSubmit}>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                                        Nom
+                                    </label>
+                                    <input
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="name" 
+                                        type="text"
+                                        placeholder="Nom de cours" 
+                                        {...formik.getFieldProps('name')}
+                                    />
+                                    {formik.touched.name && formik.errors.name ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.name}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                        Sélectionnez une Catégorie
+                                    </label>
+                                    <Field 
+                                        id="category" name="category" as="select" 
+                                        value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value); setId(e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez une Catégorie</option>
+                                        {categories.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        )
+                                        )}
+                                    </Field>
+                                    {formik.touched.category && formik.errors.category ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.category}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="course">
+                                        Sélectionnez un Cours
+                                    </label>
+                                    
+                                    <Field 
+                                        id="course" name="course" as="select" 
+                                        value={formik.values.course ? formik.values.course : "Sélectionnez un Cours"} onChange={(e) => {formik.setFieldValue("course", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled defaultValue>Sélectionnez un Cours</option>
+                                        {courses.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    
+                                    {formik.touched.course && formik.errors.course ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.course}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                        Description
+                                    </label>
+                                    <textarea 
+                                        id="description"
+                                        rows="5" 
+                                        placeholder='Description'
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        {...formik.getFieldProps('description')}
+                                    >
+                                    </textarea>
+                                    {formik.touched.description && formik.errors.description ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="image">
+                                        Upload un image
+                                    </label>
+                                    <input
+                                        ref={inputRef}
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="image" 
+                                        type="file"
+                                        name="image"
+                                        accept='image/*'
+                                        onChange={(e) => {
+                                            const file = e.currentTarget.files[0];
+                                            if (!file.type.match(imageMimeType)) {
+                                                toast.current.show({ severity: 'danger', summary: 'Faild', detail: 'Image mime type is not valid', life: 3000 });
+                                                return;
+                                            }
+                                            setFile(file);
+                                            formik.setFieldValue("image", e.currentTarget.files[0])
+                                        }}
+                                    />
+                                    {formik.touched.image && formik.errors.image ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.image}</div>
+                                    ) : null}
+                                    {fileDataURL ?
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={fileDataURL} alt="preview" />    
+                                            </div>
+                                        </div> : 
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={formik.values.image} alt="preview" />    
+                                            </div>
+                                        </div> 
+                                    }
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="flex justify-end w-full px-3">
+                                    <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" type="submit">
+                                        {formik.isSubmitting ? "Updating..." : "Update"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    )}
+                </Formik>
             </Dialog>
 
             <Dialog visible={deleteChapiterDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>

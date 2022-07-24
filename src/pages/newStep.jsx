@@ -11,6 +11,7 @@ import {GetCourseItem} from './../service/CourseService'
 import {GetChapiterItem} from './../service/ChapiterService'
 import {StepsBar} from '../data/dummy'
 import {Time} from '../helpers/convertTimeToMilliSec'
+import {useStateContext} from '../contexts/ContextProvider'
 
 export default function NewLabs(){
     const [categories, setCategories] = useState([]);
@@ -21,10 +22,8 @@ export default function NewLabs(){
     const [idCourse, setIdCourse] = useState("");
     const [idChapiter, setIdChapiter] = useState("");
     const [currentBox, setCurrentBox] = useState(0);
-    // const [text, setText] = useState('<div>Hello World app!</div>');
 
     const toast = useRef(null);
-    // const inputRef = useRef(null);
 
     useEffect(() => {
         // getting categories from db

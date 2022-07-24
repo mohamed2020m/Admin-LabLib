@@ -58,7 +58,7 @@ const App = () => {
                             : 'bg-main-bg  w-full min-h-screen flex-2 '
                         }
                     >
-                        <div className="static navbar w-full bg-white">
+                        <div className="static navbar w-full bg-white shadow-lg">
                             <Navbar />
                         </div>
                         <div className='m-3 p-4'>

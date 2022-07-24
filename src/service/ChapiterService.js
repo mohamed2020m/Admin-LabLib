@@ -1,7 +1,3 @@
-const header = new Headers({
-    'Accept': 'application/json'
-});
-
 export async function GetChapiter() {
     return await fetch('https://lablib-api.herokuapp.com/api/v1/chapter');
 }
@@ -16,13 +12,7 @@ export async function PostChapiter(newChapiter) {
     return await fetch('https://lablib-api.herokuapp.com/api/v1/chapter', newChapiter);
 }
 
-export async function PutChapiter(id, data) {
-    let modifieChapiter = {
-        method: 'PUT',
-        headers: header,
-        body: JSON.stringify(data),
-        redirect: 'follow'
-    }
+export async function PutChapiter(id, modifieChapiter) {
     return await fetch(`https://lablib-api.herokuapp.com/api/v1/chapter/${id}`, modifieChapiter);
 }
 

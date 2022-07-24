@@ -9,14 +9,9 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
 
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
-import { FileUpload } from 'primereact/fileupload';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { classNames } from 'primereact/utils';
 import { Toast } from 'primereact/toast';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
@@ -24,6 +19,7 @@ import { InputText } from 'primereact/inputtext';
 import { Formik, Field} from 'formik';
 import * as Yup from 'yup';
 import '../css/DataTableCrud.css';
+import {useStateContext} from '../contexts/ContextProvider'
 
 
 import {GetCourse, PutCourse, DelCourse} from '../service/CourseService';
@@ -46,12 +42,9 @@ const Cours = () => {
     const [deleteCoursesDialog, setDeleteCoursesDialog] = useState(false);
     const [course, setCourse] = useState(emptyCourse);
     const [selectedCourses, setSelectedCourses] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
-    // const [file, setFile] = useState(null);
-    const [totalSize, setTotalSize] = useState(0);
     const dt = useRef(null);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -59,8 +52,10 @@ const Cours = () => {
     const [isEdited, setIsEdited] = useState(false);
     const [file, setFile] = useState(null);
     const [fileDataURL, setFileDataURL] = useState(null);
+    const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
+        GetCategory().then(data => setCategories(data));
         setIsLoading(true);
         GetCourse().then(data => {
             setCourses(data);
@@ -73,7 +68,7 @@ const Cours = () => {
             fileReader.onload = (e) => {
                 const { result } = e.target;
                 if (result && !isCancel) {
-                setFileDataURL(result)
+                    setFileDataURL(result)
                 }
             }
             fileReader.readAsDataURL(file);
@@ -124,8 +119,8 @@ const Cours = () => {
     }
 
     const hideDialog = () => {
-        setSubmitted(false);
         setCourseDialog(false);
+        setActiveMenu(true)
     }
 
     const hideDeleteCategoryDialog = () => {
@@ -136,53 +131,14 @@ const Cours = () => {
         setDeleteCoursesDialog(false);
     }
 
-    // const saveCategory = async (File) => {
-    //     setSubmitted(true);
-
-    //     if (course.name.trim()) {
-    //         let _Categories = [...courses];
-    //         let _Category = {...course};
-
-    //         if (course.id) {
-    //             const index = findIndexById(course.id);
-    //             _Categories[index] = _Category;
-    //             try{
-    //                 let res = await PutCourse(course.id, _Category);
-    //                 if (res.ok){
-    //                     let d = await res.json();
-    //                     toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
-    //                 }
-    //                 else{
-    //                     if(Array.isArray(res) && res.length === 0) return "error";
-    //                     let r = await res.json()
-    //                     throw r[0].message;
-    //                 }
-    //             }
-    //             catch (err){
-    //                 toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
-    //             } 
-    //         }
-    //         else {
-    //             // this block is not used yet! by leeuw
-    //             // console.log("creating... ")
-    //             // let res = await PostCourse(formData)
-    //             // console.log("finished!");
-    //             console.log("res: ", res);
-    //             _Categories.push(_Category);
-    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
-    //         }
-    //         setCourses(_Categories);
-    //         setCourseDialog(false);
-    //         setCourse(emptyCourse);
-    //     }
-    // }
 
     const editCategory = (course) => {
-        GetCategory().then(data => setCategories(data));
         setCourse({...course});
         setCourseDialog(true);
+        setFileDataURL(false);
+        setActiveMenu(false)
     }
-
+    
     const findIdCategory = (name) => {
         const _category =  categories.filter(item => (
             item.name === name
@@ -405,7 +361,8 @@ const Cours = () => {
                 <Skeleton count={8} height={25}/>
             </div>
             }
-            <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Category Details" modal className="p-fluid"  onHide={hideDialog}>
+            {course.id ? 
+            <Dialog visible={CourseDialog} style={{ width: '650px' }} header="Modifier Cours" modal className="p-fluid"  onHide={hideDialog}>
                 <Formik
                     initialValues={{name: course.name, description: course.description, category: findIdCategory(course.category) , image: `${url}/${course.image}`}}
                     validationSchema={Yup.object({
@@ -481,7 +438,7 @@ const Cours = () => {
                                     </label>
                                     <Field 
                                         id="category" name="category" as="select" 
-                                        value={formik.values.category} onChange={(e) => {formik.setFieldValue("category", e.target.value)}}
+                                        value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value)}}
                                         className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                     >
                                         <option disabled>Sélectionnez une Catégorie</option>
@@ -539,10 +496,18 @@ const Cours = () => {
                                         <div className="text-red-500 text-xs italic">{formik.errors.image}</div>
                                     ) : null}
                                     {fileDataURL ?
-                                        <div className="justify-center">
-                                            <h3>Preview l'image</h3>
-                                            <img src={fileDataURL} alt="preview" />
-                                        </div> : null
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={fileDataURL} alt="preview" />    
+                                            </div>
+                                        </div> : 
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={formik.values.image} alt="preview" />    
+                                            </div>
+                                        </div> 
                                     }
                                 </div>
                             </div>
@@ -557,7 +522,9 @@ const Cours = () => {
                     )}
                 </Formik>
             </Dialog>
-
+            :
+            null
+            }
             <Dialog visible={deleteCourseDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCategoryDialogFooter} onHide={hideDeleteCategoryDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />

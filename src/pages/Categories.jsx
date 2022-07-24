@@ -2,26 +2,21 @@
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-
 import React, { useState, useEffect, useRef } from 'react';
-
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
 import { Formik} from 'formik';
 import * as Yup from 'yup';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { classNames } from 'primereact/utils';
 import { Toast } from 'primereact/toast';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import {useStateContext} from '../contexts/ContextProvider'
 
 import '../css/DataTableCrud.css';
 
@@ -37,29 +32,46 @@ const Categories = () => {
 
     const [categories, setCategories] = useState(null);
     const [CategoryDialog, setCategoryDialog] = useState(false);
-    const [CategoryImgDialog, setCategoryImgDialog] = useState(false);
     const [deleteCategoryDialog, setDeleteCategoryDialog] = useState(false);
     const [deleteCategoriesDialog, setDeleteCategoriesDialog] = useState(false);
     const [category, setCategory] = useState(emptyCategory);
     const [selectedCategories, setSelectedCategories] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
-    // const [file, setFile] = useState(null);
-    const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
+    const [file, setFile] = useState(null);
+    const [fileDataURL, setFileDataURL] = useState(null);
+    const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
         setIsLoading(true);
         GetCategory().then(data => setCategories(data));
         setIsLoading(false);
         initFilters();
-    }, [isDeleted, isEdited]); // eslint-disable-line react-hooks/exhaustive-deps
+        let fileReader, isCancel = false;
+        if (file) {
+            fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                const { result } = e.target;
+                if (result && !isCancel) {
+                setFileDataURL(result)
+                }
+            }
+            fileReader.readAsDataURL(file);
+        }
+        return () => {
+            isCancel = true;
+            if (fileReader && fileReader.readyState === 1) {
+                fileReader.abort();
+            }
+        }
+    }, [isDeleted, isEdited, file]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const imageMimeType = /image\/(png|jpg|jpeg)/i;
 
     const inputRef = useRef(null);
 
@@ -97,9 +109,8 @@ const Categories = () => {
     }
 
     const hideDialog = () => {
-        setSubmitted(false);
         setCategoryDialog(false);
-        setCategoryImgDialog(false);
+        setActiveMenu(true)
     }
 
     const hideDeleteCategoryDialog = () => {
@@ -110,45 +121,11 @@ const Categories = () => {
         setDeleteCategoriesDialog(false);
     }
 
-    // const saveCategory = async () => {
-    //     setSubmitted(true);
-
-    //     if (category.name.trim()) {
-    //         let _Category = {...category};
-    //         if (category.id) {
-    //             let myHeaders = new Headers();
-    //             myHeaders.append("Content-Type", "application/json");
-    //             let modifieCategory = {
-    //                 method: 'PUT',
-    //                 headers: myHeaders,
-    //                 body: JSON.stringify(_Category),
-    //                 redirect: 'follow'
-    //             }
-    //             try{
-    //                 let res = await PutCategory(category.id, modifieCategory);
-    //                 if (res.ok){
-    //                     let d = await res.json();
-    //                     setIsEdited(preIsEdited => (!preIsEdited));
-    //                     toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Categorie modifier avec succès', life: 3000 });
-    //                 }
-    //                 else{
-    //                     if(Array.isArray(res) && res.length === 0) return "error";
-    //                     let r = await res.json()
-    //                     throw r[0].message;
-    //                 }
-    //             }
-    //             catch (err){
-    //                 toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
-    //             } 
-    //         }
-    //         setCategoryDialog(false);
-    //         setCategory(emptyCategory);
-    //     }
-    // }
-
     const editCategory = (category) => {
         setCategory({...category});
         setCategoryDialog(true);
+        setFileDataURL(false);
+        setActiveMenu(false)
     }
 
     const confirmDeleteCategory = (category) => {
@@ -210,22 +187,6 @@ const Categories = () => {
         allDelelted === selectedCategories.length && toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les categories supprimés avec succès', life: 3000 });
     }
 
-    const onInputFileChange = (e, name) => {
-        console.log("image: ", e);
-        const val = (e.files && e.files[0].name) || '';
-        let _Category = {...category};
-        _Category[`${name}`] = val;
-        setCategory(_Category);
-    }
-    
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _Category = {...category};
-        _Category[`${name}`] = val;
-        setCategory(_Category);
-    }
-
-    
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
@@ -236,6 +197,10 @@ const Categories = () => {
     
     const imageBodyTemplate = (rowData) => {
         return <img src={`${url}/${rowData.image}`}  onError={(e) => e.target.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAABmJLR0QA/wD/AP+gvaeTAAAE9ElEQVRoge2Ze2xTVRzHP/f2tmtHH2u3sQePhQ3lsYSgPEJC1EEIiCivgRgICzImI0wIExAVNJI4EzATGTrCIwoBIYIhIcFACCgKiCAvN2JiEGGQzbCtZYy+H9c/yupK260bhULS7z899/f7nfP73HNOT36nFQaMnqzD66sUoBAw8uTLAuxXqDXl0n3wBfEm6oKMQInXYUcUYHq8abqpQgkwtT2VyhZyfS4ADotajgs9ABjUy0rZy3UAuDwCy3YMDIzgfQkwCgAItTLi1ceEDiap/VOuz0U+TgAuoA7YdRoPQ3JaAT98e8npIPf0txXXBUB+hLzBEh9bpkegoJk/LGoDM17TbuZvmdVsO9YbAI8veObFWgG0/tkWGoJ9j1rCwFGvPr51jrGe7m0zVHbEm6HbEv4eMSSxbeKhBHy8lICPlxLw8VJ08IKAZuQoEKMLV6Snk/xiAT0KxqLsm9MFGtGfR4iuRpI6DwHDrNmklq+kYVEx9vO/R86tN5D27gdox40PAnBcPE/jJx/jrrvRYR5j8UKMJaXcmj0T19W/Hh5eYUjBuGAh7uvXcFy+FBlcqyV7y9eocvOwnjiO7cRPyE4H6uEj0U+ZTvb2ndQXF0V8ASkjk5S583D+eQXXtehuNJ3CmxYvQdQbuL3mPWSPJ2KcceFiVLl5NH++npY9uwL2e0ePYD12lKyN1aS//yH1pcVh+6cuW4GgUtG0rgJ8vqjgO9zESQMGops8DeuJH7H9eipinCBJ6CZNxllbQ8ve3SF++9kz3D2wH/Xzw1H26Rvi1wwbQY+x42g9dBDnldqowDuGFwRSy1cie72YN1aiMJrQvTYlbKiUkYmo1WK/cA7k8HWe7fRJAFT9n3mAQCT1nZX4bFbM1VVIGZloJ7zycPDa8RNRPzeMll07cN+sQztxEulr1qLs3Sf0PdX+W5fXYomYSLbb/bEaTZBdP2MWqv7PYtm6GW9TE7pphfRcW4Go03cPXlCrMS1egqfxNnd2bPfbJKXfKUV1QEUlUW/AWFKK+2Ydd/ftvZ9HAkHwf3bWP5zR+GYJUmYW5qoN+Gy2mME+KNOiMhSGFJor1yG7XF3uHwKv7NUbw5y5OGouc+/IDzGBDCdVbh66qYXYTv6M7dQv3RojZG1Mby9DUCUhSBIZFesCdmVOPwDSylfgs1oB8DQ3Y97wWbcSpy5fhaBQIOr1ZHy6PmBv+0Knr/4osBru+nrMmzaEHAYh8ApTKgBJg/JJGpQfklQzanSg7bWYubNtc+BcFhQd7NO20sLrj1WkpgGgHjI0bHjyCwWBtuffBixbq5EdwfftkGz1b80LO1hK0XxMZUu5+fpU3Nf/CfLJPhlkGVVuXkT2tlPK29QIwK1Z08LGmcqWklI0nxsTxuC1mCOOBzGqKn13W3BeqSW5YAxSVnaIX1CrMcwpwtfaiqPmj1ikBGJYEpurqxDVGrK++JKkwf9vNykrm8zKKpR9+mLZ8hWyyxmrlNFVldHIfu43GivWkrZqNb2++RZ33Q1ktxtVv1wQRVp276Tluz2xSgd0Ad5x8Tz2M6fxNNRHjGk9eADHpQvoZ75B0uB8BKWK1kMH/fYOKtL2sp87izKnH96WO53GJn50ipcS8PFSAj5eSsDHS089fMel25MrsyjD9/Gm6JYEeZ/ktHnLNcmSLCPPoN1f+U+wzAjyPofVt/w/cSyJn0mj7McAAAAASUVORK5CYII="} alt={rowData.image} className="category-image" />
+    }
+
+    const courseBodyTemplate = (rowData) => {
+        return <span>{rowData.courses || "Empty!"}</span>
     }
 
     const filterApplyTemplate = (options) => {
@@ -279,8 +244,6 @@ const Categories = () => {
             </React.Fragment>
         );
     }
-
-    // let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
 
     const header = (
         <div className="table-header">
@@ -339,6 +302,7 @@ const Categories = () => {
                     <Column field="id" sortable header="Id" style={{ minWidth: '0rem' }}></Column>
                     <Column field="name" sortable header="Name" body={titleBodyTemplate} style={{ minWidth: '10rem' }}></Column>
                     <Column field="image" header="Image" body={imageBodyTemplate}></Column>
+                    <Column field="courses" header="Courses" body={courseBodyTemplate}></Column>
                     <Column field="description" header="Description"  body={descriptionBodyTemplate} style={{ minWidth: '15rem' }}></Column>
                     <Column field="createdAt" header="Date de creation" filterField="createdAt" body={dateBodyTemplate} style={{ minWidth: '13rem' }}
                         filter filterElement={dateFilterTemplate} ></Column>
@@ -367,7 +331,7 @@ const Categories = () => {
             </div>
             }
 
-            <Dialog visible={CategoryDialog} style={{ width: '650px' }} header="Edit Category" modal className="p-fluid"  onHide={hideDialog}>
+            <Dialog visible={CategoryDialog} style={{ width: '650px' }} header="Modifier Catégorie" modal className="p-fluid"  onHide={hideDialog}>
                 <Formik
                     initialValues={{ name: category.name, description: category.description, image: `${url}/${category.image}`}}
                     validationSchema={Yup.object({
@@ -380,16 +344,6 @@ const Categories = () => {
                         // .required('Required'),
 
                         image: Yup.mixed()
-                        // .required('Required').nullable()
-                            // .test({
-                            //     message: 'Please provide a supported file type',
-                            //     test: (file, context) => {
-                            //         const isValid = ['png', 'jpg']
-                            //         // .includes(getExtension(file?.name));
-                            //         if (!isValid) context?.createError();
-                            //         return isValid;
-                            //     }
-                            // }),
                         })
                     }
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -460,13 +414,32 @@ const Categories = () => {
                                         name="image"
                                         accept='image/*'
                                         onChange={(event) => {
+                                            const file = event.currentTarget.files[0];
+                                            if (!file.type.match(imageMimeType)) {
+                                                toast.current.show({ severity: 'danger', summary: 'Faild', detail: 'Image mime type is not valid', life: 3000 });
+                                                return;
+                                            }
+                                            setFile(file);
                                             formik.setFieldValue("image", event.currentTarget.files[0])
                                         }}
                                     />
                                     {formik.touched.image && formik.errors.image ? (
                                         <div className="text-red-500 text-xs italic">{formik.errors.image}</div>
                                     ) : null}
-                                    
+                                    {fileDataURL ?
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={fileDataURL} alt="preview" />    
+                                            </div>
+                                        </div> : 
+                                        <div className="flex justify-center py-3 bg-slate-200 rounded-sm	">
+                                            <div>
+                                                <h3 className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>Preview l'image</h3>
+                                                <img src={formik.values.image} alt="preview" />    
+                                            </div>
+                                        </div> 
+                                    }
                                 </div>
                             </div>
                             <div className="flex flex-wrap -mx-3 mb-6">
@@ -486,7 +459,7 @@ const Categories = () => {
                                         <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
                                     ) : null}
                                 </div>
-                                <div className="flex justify-between w-full px-3">
+                                <div className="flex justify-end w-full px-3">
                                     <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
                                     type="submit"
                                     disabled={formik.isSubmitting}

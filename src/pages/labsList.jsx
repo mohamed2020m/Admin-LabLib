@@ -1,14 +1,10 @@
-// prime css
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-
 import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
-
-import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -17,11 +13,14 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
-
+import { Formik, Field} from 'formik';
+import * as Yup from 'yup';
 import '../css/DataTableCrud.css';
-
+import {GetCategory, GetCategoryItem} from '../service/CategoryService';
+import {GetCourseItem} from './../service/CourseService'
 import {GetLabs, PutLabs, DelLabs} from '../service/LabsService';
+import {Time, findIdCourse, findIdCategory, findIdChapiter} from '../helpers/convertTimeToMilliSec'
+import {useStateContext} from '../contexts/ContextProvider'
 
 const codelabs = () => {
 
@@ -31,6 +30,8 @@ const codelabs = () => {
         description: '',
         level:'',
         chapter: '',
+        category:'',
+        course:'',
         steps:"",
         createdAt:null,
         updatedAt:null
@@ -42,22 +43,50 @@ const codelabs = () => {
     const [deleteCodelabsDialog, setDeleteCodelabsDialog] = useState(false);
     const [codelab, setCodelab] = useState(emptyLab);
     const [selectedCodelabs, setSelectedCodelabs] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
     const dt = useRef(null);
+    const [categories, setCategories] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [chapiters, setChapiters] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isEdited, setIsEdited] = useState(false);
+    const [idCategory, setIdCategory] = useState("");
+    const [idCourse, setIdCourse] = useState("");
+    const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
+        GetCategory().then(data => setCategories(data));
+        !idCategory ? setIdCategory(findIdCategory(codelab.category, categories)) : null;
+        idCategory && GetCategoryItem(idCategory).then(data => setCourses(data));
+        !idCourse ? setIdCourse(findIdCourse(codelab.course, courses)) : null;
+        idCourse && GetCourseItem(idCourse).then(data => setChapiters(data));
+
         setIsLoading(true);
-        GetLabs().then(data =>{
-            setCodelabs(data);
-            initFilters();
-            setIsLoading(false);
-        })
-    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
+        async function fetchData(){
+            try{
+                let res = await GetLabs();
+                if(res.ok){
+                    let data = await res.json();
+                    setCodelabs(data);
+                    setIsLoading(false);
+                }
+                else{
+                    let err = await res.json();
+                    throw err[0].message
+                }
+            }
+            catch (err){
+                console.log(err);
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 6000 });
+            };
+        }
+        fetchData();
+        initFilters();
+    }, [isDeleted, isEdited, idCategory, idCourse]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
     const formatDate = (value) => {
         if(value){
@@ -89,8 +118,8 @@ const codelabs = () => {
     }
 
     const hideDialog = () => {
-        setSubmitted(false);
-        // setUserDialog(false);
+        setCodelabDialog(false);
+        setActiveMenu(true)
     }
 
     const hideDeleteCodelabDialog = () => {
@@ -99,31 +128,6 @@ const codelabs = () => {
 
     const hideDeleteCodelabsDialog = () => {
         setDeleteCodelabsDialog(false);
-    }
-
-    const saveLab = () => {
-        setSubmitted(true);
-
-        if (codelab.name.trim()) {
-            let _Users = [...codelabs];
-            let _User = {...codelab};
-            if (codelab.id) {
-                const index = findIndexById(codelab.id);
-
-                _Users[index] = _User;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Updated', life: 3000 });
-            }
-            else {
-                _User.id = createId();
-                _User.image = 'codelab-placeholder.svg';
-                _Users.push(_User);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'codelab Created', life: 3000 });
-            }
-
-            setCodelabs(_Users);
-            // setUserDialog(false);
-            setCodelab(emptyLab);
-        }
     }
 
     const confirmDeleteCodelab = (codelab) => {
@@ -157,7 +161,9 @@ const codelabs = () => {
     const editCodelab = (codelab) => {
         setCodelab({...codelab});
         setCodelabDialog(true);
+        setActiveMenu(false)
     }
+
 
     const confirmDeleteSelected = () => {
         setDeleteCodelabsDialog(true);
@@ -189,15 +195,6 @@ const codelabs = () => {
         allDelelted === selectedCodelabs.length &&  toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les labs supprimés avec succès', life: 3000 });
     }
 
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _User = {...codelab};
-        _User[`${name}`] = val;
-
-        setCodelab(_User);
-    }
-
-    
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
@@ -306,12 +303,7 @@ const codelabs = () => {
             </span>
         </div>
     );
-    const CodelabDialogFooter = (
-        <React.Fragment>
-            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveLab} />
-        </React.Fragment>
-    );
+
     const deleteCodelabDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteCodelabDialog} />
@@ -375,17 +367,187 @@ const codelabs = () => {
                     <Skeleton count={8} height={25}/>
                 </div>
                 }
-                <Dialog visible={CodelabDialog} style={{ width: '450px' }} header="codelab Details" modal className="p-fluid" footer={CodelabDialogFooter} onHide={hideDialog}>
-                    {codelab.image && <img src={`images/codelab/${codelab.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={codelab.image} className="codelab-image block m-auto pb-3" />}
-                    <div className="field">
-                        <label htmlFor="name">Name</label>
-                        <InputText id="name" value={codelab.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !codelab.name })} />
-                        {submitted && !codelab.name && <small className="p-error">Name is required.</small>}
-                    </div>
-                    <div className="field">
-                        <label htmlFor="description">Description</label>
-                        <InputTextarea id="description" value={codelab.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-                    </div>
+                <Dialog visible={CodelabDialog} style={{ width: '450px' }} header="Modifier le Lab" modal className="p-fluid" onHide={hideDialog}>
+                <Formik
+                    initialValues={{
+                        name: codelab.name, 
+                        duration: msToTime(codelab.duration), 
+                        description: codelab.description, 
+                        category: findIdCategory(codelab.category, categories), 
+                        course: findIdCourse(codelab.course, courses), 
+                        chapter: findIdChapiter(codelab.chapter, chapiters)
+                    }}
+                    validationSchema={Yup.object({
+                        name: Yup.string()
+                        .max(45, 'Must be 15 characters or less'),
+                        // .required('Required'),
+                        description: Yup.string()
+                        .max(250, 'Must be 250 characters or less'),
+                        // .required('Required'),
+
+                        duration: Yup.string(),
+                        // .required('Required'),
+                    })}
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        let data = new FormData();
+                        for (let value in values) {
+                            if(value === "duration") values[value] = Time(values[value])
+                            data.append(value, values[value]);
+                        }
+                        setSubmitting(true);
+
+                        let requestOptions = {
+                            method: 'PUT',
+                            body: data,
+                            redirect: 'follow'
+                        };
+                        
+                        try{
+                            let res = await PutLabs(codelab.id, requestOptions)
+                            if (res.ok){
+                                let d = await res.json();
+                                toast.current.show({ severity: 'success', summary: 'Créé avec succès!', detail: "Le lab a été modifie avec succès", life: 3000 });
+                                setIsEdited(preIsEdited => (!preIsEdited));
+                                setCodelabDialog(false);
+                                resetForm();
+                            }
+                            else{
+                                if(Array.isArray(res) && res.length === 0) return "error";
+                                let r = await res.json()
+                                throw r[0].message;
+                            }
+                        }
+                        catch (err){
+                            console.log("err: ", err);
+                            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                        } 
+                        setSubmitting(false);
+                    }}
+                >
+                    {formik => (
+                        <form className="w-full" onSubmit={formik.handleSubmit}>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3 mb-6 md:mb-0">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                                        Nom
+                                    </label>
+                                    <input
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="name" 
+                                        type="text"
+                                        placeholder="Nom de cours" 
+                                        {...formik.getFieldProps('name')}
+                                    />
+                                    {formik.touched.name && formik.errors.name ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.name}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="duration">
+                                        Duration
+                                    </label>
+                                    <input 
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        id="duration" 
+                                        type="text"
+                                        placeholder="Example: 01:45" 
+                                        {...formik.getFieldProps('duration')}
+                                    />
+                                    {formik.touched.duration && formik.errors.duration ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.duration}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                        Sélectionnez une Catégorie
+                                    </label>
+                                    <Field 
+                                        id="category" name="category" as="select" 
+                                        value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value); setIdCategory(e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez une Catégorie</option>
+                                        {categories.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        )
+                                        )}
+                                    </Field>
+                                    {formik.touched.category && formik.errors.category ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.category}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="course">
+                                        Sélectionnez un Cours
+                                    </label>
+                                    
+                                    <Field 
+                                        id="course" name="course" as="select" 
+                                        value={formik.values.course ? formik.values.course : "Sélectionnez un Cours"} onChange={(e) => {formik.setFieldValue("course", e.target.value); setIdCourse(e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled defaultValue>Sélectionnez un Cours</option>
+                                        {courses.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    
+                                    {formik.touched.course && formik.errors.course ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.course}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="chapter">
+                                        Sélectionnez un Chapiter
+                                    </label>
+                                    <Field 
+                                        id="chapter" name="chapter" as="select" 
+                                        value={formik.values.chapter ? formik.values.chapter : "Sélectionnez un Chapiter"} onChange={(e) => {formik.setFieldValue("chapter", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez un Chapiter</option>
+                                        {chapiters !== [] && chapiters.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
+                                        Description
+                                    </label>
+                                    <textarea 
+                                        id="description"
+                                        rows="5" 
+                                        placeholder='Description'
+                                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        {...formik.getFieldProps('description')}
+                                    >
+                                    </textarea>
+                                    {formik.touched.description && formik.errors.description ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="flex justify-end w-full px-3">
+                                    <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" type="submit">
+                                        {formik.isSubmitting ? "Updating..." : "Update"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    )}
+                </Formik>
                 </Dialog> 
 
                 <Dialog visible={deleteCodelabDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteCodelabDialogFooter} onHide={hideDeleteCodelabDialog}>

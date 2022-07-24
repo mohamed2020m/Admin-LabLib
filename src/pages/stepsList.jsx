@@ -2,13 +2,10 @@
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-
 import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import Helmet from "react-helmet"
-
-import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -17,11 +14,18 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
+import { Steps } from 'primereact/steps';
+import { Editor } from 'primereact/editor';
+import { Formik, Field} from 'formik';
+import * as Yup from 'yup';
+import {StepsBar} from '../data/dummy'
 import {useStateContext} from '../contexts/ContextProvider'
 import '../css/DataTableCrud.css';
-
+import {Time, findIdCourse, findIdCategory, findIdChapiter} from '../helpers/convertTimeToMilliSec'
 import {GetSteps, PutSteps, DelSteps} from '../service/StepsService';
+import {GetCategory, GetCategoryItem} from '../service/CategoryService';
+import {GetCourseItem} from './../service/CourseService'
+import {GetChapiterItem} from './../service/ChapiterService'
 
 const steps = () => {
 
@@ -41,25 +45,55 @@ const steps = () => {
     const [deleteStepsDialog, setDeleteStepsDialog] = useState(false);
     const [step, setStep] = useState(emptyStep);
     const [selectedSteps, setSelectedSteps] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isEdited, setIsEdited] = useState(false);
     const [displayMaximizable, setDisplayMaximizable] = useState(false);
     const [showContent, setShowContent] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [chapiters, setChapiters] = useState([]);
+    const [labs, setLabs] = useState([]);
+    const [idCategory, setIdCategory] = useState("");
+    const [idCourse, setIdCourse] = useState("");
+    const [idChapiter, setIdChapiter] = useState("");
+    const [currentBox, setCurrentBox] = useState(0);
     const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
+        GetCategory().then(data => setCategories(data));
+        !idCategory ? setIdCategory(findIdCategory(step.category, categories)) : null;
+        idCategory && GetCategoryItem(idCategory).then(data => setCourses(data));
+        !idCourse ? setIdCourse(findIdCourse(step.course, courses)) : null;
+        idCourse && GetCourseItem(idCourse).then(data => setChapiters(data));
+        !idChapiter ? setIdChapiter(findIdChapiter(step.course, chapiters)) : null;
+        idChapiter && GetChapiterItem(idChapiter).then(data => setLabs(data));
         setIsLoading(true);
-        GetSteps().then(data =>{
-            setSteps(data);
-            initFilters();
-            setIsLoading(false);
-        })
-    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
+        async function fetchData(){
+            try{
+                let res = await GetSteps();
+                if(res.ok){
+                    let data = await res.json();
+                    setSteps(data);
+                    setIsLoading(false);
+                }
+                else{
+                    let err = await res.json();
+                    throw err[0].message
+                }
+            }
+            catch (err){
+                console.log(err);
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 6000 });
+            };
+        }
+        fetchData();
+        initFilters();
+    }, [isDeleted, isEdited, idCategory, idCourse, idChapiter]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const formatDate = (value) => {
         if(value){
@@ -91,8 +125,8 @@ const steps = () => {
     }
 
     const hideDialog = () => {
-        setSubmitted(false);
-        // setUserDialog(false);
+        setStepDialog(false);
+        setActiveMenu(true)
     }
 
     const hideDeleteStepDialog = () => {
@@ -101,31 +135,6 @@ const steps = () => {
 
     const hideDeleteStepsDialog = () => {
         setDeleteStepsDialog(false);
-    }
-
-    const saveStep = () => {
-        setSubmitted(true);
-
-        if (step.name.trim()) {
-            let _Steps = [...steps];
-            let _Step = {...step};
-            if (step.id) {
-                const index = findIndexById(step.id);
-
-                _Steps[index] = _Step;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'step Updated', life: 3000 });
-            }
-            else {
-                _Step.id = createId();
-                _Step.image = 'step-placeholder.svg';
-                _Steps.push(_Step);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'step Created', life: 3000 });
-            }
-
-            setSteps(_Steps);
-            // setUserDialog(false);
-            setStep(emptyStep);
-        }
     }
 
     const confirmDeleteStep = (step) => {
@@ -158,7 +167,20 @@ const steps = () => {
     const editStep = (step) => {
         setStep({...step});
         setStepDialog(true);
+        setActiveMenu(false)
     }
+    function msToTime(duration) {
+        let milliseconds = parseInt((duration % 1000) / 100),
+        seconds = Math.floor((duration / 1000) % 60),
+        minutes = Math.floor((duration / (1000 * 60)) % 60),
+        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+        
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    }
+
 
     const confirmDeleteSelected = () => {
         setDeleteStepsDialog(true);
@@ -189,15 +211,6 @@ const steps = () => {
         allDelelted === selectedSteps.length &&  setSteps(_Steps); toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les Steps supprimés avec succès', life: 3000 });
     }
 
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _Steps = {...step};
-        _Steps[`${name}`] = val;
-
-        setStep(_Steps);
-    }
-
-    
     const titleBodyTemplate = (rowData) => {
         return <span>{rowData.name}</span>
     }
@@ -293,8 +306,6 @@ const steps = () => {
         );
     }
 
-    // let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
-
     const header = (
         <div className="table-header">
             <div className='flex'>
@@ -311,12 +322,7 @@ const steps = () => {
             </span>
         </div>
     );
-    const StepDialogFooter = (
-        <React.Fragment>
-            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveStep} />
-        </React.Fragment>
-    );
+
     const deleteStepDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteStepDialog} />
@@ -378,19 +384,280 @@ const steps = () => {
                 }
                 <Dialog header="Aperçu le Step" visible={displayMaximizable} maximizable modal style={{ width: '70vw', height:'50vw'}} baseZIndex={2000000000000} footer={renderFooter('displayMaximizable')} onHide={() => onHide('displayMaximizable')}>
                     <iframe className='previewStep' srcDoc={PreviewContent(showContent)} height="100%" width="100%"></iframe>
-                    
                 </Dialog>
-                <Dialog visible={StepDialog} style={{ width: '450px' }} header="step Details" modal className="p-fluid" footer={StepDialogFooter} onHide={hideDialog}>
-                    {step.image && <img src={`images/step/${step.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={step.image} className="step-image block m-auto pb-3" />}
-                    <div className="field">
-                        <label htmlFor="name">Name</label>
-                        <InputText id="name" value={step.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !step.name })} />
-                        {submitted && !step.name && <small className="p-error">Name is required.</small>}
-                    </div>
-                    <div className="field">
-                        <label htmlFor="description">Description</label>
-                        <InputTextarea id="description" value={step.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-                    </div>
+                <Dialog visible={StepDialog} style={{ width: '750px' }} header="Modifier le Step" modal className="p-fluid" onHide={hideDialog}>
+                <Formik
+                    initialValues={{
+                        name: step.name, 
+                        demo:null, 
+                        rang:1, 
+                        duration: msToTime(step.duration), 
+                        lab: step.lab, 
+                        content:step.content, 
+                        name: step.name, 
+                        description: step.description, 
+                        category: findIdCategory(step.category, categories), 
+                        course: findIdCourse(step.course, courses), 
+                        chapter: findIdChapiter(step.chapter, chapiters)
+                    }}
+                    validationSchema={Yup.object({
+                        name: Yup.string()
+                        .max(45, 'Must be 15 characters or less'),
+                        // .required('Required'),
+                        duration: Yup.string(),
+                        // .required('Required'),
+                        lab: Yup.string(),
+                        chapter: Yup.string(),
+                        course: Yup.string(),
+                        category: Yup.string()
+                        })
+                    }
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        let data = new FormData();
+                        for (let value in values) {
+                            if(value === "duration") values[value] = Time(values[value])
+                            data.append(value, values[value]);
+                        }
+                        setSubmitting(true);
+
+                        var requestOptions = {
+                            method: 'PUT',
+                            body: data,
+                            redirect: 'follow'
+                        };
+                        
+                        try{
+                            let res = await PutSteps(step.id, requestOptions)
+                            if (res.ok){
+                                let d = await res.json();
+                                toast.current.show({ severity: 'success', summary: 'Updated!', detail: "Le Step a été modifier avec succès", life: 3000 });
+                                resetForm();
+                            }
+                            else{
+                                if(Array.isArray(res) && res.length === 0) return "error";
+                                let r = await res.json()
+                                throw r[0].message;
+                            }
+                        }
+                        catch (err){
+                            console.log("err: ", err);
+                            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                        } 
+                        setSubmitting(false);
+                    }}
+                >
+                    {(formik) => (
+                        <>
+                            <div className='pb-3 mb-3'>
+                                <Steps model={StepsBar} activeIndex={currentBox}  style={{marginBottom: '20px' }}/>
+                            </div>
+                            <div className='mt-3'>
+                            <form className="w-full" onSubmit={formik.handleSubmit} encType="multipart/form-data">
+                                
+                                {currentBox === 0 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="w-full px-3 mb-6 md:mb-0">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                                            Titre
+                                        </label>
+                                        <input
+                                            className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                            id="name" 
+                                            type="text"
+                                            placeholder="Le Titre de Step" 
+                                            {...formik.getFieldProps('name')}
+                                        />
+                                        {formik.touched.name && formik.errors.name ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.name}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 1 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="duration">
+                                            Duration
+                                        </label>
+                                        <input 
+                                            className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                            id="duration" 
+                                            type="text"
+                                            placeholder="Example: 01:45" 
+                                            {...formik.getFieldProps('duration')}
+                                        />
+                                        {formik.touched.description && formik.errors.description ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.description}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 2 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="justify-between w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+                                            Sélectionnez une Catégorie
+                                        </label>
+                                        <Field 
+                                            id="category" name="category" as="select" 
+                                            value={formik.values.category ? formik.values.category : "Sélectionnez une Catégorie"} onChange={(e) => {formik.setFieldValue("category", e.target.value); setIdCategory(e.target.value)}}
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez une Catégorie</option>
+                                            {categories && categories.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.name}</option>
+                                            ))}
+                                        </Field>
+                                        {formik.touched.category && formik.errors.category ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.category}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 2 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="justify-between w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="course">
+                                            Sélectionnez un Cours
+                                        </label>
+                                        {idCategory ?
+                                        <Field 
+                                            id="course" name="course" as="select" 
+                                            value={formik.values.course ? formik.values.course : "Sélectionnez un Cours"} onChange={(e) => {formik.setFieldValue("course", e.target.value); setIdCourse(e.target.value)}}
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Cours</option>
+                                            {courses && courses.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.name}</option>
+                                            ))}
+                                        </Field>
+                                        :
+                                        <Field 
+                                            id="course" name="course" as="select" disabled
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Cours</option>
+                                        </Field>
+                                        }
+                                        {formik.touched.course && formik.errors.course ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.course}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 2 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="justify-between w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="chapter">
+                                            Sélectionnez un Chapiter
+                                        </label>
+                                        {idCourse ?
+                                        <Field 
+                                            id="chapter" name="chapter" as="select" 
+                                            value={formik.values.chapter ? formik.values.chapter : "Sélectionnez un Chapiter"} onChange={(e) => {formik.setFieldValue("chapter", e.target.value); setIdChapiter(e.target.value)}}
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Chapiter</option>
+                                            {chapiters !== [] && chapiters.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.name}</option>
+                                            ))}
+                                        </Field>
+                                        :
+                                        <Field 
+                                            id="chapter" name="chapter" as="select" disabled
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Chapiter</option>
+                                        </Field>
+                                        }
+                                        {formik.touched.chapter && formik.errors.chapter ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.chapter}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 2 &&
+                                <div className="flex flex-wrap -mx-3 mb-6">
+                                    <div className="justify-between w-full px-3">
+                                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="lab">
+                                            Sélectionnez un Lab
+                                        </label>
+                                        {idChapiter ?
+                                        <Field 
+                                            id="lab" name="lab" as="select" 
+                                            value={formik.values.lab ? formik.values.lab : "Sélectionnez un Lab"} onChange={(e) => {formik.setFieldValue("lab", e.target.value)}}
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Lab</option>
+                                            {labs !== [] && labs.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.name}</option>
+                                            ))}
+                                        </Field>
+                                        :
+                                        <Field 
+                                            id="lab" name="lab" as="select" disabled
+                                            className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        >
+                                            <option disabled>Sélectionnez un Lab</option>
+                                        </Field>
+                                        }
+                                        {formik.touched.lab && formik.errors.lab ? (
+                                            <div className="text-red-500 text-xs italic">{formik.errors.lab}</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                }
+                                {currentBox === 3 &&
+                                <div className='my-3'>
+                                    <Editor 
+                                        id="content" style={{ height: '320px' }} name="content"
+                                        value={formik.values.content} onTextChange={(e) => formik.setFieldValue("content", e.htmlValue)} 
+                                        placeholder="Commencer à écrire le Step"
+                                    />
+                                </div>
+                                }
+                                {/* {currentBox === 4 &&
+                                <div className='my-3'>
+                                    That's it Click now on Create step and it's done.
+                                </div>
+                                } */}
+                                <div className="flex  mb-6">
+                                    {currentBox !== 0 && 
+                                    <div className="flex justify-start w-full px-3">
+                                        <button className="shadow bg-slate-600 hover:bg-slate-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                        type="button"
+                                        onClick={() => setCurrentBox(currentBox-1)}
+                                        >
+                                            prev
+                                        </button>
+                                    </div>
+                                    }
+                                    { currentBox !== 4 &&
+                                    <div className="flex justify-end w-full px-3">
+                                        <button className="shadow bg-green-700 hover:bg-green-400  focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                        type="button"
+                                        onClick={() => setCurrentBox(currentBox+1)}
+                                        >
+                                            Suivant
+                                        </button>
+                                    </div>
+                                    }
+                                    {currentBox === 4 &&
+                                    <div className="flex justify-end w-full px-3">
+                                        <button className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded" 
+                                        type="submit"
+                                        disabled={formik.isSubmitting}
+                                        >
+                                            {formik.isSubmitting ? "Updating..." : "Update"}
+                                        </button>
+                                    </div>
+                                    }  
+                                </div>
+                            </form>
+                            </div>
+                        </>
+                    )}
+                </Formik>
                 </Dialog> 
 
                 <Dialog visible={deleteStepDialog} style={{ width: '450px' }} header="Confirmer" modal footer={deleteStepDialogFooter} onHide={hideDeleteStepDialog}>
@@ -410,5 +677,4 @@ const steps = () => {
         </>
     );
 }
-                
 export default steps;
