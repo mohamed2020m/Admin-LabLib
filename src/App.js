@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
@@ -28,13 +28,12 @@ import './css/App.css';
 import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-    const {pathname, activeMenu, setPathName} = useStateContext();
+    const [path, setPath] = useState([{label: window.location.pathname.substring(1)}]);
+    const {activeMenu} = useStateContext();
 
-    // useEffect(() => {
-    //     const currentPath = localStorage.getItem('currentPath');
-    //     console.log("currentPath: ", currentPath)
-    //     setPathName([{label: currentPath}]);        
-    // }, []);
+    useEffect(() => {
+        setPath([{label: window.location.pathname.substring(1)}]);        
+    }, []);
 
     const home = { icon: 'pi pi-home', url: 'https://admin-lablib.herokuapp.com'}
 
@@ -63,7 +62,7 @@ const App = () => {
                         </div>
                         <div className='m-3 p-4'>
                             <div className="card">
-                                <BreadCrumb model={pathname} home={home}/>
+                                <BreadCrumb model={path} home={home}/>
                             </div>
 
                             <Routes>

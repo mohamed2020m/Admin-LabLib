@@ -1,35 +1,24 @@
-
-// prime css
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-// import 'primeflex/primeflex.css';
-// import '../css/App.css';
-
 import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
-
 import Helmet from "react-helmet"
-// import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { UserService } from '../service/UserService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
-// import { FileUpload } from 'primereact/fileupload';
-// import { Rating } from 'primereact/rating';
 import { Dropdown } from 'primereact/dropdown';
-import { Toolbar } from 'primereact/toolbar';
-// import { InputTextarea } from 'primereact/inputtextarea';
-// import { RadioButton } from 'primereact/radiobutton';
-// import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+
+const [isDeleted, setIsDeleted] = useState(false);
 import '../css/DataTableCrud.css';
 
+import { GetUsers, DelUser } from '../service/UserService';
 
 const Users = () => {
 
@@ -51,7 +40,6 @@ const Users = () => {
     const [deleteUsersDialog, setDeleteUsersDialog] = useState(false);
     const [user, setUser] = useState(emptyUser);
     const [selectedUsers, setSelectedUsers] = useState(null);
-    // const [submitted, setSubmitted] = useState(false);
     const [filters, setFilters] = useState(null);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef(null);
@@ -62,21 +50,33 @@ const Users = () => {
         'online', 'offline'
     ];
 
-    const userService = new UserService();
-
-
     useEffect(() => {
         setIsLoading(true);
-        const timer  = setTimeout(() => {
-            userService.getUsers().then(data => setUsers(updateDateUsers(data)));
-            initFilters();
-            setIsLoading(false);
-        }, 5000)
-        return () => clearTimeout(timer);
+        async function fetchUsersData(){
+            try{
+                let res = await GetUsers();
+                if(res.ok){
+                    let data = await res.json();
+                    setUsers(data);
+                    setIsLoading(false);
+                }
+                else{
+                    let err = await res.json();
+                    throw err[0].message
+                }
+            }
+            catch (err){
+                console.log(err);
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 6000 });
+            };
+        }
+        fetchUsersData()
+        initFilters();
 
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isDeleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    
+    const url = 'https://lablib-api.herokuapp.com/api/v1/image';
+
     const updateDateUsers = (rowData) => {
         return [...rowData || []].map(d => {
             d.dateOfCreation = new Date(d.dateOfCreation);
@@ -85,11 +85,10 @@ const Users = () => {
     }
 
     const formatDate = (value) => {
-        return value.toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
+        if(value){
+            return value.toLocaleString('en-US');
+        }
+        return 
     }
     
     const onGlobalFilterChange = (e) => {
@@ -127,66 +126,80 @@ const Users = () => {
         setDeleteUsersDialog(false);
     }
 
-    // const saveUser = () => {
-    //     setSubmitted(true);
-
-    //     if (user.name.trim()) {
-    //         let _Users = [...users];
-    //         let _User = {...user};
-    //         if (user.id) {
-    //             const index = findIndexById(user.id);
-
-    //             _Users[index] = _User;
-    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'user Updated', life: 3000 });
-    //         }
-    //         else {
-    //             _User.id = createId();
-    //             _User.image = 'user-placeholder.svg';
-    //             _Users.push(_User);
-    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'user Created', life: 3000 });
-    //         }
-
-    //         setUsers(_Users);
-    //         setUserDialog(false);
-    //         setUser(emptyUser);
-    //     }
-    // }
-
     const confirmDeleteUser = (user) => {
         setUser(user);
         setDeleteUserDialog(true);
     }
 
-    const deleteUser = () => {
+    const deleteUser = async () => {
         let _Users = users.filter(val => val.id !== user.id);
         setUsers(_Users);
+        try{
+            let res = await DelUser(course.id)
+            if (!res.ok){
+                if(Array.isArray(res) && res.length === 0) return "error";
+                let r = await res.json()
+                throw r[0].message;
+            }
+            else{
+                toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'L\'Utilisateur est supprimé avec succès', life: 3000 });
+            }
+        }
+        catch (err){
+            toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+        } 
+        setIsDeleted(preIsDeleted => (!preIsDeleted));
         setDeleteUserDialog(false);
         setUser(emptyUser);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Utilisateur supprimé avec succès', life: 3000 });
     }
 
     const confirmDeleteSelected = () => {
         setDeleteUsersDialog(true);
     }
 
-    const deleteSelectedUsers = () => {
+    const deleteSelectedUsers = async () => {
+        let allDelelted = 0;
         let _Users = users.filter(val => !selectedUsers.includes(val));
         setUsers(_Users);
+        for(let item of selectedUsers){
+            try{
+                let res = await DelUser(item.id);
+                if (!res.ok){
+                    if(Array.isArray(res) && res.length === 0) return "error";
+                    let r = await res.json()
+                    throw r[0].message;
+                }
+                else{
+                    allDelelted += 1;
+                }
+            }
+            catch (err){
+                toast.current.show({ severity: 'error', summary: 'Failed', detail: err, life: 3000 });
+                return
+            } 
+        }
         setDeleteUsersDialog(false);
+        setIsDeleted(preIsDeleted => (!preIsDeleted));
         setSelectedUsers(null);
-        toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'Utilisateurs supprimés avec succès', life: 3000 });
+        allDelelted === selectedUsers.length && toast.current.show({ severity: 'success', summary: 'Réussi', detail: 'les utilisateurs sont supprimés avec succès', life: 3000 });
     }
     
-    const usernameBodyTemplate = (rowData) => {
-        return <span>{rowData.username}</span>
-    }
+    // const usernameBodyTemplate = (rowData) => {
+    //     return <span>{rowData.username}</span>
+    // }
 
+    const firstnameBodyTemplate = (rowData) => {
+        return <span>{rowData.firstname}</span>
+    }
+    const lastnameBodyTemplate = (rowData) => {
+        return <span>{rowData.lastname}</span>
+    }
     const countryBodyTemplate = (rowData) => {
         
         return (
             <React.Fragment>
                 {/* <img alt="flag" src="/images/flag/flag_placeholder.png" onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className={`flag flag-${rowData.country.code}`} width={30} /> */}
-                <span className="image-text">{rowData.country.name}</span>
+                <span className="image-text">{}</span>
             </React.Fragment>
         )
     }
@@ -199,18 +212,30 @@ const Users = () => {
         return <Button type="button" icon="pi pi-times" onClick={options.filterClearCallback} className="p-button-secondary"></Button>;
     }
 
-    const hashBodyTemplate = (rowData) => {
-        return <span>{rowData.hash}</span>;
-    }
+    // const hashBodyTemplate = (rowData) => {
+    //     return <span>{rowData.hash}</span>;
+    // }
 
     const imageBodyTemplate = (rowData) => {
-        return <img src={`images/user/${rowData.image}`} onError={(e) => e.target.src='https://www.citypng.com/public/uploads/preview/png-round-blue-contact-user-profile-icon-11639786938sxvzj5ogua.png'} alt={rowData.image} className="user-image" />
+        return <img src={`${url}${rowData.image}`} onError={(e) => e.target.src='https://www.citypng.com/public/uploads/preview/png-round-blue-contact-user-profile-icon-11639786938sxvzj5ogua.png'} alt={rowData.image} className="user-image" />
     }
 
     const emailBodyTemplate = (rowData) => {
         return  <span>{rowData.email}</span>
     }
+
+    const roleBodyTemplate = (rowData) => {
+        return  <span>{rowData.role}</span>
+    }
     
+    const activeBodyTemplate = (rowData) => {
+        return  <span>{formatDate(new Date(rowData.active))}</span>
+    }
+
+    const MFABodyTemplate = (rowData) => {
+        return  <span>{rowData.MFA}</span>
+    }
+
     const statusFilterTemplate = (options) => {
         return <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterCallback(e.value, options.index)} itemTemplate={statusItemTemplate} placeholder="Sélectionnez un statut" className="p-column-filter"/>;
     }
@@ -224,7 +249,7 @@ const Users = () => {
     }
 
     const dateBodyTemplate = (rowData) => {
-        return formatDate(rowData.dateOfCreation);
+        return formatDate(new Date(rowData.createdAt));
     }
 
     const dateFilterTemplate = (options) => {
@@ -238,8 +263,6 @@ const Users = () => {
             </React.Fragment>
         );
     }
-
-    let num =  filters !== null && Object.keys(filters).length > 0 ? Object.keys(filters).length : ""
 
     const header = (
         <div className="table-header">
@@ -295,17 +318,19 @@ const Users = () => {
                         globalFilter={globalFilter} filters={filters} filterDisplay="menu" header={header} emptyMessage="Aucun utilisateur trouvé." responsiveLayout="scroll">
                         <Column selectionMode="multiple" headerStyle={{ width: '0rem' }} exportable={false}></Column>
                         <Column field="id" header="Id" style={{ minWidth: '0rem' }}></Column>
-                        <Column field="username" header="Username" body={usernameBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="firstname" header="FirstName" body={firstnameBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="lastname" header="LastName" body={lastnameBodyTemplate} style={{ minWidth: '10rem' }}></Column>
+                        <Column field="email" header="Email" body={emailBodyTemplate} style={{ minWidth: '0rem' }}></Column>
+                        <Column field="image" header="Image" body={imageBodyTemplate}></Column>
+                        <Column field="role" header="Role" body={roleBodyTemplate}  style={{ minWidth: '0rem' }}></Column>
+                        {/* <Column field="name" header="Nom" sortable style={{ minWidth: '0rem' }}></Column> */}
                         <Column field="country" filterField="country.name" header="Country" body={countryBodyTemplate} style={{ minWidth: '8rem' }} filter filterPlaceholder="Recherche par pays"
                             filterClear={filterClearTemplate} filterApply={filterApplyTemplate}></Column>
-                        <Column field="name" header="Nom" sortable style={{ minWidth: '0rem' }}></Column>
-                        <Column field="email" header="Email" body={emailBodyTemplate} style={{ minWidth: '0rem' }}></Column>
-                        <Column field="hash" header="Hash" body={hashBodyTemplate}  style={{ minWidth: '0rem' }}></Column>
-                        <Column field="image" header="Image" body={imageBodyTemplate}></Column>
                         <Column field="status" header="Status" body={statusBodyTemplate} filterMenuStyle={{boxShadow:'0px 1px 6px rgb(180, 178, 178)', width: '14rem' }} 
                             style={{ minWidth: '0rem' }} filter filterElement={statusFilterTemplate}></Column>
-                        <Column field="dateOfCreation" header="Date de creation" dataType="date" filterField="dateOfCreation" body={dateBodyTemplate} style={{ minWidth: '0rem' }}
-                            filter filterElement={dateFilterTemplate} ></Column>
+                        <Column field="MFA" header="MFA" body={MFABodyTemplate}  style={{ minWidth: '0rem' }}></Column>
+                        <Column field="active" header="Active" body={activeBodyTemplate}  style={{ minWidth: '13rem' }}></Column>
+                        <Column field="createdAt" header="Date de creation" dataType="date" body={dateBodyTemplate} style={{ minWidth: '13rem' }}></Column>
                         <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
                     </DataTable>
                 </div>

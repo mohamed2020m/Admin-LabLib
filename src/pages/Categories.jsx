@@ -49,8 +49,10 @@ const Categories = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        GetCategory().then(data => setCategories(data));
-        setIsLoading(false);
+        GetCategory().then(data => {
+            setCategories(data);
+            setIsLoading(false);
+        });
         initFilters();
         let fileReader, isCancel = false;
         if (file) {

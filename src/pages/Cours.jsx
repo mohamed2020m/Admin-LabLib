@@ -55,8 +55,8 @@ const Cours = () => {
     const {activeMenu, setActiveMenu} = useStateContext();
 
     useEffect(() => {
-        GetCategory().then(data => setCategories(data));
         setIsLoading(true);
+        GetCategory().then(data => setCategories(data));
         GetCourse().then(data => {
             setCourses(data);
             setIsLoading(false);
