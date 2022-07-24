@@ -15,7 +15,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 
-const [isDeleted, setIsDeleted] = useState(false);
 import '../css/DataTableCrud.css';
 
 import { GetUsers, DelUser } from '../service/UserService';
@@ -45,6 +44,7 @@ const Users = () => {
     const toast = useRef(null);
     const dt = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     const statuses = [
         'online', 'offline'
