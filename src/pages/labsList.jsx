@@ -16,6 +16,7 @@ import { InputText } from 'primereact/inputtext';
 import { Formik, Field} from 'formik';
 import * as Yup from 'yup';
 import '../css/DataTableCrud.css';
+import {levels} from '../data/dummy'
 import {GetCategory, GetCategoryItem} from '../service/CategoryService';
 import {GetCourseItem} from './../service/CourseService'
 import {GetLabs, PutLabs, DelLabs} from '../service/LabsService';
@@ -373,6 +374,7 @@ const codelabs = () => {
                         name: codelab.name, 
                         duration: msToTime(codelab.duration), 
                         description: codelab.description, 
+                        level: codelab.level,
                         category: findIdCategory(codelab.category, categories), 
                         course: findIdCourse(codelab.course, courses), 
                         chapter: findIdChapiter(codelab.chapter, chapiters)
@@ -384,7 +386,6 @@ const codelabs = () => {
                         description: Yup.string()
                         .max(250, 'Must be 250 characters or less'),
                         // .required('Required'),
-
                         duration: Yup.string(),
                         // .required('Required'),
                     })}
@@ -457,6 +458,27 @@ const codelabs = () => {
                                     />
                                     {formik.touched.duration && formik.errors.duration ? (
                                         <div className="text-red-500 text-xs italic">{formik.errors.duration}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap -mx-3 mb-6">
+                                <div className="justify-between w-full px-3">
+                                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="level">
+                                        Sélectionnez le Niveau
+                                    </label>
+                                    <Field 
+                                        id="level" name="level" as="select" 
+                                        value={formik.values.level ? formik.values.level : "Sélectionnez le Niveau"} onChange={(e) => {formik.setFieldValue("level", e.target.value)}}
+                                        className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    >
+                                        <option disabled>Sélectionnez le Niveau</option>
+                                        {levels.map((item) => (
+                                            <option key={item.id} value={item.id}>{item.name}</option>
+                                        ))}
+                                    </Field>
+                                    
+                                    {formik.touched.level && formik.errors.level ? (
+                                        <div className="text-red-500 text-xs italic">{formik.errors.level}</div>
                                     ) : null}
                                 </div>
                             </div>

@@ -33,19 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["@syncfusion/ej2", "npm:19.4.56"],\
-            ["@syncfusion/ej2-buttons", "npm:20.2.38"],\
-            ["@syncfusion/ej2-file-utils", "npm:20.2.38"],\
-            ["@syncfusion/ej2-react-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-react-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-kanban", "npm:19.4.52"],\
             ["@syncfusion/ej2-react-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-react-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-schedule", "npm:19.4.55"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:20.2.38"],\
             ["@testing-library/jest-dom", "npm:5.16.4"],\
             ["@testing-library/react", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:13.3.0"],\
             ["@testing-library/user-event", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:13.5.0"],\
@@ -58,7 +46,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:4.6.0"],\
             ["express", "npm:4.18.1"],\
             ["formik", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.2.9"],\
-            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
             ["postcss", "npm:8.4.14"],\
             ["primeflex", "npm:3.2.1"],\
             ["primeicons", "npm:5.0.0"],\
@@ -4022,84 +4009,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@syncfusion/ej2", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-npm-19.4.56-9949fb485e-05f20d125e.zip/node_modules/@syncfusion/ej2/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2", "npm:19.4.56"],\
-            ["@syncfusion/ej2-barcode-generator", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-circulargauge", "npm:19.4.52"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-diagrams", "npm:19.4.56"],\
-            ["@syncfusion/ej2-documenteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-drawings", "npm:19.4.52"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-filemanager", "npm:19.4.56"],\
-            ["@syncfusion/ej2-gantt", "npm:19.4.56"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-heatmap", "npm:19.4.52"],\
-            ["@syncfusion/ej2-icons", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inplace-editor", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-kanban", "npm:19.4.52"],\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lineargauge", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-maps", "npm:19.4.56"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-notifications", "npm:19.4.52"],\
-            ["@syncfusion/ej2-office-chart", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdfviewer", "npm:19.4.56"],\
-            ["@syncfusion/ej2-pivotview", "npm:19.4.55"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-progressbar", "npm:19.4.55"],\
-            ["@syncfusion/ej2-querybuilder", "npm:19.4.56"],\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-schedule", "npm:19.4.55"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"],\
-            ["@syncfusion/ej2-spreadsheet", "npm:19.4.56"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-treegrid", "npm:19.4.56"],\
-            ["@syncfusion/ej2-treemap", "npm:19.4.52"],\
-            ["@types/lodash", "npm:4.14.159"],\
-            ["tslib", "npm:1.14.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-barcode-generator", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-barcode-generator-npm-19.4.52-cb1a24c5eb-f26010f90b.zip/node_modules/@syncfusion/ej2-barcode-generator/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-barcode-generator", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@syncfusion/ej2-base", [\
         ["npm:19.4.52", {\
           "packageLocation": "./.yarn/cache/@syncfusion-ej2-base-npm-19.4.52-7d7b0654aa-f06abbca75.zip/node_modules/@syncfusion/ej2-base/",\
           "packageDependencies": [\
             ["@syncfusion/ej2-base", "npm:19.4.52"],\
             ["@syncfusion/ej2-icons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-base-npm-20.2.38-61e91e32dd-23800fc04f.zip/node_modules/@syncfusion/ej2-base/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-base", "npm:20.2.38"],\
-            ["@syncfusion/ej2-icons", "npm:20.2.38"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4112,245 +4027,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@syncfusion/ej2-base", "npm:19.4.52"]\
           ],\
           "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-buttons-npm-20.2.38-0092e19c3a-fed66fa437.zip/node_modules/@syncfusion/ej2-buttons/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-buttons", "npm:20.2.38"],\
-            ["@syncfusion/ej2-base", "npm:20.2.38"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-calendars", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-calendars-npm-19.4.56-233a7b322e-1d57f0ca34.zip/node_modules/@syncfusion/ej2-calendars/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-charts", [\
-        ["npm:19.4.54", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-charts-npm-19.4.54-e6eaa2fbd5-cba3f96784.zip/node_modules/@syncfusion/ej2-charts/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-circulargauge", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-circulargauge-npm-19.4.52-fd9bfffb5a-1b70c1e6c5.zip/node_modules/@syncfusion/ej2-circulargauge/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-circulargauge", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-compression", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-compression-npm-19.4.52-7b19e8cbd1-00f1699fea.zip/node_modules/@syncfusion/ej2-compression/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-data", [\
-        ["npm:19.4.54", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-data-npm-19.4.54-fd39d2f0fd-bbd33923e6.zip/node_modules/@syncfusion/ej2-data/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-diagrams", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-diagrams-npm-19.4.56-c4bc662a4d-94c3512e79.zip/node_modules/@syncfusion/ej2-diagrams/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-diagrams", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-documenteditor", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-documenteditor-npm-19.4.56-2914517ddd-8e800f68b3.zip/node_modules/@syncfusion/ej2-documenteditor/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-documenteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-office-chart", "npm:19.4.52"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-drawings", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-drawings-npm-19.4.52-ddef0e8aed-84069d173f.zip/node_modules/@syncfusion/ej2-drawings/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-drawings", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-dropdowns", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-dropdowns-npm-19.4.56-5a6304339c-d628272f3d.zip/node_modules/@syncfusion/ej2-dropdowns/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-excel-export", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-excel-export-npm-19.4.52-ca7e38e213-cf8d7f171c.zip/node_modules/@syncfusion/ej2-excel-export/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-file-utils", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-file-utils-npm-19.4.52-fdf5f56bd0-9e9651e4bd.zip/node_modules/@syncfusion/ej2-file-utils/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-file-utils-npm-20.2.38-9eb497bdd2-0a845c67b2.zip/node_modules/@syncfusion/ej2-file-utils/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-file-utils", "npm:20.2.38"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-filemanager", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-filemanager-npm-19.4.56-055153e90d-6e5d58afb9.zip/node_modules/@syncfusion/ej2-filemanager/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-filemanager", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-gantt", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-gantt-npm-19.4.56-2f63f4c862-fcb8911cc1.zip/node_modules/@syncfusion/ej2-gantt/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-gantt", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-treegrid", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-grids", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-grids-npm-19.4.56-49e5da3be1-e010288547.zip/node_modules/@syncfusion/ej2-grids/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-heatmap", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-heatmap-npm-19.4.52-2e9e8e31d5-f20860c363.zip/node_modules/@syncfusion/ej2-heatmap/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-heatmap", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["@syncfusion/ej2-icons", [\
@@ -4358,215 +4034,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@syncfusion-ej2-icons-npm-19.4.52-2a18565610-6e5e4487f7.zip/node_modules/@syncfusion/ej2-icons/",\
           "packageDependencies": [\
             ["@syncfusion/ej2-icons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-icons-npm-20.2.38-e4333d3f78-bdefbd3896.zip/node_modules/@syncfusion/ej2-icons/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-icons", "npm:20.2.38"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-inplace-editor", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-inplace-editor-npm-19.4.52-aad4af3542-16dfa4e1e2.zip/node_modules/@syncfusion/ej2-inplace-editor/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-inplace-editor", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-inputs", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-inputs-npm-19.4.52-5f5ad17cc7-99759de5fb.zip/node_modules/@syncfusion/ej2-inputs/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-kanban", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-kanban-npm-19.4.52-e924bee535-2d38feacfe.zip/node_modules/@syncfusion/ej2-kanban/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-kanban", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-layouts", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-layouts-npm-19.4.52-e4f81b6d58-9dabe6f3f9.zip/node_modules/@syncfusion/ej2-layouts/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-lineargauge", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-lineargauge-npm-19.4.52-eb5bfe9c6d-fb660a70d7.zip/node_modules/@syncfusion/ej2-lineargauge/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-lineargauge", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-lists", [\
-        ["npm:19.4.55", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-lists-npm-19.4.55-6f0b337591-f1cc87789c.zip/node_modules/@syncfusion/ej2-lists/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-maps", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-maps-npm-19.4.56-0c87c0adbd-a4b1be8a9d.zip/node_modules/@syncfusion/ej2-maps/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-maps", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-navigations", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-navigations-npm-19.4.56-fc7e2539fa-6eb8d8acf4.zip/node_modules/@syncfusion/ej2-navigations/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-notifications", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-notifications-npm-19.4.52-686534f2b3-8b65e3e4a5.zip/node_modules/@syncfusion/ej2-notifications/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-notifications", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-office-chart", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-office-chart-npm-19.4.52-015d3ff4c2-b485627ea3.zip/node_modules/@syncfusion/ej2-office-chart/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-office-chart", "npm:19.4.52"],\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-pdf-export", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-pdf-export-npm-19.4.52-f2d63a2915-c0b59cfa96.zip/node_modules/@syncfusion/ej2-pdf-export/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-pdfviewer", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-pdfviewer-npm-19.4.56-6fcf6018a9-ce9cbcd521.zip/node_modules/@syncfusion/ej2-pdfviewer/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-pdfviewer", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-drawings", "npm:19.4.52"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-filemanager", "npm:19.4.56"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inplace-editor", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-layouts", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-notifications", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-pivotview", [\
-        ["npm:19.4.55", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-pivotview-npm-19.4.55-7bbc9a968d-ad8d3657ce.zip/node_modules/@syncfusion/ej2-pivotview/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-pivotview", "npm:19.4.55"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4578,42 +4045,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@syncfusion/ej2-popups", "npm:19.4.53"],\
             ["@syncfusion/ej2-base", "npm:19.4.52"],\
             ["@syncfusion/ej2-buttons", "npm:19.4.55"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-popups-npm-20.2.38-99ec9f66a9-dc34adba8d.zip/node_modules/@syncfusion/ej2-popups/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-popups", "npm:20.2.38"],\
-            ["@syncfusion/ej2-base", "npm:20.2.38"],\
-            ["@syncfusion/ej2-buttons", "npm:20.2.38"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-progressbar", [\
-        ["npm:19.4.55", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-progressbar-npm-19.4.55-028358a125-15472623bf.zip/node_modules/@syncfusion/ej2-progressbar/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-progressbar", "npm:19.4.55"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-querybuilder", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-querybuilder-npm-19.4.56-ed26e2f8b6-8840948678.zip/node_modules/@syncfusion/ej2-querybuilder/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-querybuilder", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4628,78 +4059,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@syncfusion/ej2-react-calendars", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-calendars-npm-19.4.56-89bfb285ab-6d098ecdaf.zip/node_modules/@syncfusion/ej2-react-calendars/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-charts", [\
-        ["npm:19.4.54", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-charts-npm-19.4.54-23f18c2b68-1cd32fb797.zip/node_modules/@syncfusion/ej2-react-charts/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-dropdowns", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-dropdowns-npm-19.4.56-81212d708f-8313f7c66d.zip/node_modules/@syncfusion/ej2-react-dropdowns/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-grids", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-grids-npm-19.4.56-fd3f778faf-764be1801c.zip/node_modules/@syncfusion/ej2-react-grids/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-inputs", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-inputs-npm-19.4.52-4d44a78ea4-08fc33fc04.zip/node_modules/@syncfusion/ej2-react-inputs/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-kanban", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-kanban-npm-19.4.52-c4feb82c38-8e8802fffc.zip/node_modules/@syncfusion/ej2-react-kanban/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-kanban", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-kanban", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@syncfusion/ej2-react-popups", [\
         ["npm:19.4.53", {\
           "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-popups-npm-19.4.53-4f8f81cb82-ae680f8cf2.zip/node_modules/@syncfusion/ej2-react-popups/",\
@@ -4708,137 +4067,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@syncfusion/ej2-base", "npm:19.4.52"],\
             ["@syncfusion/ej2-popups", "npm:19.4.53"],\
             ["@syncfusion/ej2-react-base", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-richtexteditor", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-richtexteditor-npm-19.4.56-79e33082ee-d7b3bb3b3a.zip/node_modules/@syncfusion/ej2-react-richtexteditor/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"],\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-react-schedule", [\
-        ["npm:19.4.55", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-react-schedule-npm-19.4.55-c0ee53b449-cd4c641cd4.zip/node_modules/@syncfusion/ej2-react-schedule/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-react-schedule", "npm:19.4.55"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-base", "npm:19.4.56"],\
-            ["@syncfusion/ej2-schedule", "npm:19.4.55"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-richtexteditor", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-richtexteditor-npm-19.4.56-8e3bb7b3c4-ae5f885570.zip/node_modules/@syncfusion/ej2-richtexteditor/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-filemanager", "npm:19.4.56"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-schedule", [\
-        ["npm:19.4.55", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-schedule-npm-19.4.55-874fb37f64-2c20effeb0.zip/node_modules/@syncfusion/ej2-schedule/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-schedule", "npm:19.4.55"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-buttons", "npm:19.4.55"],\
-            ["@syncfusion/ej2-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-excel-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-lists", "npm:19.4.55"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-splitbuttons", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-splitbuttons-npm-19.4.52-6f4eaf9587-c3a7bfe98d.zip/node_modules/@syncfusion/ej2-splitbuttons/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-splitbuttons", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:20.2.38", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-splitbuttons-npm-20.2.38-215f36e1e4-c0f85e6272.zip/node_modules/@syncfusion/ej2-splitbuttons/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-splitbuttons", "npm:20.2.38"],\
-            ["@syncfusion/ej2-base", "npm:20.2.38"],\
-            ["@syncfusion/ej2-popups", "npm:20.2.38"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-spreadsheet", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-spreadsheet-npm-19.4.56-a972c8ff0c-12f44cb3d2.zip/node_modules/@syncfusion/ej2-spreadsheet/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-spreadsheet", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-navigations", "npm:19.4.56"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-svg-base", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-svg-base-npm-19.4.52-3b6cf116ac-6321403493.zip/node_modules/@syncfusion/ej2-svg-base/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-treegrid", [\
-        ["npm:19.4.56", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-treegrid-npm-19.4.56-7944d50bdb-2bfe68296e.zip/node_modules/@syncfusion/ej2-treegrid/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-treegrid", "npm:19.4.56"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-popups", "npm:19.4.53"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@syncfusion/ej2-treemap", [\
-        ["npm:19.4.52", {\
-          "packageLocation": "./.yarn/cache/@syncfusion-ej2-treemap-npm-19.4.52-f1359c4475-33d8833e69.zip/node_modules/@syncfusion/ej2-treemap/",\
-          "packageDependencies": [\
-            ["@syncfusion/ej2-treemap", "npm:19.4.52"],\
-            ["@syncfusion/ej2-base", "npm:19.4.52"],\
-            ["@syncfusion/ej2-compression", "npm:19.4.52"],\
-            ["@syncfusion/ej2-data", "npm:19.4.54"],\
-            ["@syncfusion/ej2-file-utils", "npm:19.4.52"],\
-            ["@syncfusion/ej2-pdf-export", "npm:19.4.52"],\
-            ["@syncfusion/ej2-svg-base", "npm:19.4.52"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -5207,13 +4435,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@types/lodash", [\
-        ["npm:4.14.159", {\
-          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.159-9118effd98-ed467c79c1.zip/node_modules/@types/lodash/",\
-          "packageDependencies": [\
-            ["@types/lodash", "npm:4.14.159"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:4.14.182", {\
           "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.182-1073aac722-7dd137aa9d.zip/node_modules/@types/lodash/",\
           "packageDependencies": [\
@@ -5994,19 +5215,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["adminlablib", "workspace:."],\
-            ["@syncfusion/ej2", "npm:19.4.56"],\
-            ["@syncfusion/ej2-buttons", "npm:20.2.38"],\
-            ["@syncfusion/ej2-file-utils", "npm:20.2.38"],\
-            ["@syncfusion/ej2-react-calendars", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-charts", "npm:19.4.54"],\
-            ["@syncfusion/ej2-react-dropdowns", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-grids", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-inputs", "npm:19.4.52"],\
-            ["@syncfusion/ej2-react-kanban", "npm:19.4.52"],\
             ["@syncfusion/ej2-react-popups", "npm:19.4.53"],\
-            ["@syncfusion/ej2-react-richtexteditor", "npm:19.4.56"],\
-            ["@syncfusion/ej2-react-schedule", "npm:19.4.55"],\
-            ["@syncfusion/ej2-splitbuttons", "npm:20.2.38"],\
             ["@testing-library/jest-dom", "npm:5.16.4"],\
             ["@testing-library/react", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:13.3.0"],\
             ["@testing-library/user-event", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:13.5.0"],\
@@ -6019,7 +5228,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:4.6.0"],\
             ["express", "npm:4.18.1"],\
             ["formik", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.2.9"],\
-            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
             ["postcss", "npm:8.4.14"],\
             ["primeflex", "npm:3.2.1"],\
             ["primeicons", "npm:5.0.0"],\
@@ -10549,22 +9757,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["http-proxy-middleware", "npm:2.0.6"]\
           ],\
           "linkType": "SOFT"\
-        }],\
-        ["virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6", {\
-          "packageLocation": "./.yarn/__virtual__/http-proxy-middleware-virtual-1fcb2ff97e/0/cache/http-proxy-middleware-npm-2.0.6-3bb17658ee-2ee85bc878.zip/node_modules/http-proxy-middleware/",\
-          "packageDependencies": [\
-            ["http-proxy-middleware", "virtual:2de3b25497191433c62604fd2541780e8910db34d72f89ff84cf8bbffc807b6a958a32af38edd67f1368e141d11241fddb9befb1ed3a08d53f3e180ef9cdc7bc#npm:2.0.6"],\
-            ["@types/express", null],\
-            ["@types/http-proxy", "npm:1.17.9"],\
-            ["http-proxy", "npm:1.18.1"],\
-            ["is-glob", "npm:4.0.3"],\
-            ["is-plain-obj", "npm:3.0.0"],\
-            ["micromatch", "npm:4.0.5"]\
-          ],\
-          "packagePeers": [\
-            "@types/express"\
-          ],\
-          "linkType": "HARD"\
         }],\
         ["virtual:685b1837494dd23e4d3d75d426aa5166398259e0bdb78e8a98fe446849a06be24906d69e93be93b10ea59639c276ae88d0c46727c6fc9e40ef99ae3b58434a69#npm:2.0.6", {\
           "packageLocation": "./.yarn/__virtual__/http-proxy-middleware-virtual-d4abf1a049/0/cache/http-proxy-middleware-npm-2.0.6-3bb17658ee-2ee85bc878.zip/node_modules/http-proxy-middleware/",\

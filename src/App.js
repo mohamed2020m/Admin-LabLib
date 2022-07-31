@@ -57,7 +57,7 @@ const App = () => {
                             : 'bg-main-bg  w-full min-h-screen flex-2 '
                         }
                     >
-                        <div className="static navbar w-full bg-white shadow-lg">
+                        <div className="navbar w-full bg-white shadow-lg sticky top-0 z-50">
                             <Navbar />
                         </div>
                         <div className='m-3 p-4'>

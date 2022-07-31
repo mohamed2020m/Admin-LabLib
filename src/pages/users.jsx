@@ -135,7 +135,7 @@ const Users = () => {
         let _Users = users.filter(val => val.id !== user.id);
         setUsers(_Users);
         try{
-            let res = await DelUser(course.id)
+            let res = await DelUser(user.id)
             if (!res.ok){
                 if(Array.isArray(res) && res.length === 0) return "error";
                 let r = await res.json()
